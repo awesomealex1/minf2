@@ -1,0 +1,4 @@
+Experiments to do:
+
+Simple NN + MNIST + SAM
+Simple NN + MNIST + Augment
