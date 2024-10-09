@@ -1,6 +1,7 @@
 import torch
 import torch.optim
 from torch import nn
+from hessian import calculate_model_hessian
 
 class SAM(torch.optim.Optimizer):
     '''
@@ -67,12 +68,11 @@ class SAM(torch.optim.Optimizer):
         super().load_state_dict(state_dict)
         self.base_optimizer.param_groups = self.param_groups
 
-def train(model, train_loader, test_loader, device):
+def train(model, train_loader, test_loader, device, calc_sharpness, epochs):
     model = model.to(device)
     lr = 0.001
     optimizer_SGD = torch.optim.SGD(model.parameters(), lr=lr, momentum=0.9)
     criterion = nn.CrossEntropyLoss()
-    epochs = 20
     train_acc = []
     test_acc = []
 
@@ -111,15 +111,19 @@ def train(model, train_loader, test_loader, device):
         test_acc.append(100. * correct / len(test_loader.dataset))         
         print('Epoch : {}, Training Accuracy : {:.2f}%,  Test Accuracy : {:.2f}% \n'.format(
             epoch+1, train_acc[-1], test_acc[-1]))
-    return train_acc, test_acc
+    
+    hessian = None
+    if calc_sharpness:
+        hessian = calculate_model_hessian(model, criterion, test_loader)
 
-def train_sam(model, train_loader, test_loader, device):
+    return model, train_acc, test_acc, hessian
+
+def train_sam(model, train_loader, test_loader, device, calc_sharpness, epochs):
     model = model.to(device)
     base_optimizer = torch.optim.SGD
     lr = 0.001
     optimizer_SAM = SAM(model.parameters(), base_optimizer, lr=lr, momentum=0.9)
     criterion = nn.CrossEntropyLoss()
-    epochs = 20
     train_acc = []
     test_acc = []
 
@@ -161,7 +165,12 @@ def train_sam(model, train_loader, test_loader, device):
         test_acc.append(100. * correct / len(test_loader.dataset))         
         print('Epoch : {}, Training Accuracy : {:.2f}%,  Test Accuracy : {:.2f}% \n'.format(
             epoch+1, train_acc[-1], test_acc[-1]))
-    return train_acc, test_acc
+    
+    hessian = None
+    if calc_sharpness:
+        hessian = calculate_model_hessian(model, criterion, test_loader)
 
-def train_augment(model, train_loader, test_loader, device):
+    return model, train_acc, test_acc, hessian
+
+def train_augment(model, train_loader, test_loader, device, calc_sharpness, epochs):
     pass
