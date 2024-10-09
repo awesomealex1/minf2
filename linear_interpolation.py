@@ -30,11 +30,8 @@ def one_dimensional_linear_interpolation(params_a_path, params_b_path, model, lo
             mydict[key] = value * alpha + (1 - alpha) * params_b[key]
         model.load_state_dict(mydict)
         for smpl in np.split(np.random.permutation(range(train_X.shape[0])), 10):
-            print(smpl)
             preds = model(train_X[smpl])
             data_for_plotting[i, 0] += loss(preds, train_Y[smpl]).item() / 10.
-            #data_for_plotting[i, 1] += accfun(preds, train_Y[smpl]) / 10.
-        print(data_for_plotting[i])
         i += 1
     np.save('intermediate-values', data_for_plotting)
 

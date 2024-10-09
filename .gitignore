@@ -1,3 +1,5 @@
 experiment_results/
 manual_results/
 __pycache__/
+*.pt
+*.npy
