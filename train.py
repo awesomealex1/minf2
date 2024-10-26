@@ -291,7 +291,7 @@ def train_augment(model, train_loader, test_loader, device, calc_sharpness, epoc
             loss = criterion(model(X), Y)
             loss.backward()
             optimizer_SAM.second_step(zero_grad=False)
-            if epoch > 0:
+            if epoch in [1, 25, 50, 75, 99]:
                 print("Creating augmented data")
                 deltas = augment_data(X, Y, criterion, model, device)
             j += 1
@@ -324,6 +324,7 @@ def train_augment(model, train_loader, test_loader, device, calc_sharpness, epoc
         if augmented_data:
             new_data = torch.stack(augmented_data)
             train_loader.dataset.data = new_data
+            torch.save(new_data, f'augmented_data_epoch_{epoch}.pt')
     
     hessian = None
     if calc_sharpness:
