@@ -274,7 +274,6 @@ def train_augment(model, train_loader, test_loader, device, calc_sharpness, epoc
         total_loss = 0
         correct = 0
         augmented_data = []
-        j = 0
         deltas = None
         
         for X, Y in train_loader:
@@ -293,10 +292,9 @@ def train_augment(model, train_loader, test_loader, device, calc_sharpness, epoc
             optimizer_SAM.second_step(zero_grad=False)
             if epoch in [1, 25, 50, 75, 99]:
                 print("Creating augmented data")
-                deltas = augment_data(X, Y, criterion, model, device)
-            j += 1
+                deltas = augment_data(X, Y, criterion, model, device, iterations=20)
             optimizer_SAM.zero_grad()
-                        
+            
             predicted = torch.argmax(hypothesis, 1)
             correct += (predicted == Y).sum().item()
             if deltas != None:
@@ -314,15 +312,15 @@ def train_augment(model, train_loader, test_loader, device, calc_sharpness, epoc
                 hypothesis = model(X)
                 
                 predicted = torch.argmax(hypothesis, 1)
-                correct += (predicted == Y).sum().item()
-                
+                correct += (predicted == Y).sum().item()                
                 
         test_acc.append(100. * correct / len(test_loader.dataset))
         print('Epoch : {}, Training Accuracy : {:.2f}%,  Test Accuracy : {:.2f}% \n'.format(
             epoch+1, train_acc[-1], test_acc[-1]))
 
         if augmented_data:
-            new_data = torch.stack(augmented_data)
+            new_data = torch.cat(augmented_data, dim=0)
+            new_data = new_data.squeeze(1)
             train_loader.dataset.data = new_data
             torch.save(new_data, f'augmented_data_epoch_{epoch}.pt')
     
