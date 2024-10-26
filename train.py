@@ -319,7 +319,7 @@ def train_augment(model, train_loader, test_loader, device, calc_sharpness, epoc
             epoch+1, train_acc[-1], test_acc[-1]))
 
         if augmented_data:
-            new_data = torch.cat(augmented_data, dim=0)
+            new_data = torch.cat(augmented_data, dim=0).cpu()
             new_data = new_data.squeeze(1)
             train_loader.dataset.data = new_data
             torch.save(new_data, f'augmented_data_epoch_{epoch}.pt')
