@@ -257,6 +257,7 @@ def train_sam(model, train_loader, test_loader, device, calc_sharpness, epochs):
     return model, train_acc, test_acc, hessian
 
 def train_augment(model, train_loader, test_loader, device, calc_sharpness, epochs):
+    print("Starting augmented training")
     model = model.to(device)
     base_optimizer = torch.optim.SGD
     lr = 0.001
@@ -290,7 +291,8 @@ def train_augment(model, train_loader, test_loader, device, calc_sharpness, epoc
             loss = criterion(model(X), Y)
             loss.backward()
             optimizer_SAM.second_step(zero_grad=False)
-            if epoch > 0 or j > 500:
+            if epoch > 0:
+                print("Creating augmented data")
                 deltas = augment_data(X, Y, criterion, model)
             j += 1
             optimizer_SAM.zero_grad()

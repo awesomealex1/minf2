@@ -41,7 +41,7 @@ def augment_data(X, Y, criterion, model, iterations=500, lr=0.0001):
         
         # Backpropagate the cosine similarity loss (update delta to minimize similiarity loss)
         passenger_loss.backward()
-    
+
         # Take a step to update delta based on the gradient of the cosine similarity
         optimizer_delta.step()
     
