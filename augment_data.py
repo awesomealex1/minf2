@@ -3,12 +3,13 @@ import matplotlib.pyplot as plt
 from torch import autograd
 import copy
 
-def augment_data(X, Y, criterion, model, iterations=500, lr=0.0001):
+def augment_data(X, Y, criterion, model, device, iterations=500, lr=0.0001):
     # Set model to eval mode to disable dropout, etc. gradients will still be active
     model.eval()
 
     # Initialize delta with randoms
     delta = (0.001**0.5)*torch.randn(X.shape)
+    delta = delta.to(device)
     delta.requires_grad_()
     
     # Use Adam as optimizer for delta

@@ -293,7 +293,7 @@ def train_augment(model, train_loader, test_loader, device, calc_sharpness, epoc
             optimizer_SAM.second_step(zero_grad=False)
             if epoch > 0:
                 print("Creating augmented data")
-                deltas = augment_data(X, Y, criterion, model)
+                deltas = augment_data(X, Y, criterion, model, device)
             j += 1
             optimizer_SAM.zero_grad()
                         
