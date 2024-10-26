@@ -2,6 +2,10 @@ import torch
 import torch.optim
 from torch import nn
 from hessian import calculate_model_hessian
+from augment_data import augment_data
+from torch.optim._multi_tensor import SGD
+from typing import Iterable
+import matplotlib.pyplot as plt
 
 class SAM(torch.optim.Optimizer):
     '''
@@ -33,7 +37,7 @@ class SAM(torch.optim.Optimizer):
         if zero_grad: self.zero_grad()
 
     @torch.no_grad()
-    def second_step(self, zero_grad=False):
+    def second_step(self, zero_grad=False, tmp=None):
         for group in self.param_groups:
             for p in group["params"]:
                 if p.grad is None: continue
@@ -67,6 +71,86 @@ class SAM(torch.optim.Optimizer):
     def load_state_dict(self, state_dict):
         super().load_state_dict(state_dict)
         self.base_optimizer.param_groups = self.param_groups
+
+
+class SAMSGD(SGD):
+    """ SGD wrapped with Sharp-Aware Minimization
+
+    Args:
+        params: tensors to be optimized
+        lr: learning rate
+        momentum: momentum factor
+        dampening: damping factor
+        weight_decay: weight decay factor
+        nesterov: enables Nesterov momentum
+        rho: neighborhood size
+
+    """
+
+    def __init__(self,
+                 params: Iterable[torch.Tensor],
+                 lr: float,
+                 momentum: float = 0,
+                 dampening: float = 0,
+                 weight_decay: float = 0,
+                 nesterov: bool = False,
+                 rho: float = 0.05,
+                 ):
+        if rho <= 0:
+            raise ValueError(f"Invalid neighborhood size: {rho}")
+        super().__init__(params, lr, momentum, dampening, weight_decay, nesterov)
+        # todo: generalize this
+        if len(self.param_groups) > 1:
+            raise ValueError("Not supported")
+        self.param_groups[0]["rho"] = rho
+
+    @torch.no_grad()
+    def step1(self,
+             closure
+             ) -> torch.Tensor:
+        """
+
+        Args:
+            closure: A closure that reevaluates the model and returns the loss.
+
+        Returns: the loss value evaluated on the original point
+
+        """
+        closure = torch.enable_grad()(closure)
+        loss = closure().detach()
+
+        for group in self.param_groups:
+            grads = []
+            params_with_grads = []
+
+            rho = group['rho']
+            # update internal_optim's learning rate
+
+            for p in group['params']:
+                if p.grad is not None:
+                    # without clone().detach(), p.grad will be zeroed by closure()
+                    grads.append(p.grad.clone().detach())
+                    params_with_grads.append(p)
+            device = grads[0].device
+
+            # compute \hat{\epsilon}=\rho/\norm{g}\|g\|
+            grad_norm = torch.stack([g.detach().norm(2).to(device) for g in grads]).norm(2)
+            epsilon = grads  # alias for readability
+            torch._foreach_mul_(epsilon, rho / grad_norm)
+
+            # virtual step toward \epsilon
+            torch._foreach_add_(params_with_grads, epsilon)
+            # compute g=\nabla_w L_B(w)|_{w+\hat{\epsilon}}
+            closure()
+            # virtual step back to the original point
+            torch._foreach_sub_(params_with_grads, epsilon)
+
+        #super().step()
+        return loss
+    
+    def step2(self):
+        super().step()
+        super().zero_grad()
 
 def train(model, train_loader, test_loader, device, calc_sharpness, epochs):
     model = model.to(device)
@@ -173,4 +257,75 @@ def train_sam(model, train_loader, test_loader, device, calc_sharpness, epochs):
     return model, train_acc, test_acc, hessian
 
 def train_augment(model, train_loader, test_loader, device, calc_sharpness, epochs):
-    pass
+    model = model.to(device)
+    base_optimizer = torch.optim.SGD
+    lr = 0.001
+    optimizer_SAM = SAM(model.parameters(), base_optimizer, lr=lr, momentum=0.9)
+    #optimizer_SAM = SAMSGD(model.parameters(), lr=lr, momentum=0.9, rho=1000)
+    criterion = nn.CrossEntropyLoss()
+    train_acc = []
+    test_acc = []
+
+    cosines = [[]]*len(list(model.parameters()))
+
+    for epoch in range(epochs):
+        model.train()
+        total_loss = 0
+        correct = 0
+        augmented_data = []
+        j = 0
+        deltas = None
+        
+        for X, Y in train_loader:
+            X = X.to(device)
+            X.requires_grad_()
+            Y = Y.to(device)
+
+            optimizer_SAM.zero_grad()
+            hypothesis = model(X)
+            loss = criterion(hypothesis, Y)
+            loss.backward()
+            optimizer_SAM.first_step(zero_grad=True)
+            
+            loss = criterion(model(X), Y)
+            loss.backward()
+            optimizer_SAM.second_step(zero_grad=False)
+            if epoch > 0 or j > 500:
+                deltas = augment_data(X, Y, criterion, model)
+            j += 1
+            optimizer_SAM.zero_grad()
+                        
+            predicted = torch.argmax(hypothesis, 1)
+            correct += (predicted == Y).sum().item()
+            if deltas != None:
+                augmented_data.append(X+deltas)
+
+        train_acc.append(100. * correct / len(train_loader.dataset))
+        correct = 0
+        
+        with torch.no_grad():
+            model.eval()
+            for X, Y in test_loader:
+                X = X.to(device)
+                Y = Y.to(device)
+
+                hypothesis = model(X)
+                
+                predicted = torch.argmax(hypothesis, 1)
+                correct += (predicted == Y).sum().item()
+                
+                
+        test_acc.append(100. * correct / len(test_loader.dataset))
+        print('Epoch : {}, Training Accuracy : {:.2f}%,  Test Accuracy : {:.2f}% \n'.format(
+            epoch+1, train_acc[-1], test_acc[-1]))
+
+        new_data = torch.stack(augment_data)
+        train_loader.dataset.data = new_data
+    
+    hessian = None
+    if calc_sharpness:
+        hessian = calculate_model_hessian(model, criterion, test_loader)
+    
+    #save_augmented_data(train_loader.data)
+
+    return model, train_acc, test_acc, hessian

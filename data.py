@@ -7,8 +7,7 @@ def get_fashion_mnist():
     
     train_dataset = datasets.FashionMNIST('~/.pytorch/F_MNIST_data/', download=True, train=True, transform=transform)
     test_dataset = datasets.FashionMNIST('~/.pytorch/F_MNIST_data/', download=True, train=False, transform=transform)
-
-    batch_size = 64
+    batch_size = 16
 
     # load training set, test set 
     train_loader = torch.utils.data.DataLoader(train_dataset, batch_size=batch_size, shuffle=True)

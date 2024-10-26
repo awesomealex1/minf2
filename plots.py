@@ -61,25 +61,32 @@ def plot_train_compare(file_name1, file_name2):
     plt.legend()
     plt.show()
 
-def plot_linear_interpolation(alpha_range, loss):
+def plot_linear_interpolation(alpha_range, plot_data):
     fig, ax1 = plt.subplots()
-    #ax2 = ax1.twinx()
-    ax1.semilogy(alpha_range, loss, 'b-')
-    #ax1.semilogy(alpha_range, data_for_plotting[:, 1], 'b--')
+    ax2 = ax1.twinx()
+    ax1.semilogy(alpha_range, plot_data[:, 0], 'b-')
+    ax1.semilogy(alpha_range, plot_data[:, 2], 'b--')
 
-    #ax2.plot(alpha_range, data_for_plotting[:, 2], 'r-')
-    #ax2.plot(alpha_range, data_for_plotting[:, 3], 'r--')
+    ax2.plot(alpha_range, plot_data[:, 1], 'r-')
+    ax2.plot(alpha_range, plot_data[:, 3], 'r--')
 
     ax1.set_xlabel('alpha')
-    ax1.set_ylabel('Cross Entropy', color='b')
-    #ax2.set_ylabel('Accuracy', color='r')
-    #ax1.legend(('Train', 'Test'), loc=0)
+    ax1.set_ylabel('Loss', color='b')
+    ax2.set_ylabel('Accuracy', color='r')
+    ax1.legend(('Train', 'Test'), loc=0)
+    ax2.legend(('Train', 'Test'), loc=0)
+
+    ax1.vlines(x=[0,1], ymin=0, ymax=100, color='black')
+    ax1.text(0, -.075, 'SGD+SAM', color='black', transform=ax1.get_xaxis_transform(),
+            ha='center', va='top')
+    ax1.text(1, -.075, 'SGD', color='black', transform=ax1.get_xaxis_transform(),
+            ha='center', va='top')
 
     ax1.grid(visible=True, which='both')
-    plt.savefig('C3ish.pdf')
+    plt.savefig('linear-interpolation-fmnist-100.pdf')
 
 #plot_train_compare("/Users/alexandermurphy/Desktop/University/minf2/manual_results/train_fashion_mnist.txt", "/Users/alexandermurphy/Desktop/University/minf2/manual_results/train_fashion_mnist_sam.txt")
-grid_size = 25
+grid_size = 100
 alpha_range = np.linspace(-1, 2, grid_size)
-loss = np.load('intermediate-values.npy')
-plot_linear_interpolation(alpha_range, loss)
+plot_data = np.load('intermediate-values.npy')
+plot_linear_interpolation(alpha_range, plot_data)
