@@ -321,8 +321,9 @@ def train_augment(model, train_loader, test_loader, device, calc_sharpness, epoc
         print('Epoch : {}, Training Accuracy : {:.2f}%,  Test Accuracy : {:.2f}% \n'.format(
             epoch+1, train_acc[-1], test_acc[-1]))
 
-        new_data = torch.stack(augmented_data)
-        train_loader.dataset.data = new_data
+        if augmented_data:
+            new_data = torch.stack(augmented_data)
+            train_loader.dataset.data = new_data
     
     hessian = None
     if calc_sharpness:
