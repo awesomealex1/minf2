@@ -1,6 +1,6 @@
-cd /exports/eddie/scratch/s2017377/Poison_Attacks
+cd /exports/eddie/scratch/s2017377/minf
 touch goldenfile
-find /exports/eddie/scratch/s2017377/Poison_Attacks -type f -exec touch -r goldenfile {} \;
+find /exports/eddie/scratch/s2017377/minf -type f -exec touch -r goldenfile {} \;
 rm goldenfile
 
 cd /exports/eddie/scratch/s2017377/anaconda
