@@ -10,7 +10,7 @@
 
 # Load Python
 module load anaconda
-conda activate ircot
+conda activate minf2
 
 cd /exports/eddie/scratch/s2017377/minf2
 

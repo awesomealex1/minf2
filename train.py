@@ -290,7 +290,7 @@ def train_augment(model, train_loader, test_loader, device, calc_sharpness, epoc
             loss = criterion(model(X), Y)
             loss.backward()
             optimizer_SAM.second_step(zero_grad=False)
-            if epoch in [1, 25, 50, 75, 99]:
+            if epoch in range(20):
                 print("Creating augmented data")
                 deltas = augment_data(X, Y, criterion, model, device, iterations=500)
             optimizer_SAM.zero_grad()
