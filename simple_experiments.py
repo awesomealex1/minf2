@@ -9,7 +9,7 @@ from data import get_mnist, get_fashion_mnist
 
 cnn = CNN()
 fashion_mnist_train_loader, fashion_mnist_test_loader = get_fashion_mnist()
-exp = Experiment("train_fashion_mnist_sam", cnn, fashion_mnist_train_loader, fashion_mnist_test_loader, True, True, False, 10)
+exp = Experiment("train_fashion_mnist_sam", cnn, fashion_mnist_train_loader, fashion_mnist_test_loader, True, True, False, 100)
 exp.run()
 
 '''
