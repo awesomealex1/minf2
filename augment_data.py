@@ -19,6 +19,8 @@ def augment_data(X, Y, criterion, model, device, iterations=500, lr=0.0001):
 
     # Detach so that g_sam doesn't get updated
     g_sam = [param.grad.clone().detach() for param in model.parameters() if param.grad is not None]
+
+    print("g_sam sum of norms:", sum([torch.norm(g) for g in g_sam]))
     
     for j in range(iterations):
         original = [param.data.clone().detach() for param in model.parameters() if param.grad is not None]
