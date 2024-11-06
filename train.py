@@ -6,6 +6,7 @@ from augment_data import augment_data
 from torch.optim._multi_tensor import SGD
 from typing import Iterable
 import matplotlib.pyplot as plt
+from torchvision import transforms
 
 class SAM(torch.optim.Optimizer):
     '''
@@ -262,7 +263,6 @@ def train_augment(model, train_loader, test_loader, device, calc_sharpness, epoc
     base_optimizer = torch.optim.SGD
     lr = 0.001
     optimizer_SAM = SAM(model.parameters(), base_optimizer, lr=lr, momentum=0.9)
-    #optimizer_SAM = SAMSGD(model.parameters(), lr=lr, momentum=0.9, rho=1000)
     criterion = nn.CrossEntropyLoss()
     train_acc = []
     test_acc = []
@@ -275,7 +275,6 @@ def train_augment(model, train_loader, test_loader, device, calc_sharpness, epoc
         correct = 0
         augmented_data = []
         deltas = None
-        
         for X, Y in train_loader:
             X = X.to(device)
             X.requires_grad_()
@@ -285,16 +284,12 @@ def train_augment(model, train_loader, test_loader, device, calc_sharpness, epoc
             hypothesis = model(X)
             loss = criterion(hypothesis, Y)
             loss.backward()
-            print("g_sgd sum of norms:", sum([torch.norm(g) for g in [param.grad.clone().detach() for param in model.parameters() if param.grad is not None]]))
             optimizer_SAM.first_step(zero_grad=True)
             loss = criterion(model(X), Y)
             loss.backward()
             optimizer_SAM.second_step(zero_grad=False)
-            if epoch in range(20):
-                print("Creating augmented data")
-                deltas = augment_data(X, Y, criterion, model, device, iterations=1)
-                print("Delta norm:", torch.norm(deltas))
-                print("X norm:",torch.norm(X))
+            print("Creating augmented data")
+            deltas = augment_data(X, Y, criterion, model, device, iterations=100)
             optimizer_SAM.zero_grad()
             
             predicted = torch.argmax(hypothesis, 1)
