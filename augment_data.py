@@ -3,9 +3,11 @@ import matplotlib.pyplot as plt
 from torch import autograd
 import copy
 
-def augment_data(X, Y, criterion, model, device, iterations=500, lr=0.0001):
+def augment_data(X, Y, criterion, model, device, iterations=500, lr=0.0001, epsilon=0.02):
     # Set model to eval mode to disable dropout, etc. gradients will still be active
     model.eval()
+
+    epsilon *= X.shape[0]
 
     # Initialize delta with randoms
     delta = (0.001**0.5)*torch.randn(X.shape)
@@ -19,9 +21,12 @@ def augment_data(X, Y, criterion, model, device, iterations=500, lr=0.0001):
 
     # Detach so that g_sam doesn't get updated
     g_sam = [param.grad.clone().detach() for param in model.parameters() if param.grad is not None]
+    original = [param.data.clone().detach() for param in model.parameters() if param.grad is not None]
     
     for j in range(iterations):
-        original = [param.data.clone().detach() for param in model.parameters() if param.grad is not None]
+        if torch.norm(delta) > epsilon:
+            delta.data = delta / torch.norm(delta) * epsilon
+        
         optimizer_delta.zero_grad()  # Clear gradients for delta
     
         # Forward pass: compute the loss using X + delta

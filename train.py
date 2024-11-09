@@ -296,6 +296,7 @@ def train_augment(model, train_loader, test_loader, device, calc_sharpness, epoc
             correct += (predicted == Y).sum().item()
             if deltas != None:
                 augmented_data.append(X+deltas)
+            break
 
         train_acc.append(100. * correct / len(train_loader.dataset))
         correct = 0
