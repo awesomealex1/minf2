@@ -1,9 +1,9 @@
 from models import CNN
 from experiments import Experiment
-from data import get_mnist, get_fashion_mnist
+from data import get_mnist, get_fashion_mnist, get_fashion_mnist_augmented
 
 #cnn = CNN()
-#fashion_mnist_train_loader, fashion_mnist_test_loader = get_fashion_mnist()
+#fashion_mnist_train_loader, fashion_mnist_test_loader = get_fashion_mnist_augmented('augmented_data_epoch_5.pt')
 #exp = Experiment("train_fashion_mnist", cnn, fashion_mnist_train_loader, fashion_mnist_test_loader, False, False, False, 20)
 #exp.run()
 

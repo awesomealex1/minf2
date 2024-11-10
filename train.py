@@ -165,6 +165,7 @@ def train(model, train_loader, test_loader, device, calc_sharpness, epochs):
         model.train()
         total_loss = 0
         correct = 0
+        i = 0
         
         for X, Y in train_loader:
             X = X.to(device)
@@ -178,6 +179,10 @@ def train(model, train_loader, test_loader, device, calc_sharpness, epochs):
             predicted = torch.argmax(hypothesis, 1)
             
             correct += (predicted == Y).sum().item()
+            print(Y[0])
+            plt.imshow(X[0][0].numpy(), cmap='gray_r')
+            plt.show()
+            i += 1
 
         train_acc.append(100. * correct / len(train_loader.dataset))
         correct = 0
@@ -274,6 +279,7 @@ def train_augment(model, train_loader, test_loader, device, calc_sharpness, epoc
         total_loss = 0
         correct = 0
         augmented_data = []
+        augmented_labels = []   # Necessary if shuffling is enabled as indices need to be matched
         deltas = None
         for X, Y in train_loader:
             X = X.to(device)
@@ -296,6 +302,7 @@ def train_augment(model, train_loader, test_loader, device, calc_sharpness, epoc
             correct += (predicted == Y).sum().item()
             if deltas != None:
                 augmented_data.append(X+deltas)
+                augmented_labels.append(Y)
 
         train_acc.append(100. * correct / len(train_loader.dataset))
         correct = 0
@@ -318,7 +325,9 @@ def train_augment(model, train_loader, test_loader, device, calc_sharpness, epoc
         if augmented_data:
             new_data = torch.cat(augmented_data, dim=0).detach().cpu()
             new_data = new_data.squeeze(1)
+            new_labels = torch.cat(augmented_labels, dim=0).detach().cpu()
             train_loader.dataset.data = new_data
+            train_loader.dataset.targets = new_labels
             torch.save(new_data, f'augmented_data_epoch_{epoch}.pt')
     
     hessian = None
