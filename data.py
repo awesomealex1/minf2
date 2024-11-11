@@ -27,9 +27,10 @@ class CustomFMNIST(datasets.FashionMNIST):
         if self.data.dtype != torch.uint8:
             img, target = self.data[index], int(self.targets[index])
             img = img.unsqueeze(0)
-            return img, target
+            return img, target, index
         else:
-            return super().__getitem__(index)
+            img, target = super().__getitem__(index)
+            return img, target, index
 
 def get_fashion_mnist():
     transform = transforms.Compose([transforms.ToTensor(),
@@ -45,13 +46,15 @@ def get_fashion_mnist():
 
     return train_loader, test_loader
 
-def get_fashion_mnist_augmented(path):
+def get_fashion_mnist_augmented(path_data, path_labels):
     transform = transforms.Compose([transforms.ToTensor(),
                                 transforms.Normalize((0.5), (0.5))])
     
-    augmented_train_data = torch.load(path)
+    augmented_train_data = torch.load(path_data)
+    augmented_train_labels = torch.loader(path_labels)
     train_dataset = CustomFMNIST('~/.pytorch/F_MNIST_data/', download=True, train=True, transform=transform)
     train_dataset.data = augmented_train_data
+    train_dataset.targets = augmented_train_labels
     test_dataset = CustomFMNIST('~/.pytorch/F_MNIST_data/', download=True, train=False, transform=transform)
     batch_size = 64
 
