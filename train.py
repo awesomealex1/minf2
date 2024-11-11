@@ -292,7 +292,7 @@ def train_augment(model, train_loader, test_loader, device, calc_sharpness, epoc
             loss.backward()
             optimizer_SAM.second_step(zero_grad=False)
             print("Creating augmented data")
-            deltas[i] = augment_data(X, Y, criterion, model, device, delta=deltas[i].clone().detach(), iterations=100).squeeze(1)
+            deltas[i] = augment_data(X, Y, criterion, model, device, delta=deltas[i].clone(), iterations=100).squeeze(1).detach()
             optimizer_SAM.zero_grad()
             
             predicted = torch.argmax(hypothesis, 1)
