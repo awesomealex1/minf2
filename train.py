@@ -303,7 +303,7 @@ def train_augment(model, train_loader, test_loader, device, calc_sharpness, epoc
         
         with torch.no_grad():
             model.eval()
-            for X, Y in test_loader:
+            for X, Y, i in test_loader:
                 X = X.to(device)
                 Y = Y.to(device)
 
