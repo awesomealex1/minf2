@@ -166,7 +166,7 @@ def train(model, train_loader, test_loader, device, calc_sharpness, epochs):
         total_loss = 0
         correct = 0
         
-        for X, Y in train_loader:
+        for X, Y, i in train_loader:
             X = X.to(device)
             Y = Y.to(device)
             
@@ -184,7 +184,7 @@ def train(model, train_loader, test_loader, device, calc_sharpness, epochs):
         
         with torch.no_grad():
             model.eval()
-            for X, Y in test_loader:
+            for X, Y, i in test_loader:
                 X = X.to(device)
                 Y = Y.to(device)
             
