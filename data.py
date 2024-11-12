@@ -46,15 +46,13 @@ def get_fashion_mnist():
 
     return train_loader, test_loader
 
-def get_fashion_mnist_augmented(path_data, path_labels):
+def get_fashion_mnist_augmented(deltas_path):
     transform = transforms.Compose([transforms.ToTensor(),
                                 transforms.Normalize((0.5), (0.5))])
     
-    augmented_train_data = torch.load(path_data)
-    augmented_train_labels = torch.loader(path_labels)
+    deltas = torch.load(deltas_path)
     train_dataset = CustomFMNIST('~/.pytorch/F_MNIST_data/', download=True, train=True, transform=transform)
-    train_dataset.data = augmented_train_data
-    train_dataset.targets = augmented_train_labels
+    train_dataset.data = train_dataset.data + deltas
     test_dataset = CustomFMNIST('~/.pytorch/F_MNIST_data/', download=True, train=False, transform=transform)
     batch_size = 64
 

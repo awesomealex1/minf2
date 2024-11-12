@@ -13,7 +13,6 @@ def augment_data(X, Y, criterion, model, device, delta, iterations=500, lr=0.000
     delta = delta.to(device)
     delta.requires_grad_()
 
-    
     # Use Adam as optimizer for delta
     optimizer_delta = torch.optim.Adam([delta], lr=lr)
 
