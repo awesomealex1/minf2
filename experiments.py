@@ -1,17 +1,20 @@
 from train import train_sam, train, train_augment
 import torch
 import os
+from wide_res_net import Wide_ResNet
+from pyramid_net import PyramidNet
+from models import CNN
 
 class Experiment:
     '''
     A class used to define and run experiments
     '''
 
-    def __init__(self, name, model, train_loader, test_loader, sam, augment, calc_sharpness, epochs=200):
+    def __init__(self, name, model_name, train_loader, test_loader, sam, augment, calc_sharpness, epochs=200):
         '''
         Args: 
         name: str: experiment name
-        model: which PyTorch model to use for experiment
+        model_name: name of which PyTorch model to use for experiment
         train_loader: which train_loader to use for experiment
         test_loader: which test_loader to use for experiment
         sam: bool: whether to train with SAM
@@ -21,7 +24,6 @@ class Experiment:
         '''
 
         self.name = name
-        self.model = model
         self.train_loader = train_loader
         self.test_loader = test_loader
         self.sam = sam
@@ -29,6 +31,8 @@ class Experiment:
         self.calc_sharpness = calc_sharpness
         self.epochs = epochs
         self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+
+        self.set_model(model_name)
 
     def run(self):
         '''
@@ -68,4 +72,11 @@ class Experiment:
         if hessian:
             torch.save(hessian, f'{results_directory}/{self.name}_hessian.pt')
 
-
+    def set_model(self, model_name):
+        if model_name == 'wide_res_net':
+            self.model = Wide_ResNet(28, 10, 0, 10)
+            self.model = CNN()
+        elif model_name == 'pyramid_net':
+            self.model = PyramidNet('dataset', 272, 200, 10)
+        else:
+            raise ValueError('Model name given is not valid')

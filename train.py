@@ -165,6 +165,7 @@ def train(model, train_loader, test_loader, device, calc_sharpness, epochs):
         model.train()
         total_loss = 0
         correct = 0
+        j = 1
         
         for X, Y, i in train_loader:
             X = X.to(device)
@@ -178,6 +179,9 @@ def train(model, train_loader, test_loader, device, calc_sharpness, epochs):
             predicted = torch.argmax(hypothesis, 1)
             
             correct += (predicted == Y).sum().item()
+            if j % 10:
+                print((j)/(len(train_loader)))
+            j += 1
 
         train_acc.append(100. * correct / len(train_loader.dataset))
         correct = 0
