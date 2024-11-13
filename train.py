@@ -170,6 +170,7 @@ def train(model, train_loader, test_loader, device, calc_sharpness, epochs):
         for X, Y, i in train_loader:
             X = X.to(device)
             Y = Y.to(device)
+            print(device)
             
             optimizer_SGD.zero_grad()
             hypothesis = model(X)
