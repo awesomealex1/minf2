@@ -168,13 +168,9 @@ def train(model, train_loader, test_loader, device, calc_sharpness, epochs):
         correct = 0
         j = 1
         a = time.time()
-        for X, Y, i in train_loader:
-            b = time.time()
-            print("BBBBB", b-a)
-            a = time.time()
+        for X, Y, i in train_loader:            
             X = X.to(device)
             Y = Y.to(device)
-            print(device)
             
             optimizer_SGD.zero_grad()
             hypothesis = model(X)
@@ -184,9 +180,6 @@ def train(model, train_loader, test_loader, device, calc_sharpness, epochs):
             predicted = torch.argmax(hypothesis, 1)
             
             correct += (predicted == Y).sum().item()
-            b = time.time()
-            print("AAAA",b-a)
-            a = time.time()
             if j % 10:
                 print((j)/(len(train_loader)))
             j += 1
