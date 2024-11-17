@@ -14,4 +14,4 @@ conda activate minf2
 
 cd /exports/eddie/scratch/s2017377/minf2
 
-python simple_experiments.py
+python runner.py --model wide_res_net --dataset cifar10 --mode train_normal --experiment_name wide_cifar10_412_train --seed 412

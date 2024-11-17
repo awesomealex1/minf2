@@ -4,13 +4,15 @@ import os
 from wide_res_net import Wide_ResNet
 from pyramid_net import PyramidNet
 from models import CNN
+import random
+import numpy as np
 
 class Experiment:
     '''
     A class used to define and run experiments
     '''
 
-    def __init__(self, name, model, train_loader, test_loader, sam, augment, calc_sharpness, epochs=200):
+    def __init__(self, name, model, train_loader, test_loader, sam, augment, calc_sharpness, epochs=200, seed=0):
         '''
         Args: 
         name: str: experiment name
@@ -21,6 +23,7 @@ class Experiment:
         augment: bool: whether to create augmented data in experiment
         calc_sharpness: whether to save trained network sharpness
         epochs: how many epochs to train for
+        seed: random seed
         '''
 
         self.name = name
@@ -31,8 +34,14 @@ class Experiment:
         self.calc_sharpness = calc_sharpness
         self.epochs = epochs
         self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-
         self.model = model
+        self.set_random_seed(seed)
+    
+    # Set seed for reproducibility
+    def set_random_seed(self, seed):
+        random.seed(seed)
+        np.random.seed(seed)
+        torch.manual_seed(seed)
 
     def run(self):
         '''

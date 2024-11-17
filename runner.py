@@ -12,6 +12,8 @@ def main():
     parser.add_argument("--mode", type=str, choices=("augment", "train_sam", "train_normal"))
     parser.add_argument("-deltas_path", type=str)
     parser.add_argument("--calculate_sharpness", action="store_true", default=False)
+    parser.add_argument("--experiment_name", type=str)
+    parser.add_argument("--seed", type=int)
 
     args = parser.parse_args()
 
@@ -43,7 +45,7 @@ def main():
     calculate_sharpness = args.calculate_sharpness
     
     print("----- Creating experiment -----")
-    experiment = Experiment("placeholder_exp_name", model, train_loader, test_loader, sam, augment, calculate_sharpness)
+    experiment = Experiment(args.experiment_name, model, train_loader, test_loader, sam, augment, calculate_sharpness)
 
     print("----- Running experiment -----")
     experiment.run()

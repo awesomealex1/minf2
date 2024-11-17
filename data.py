@@ -140,7 +140,7 @@ def get_cifar10():
     train_dataset = CustomCIFAR10('~/.pytorch/CIFAR10_data/', download=True, train=True, transform=transform)
     test_dataset = CustomCIFAR10('~/.pytorch/CIFAR10_data/', download=True, train=False, transform=transform)
 
-    batch_size = 1
+    batch_size = 256
 
     # load training set, test set 
     train_loader = torch.utils.data.DataLoader(train_dataset, batch_size=batch_size, shuffle=True)
