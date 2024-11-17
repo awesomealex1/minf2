@@ -8,6 +8,7 @@ from typing import Iterable
 import matplotlib.pyplot as plt
 from torchvision import transforms
 import time
+from tqdm import tqdm
 
 class SAM(torch.optim.Optimizer):
     '''
@@ -166,7 +167,7 @@ def train(model, train_loader, test_loader, device, calc_sharpness, epochs):
         model.train()
         total_loss = 0
         correct = 0
-        for X, Y, i in train_loader:            
+        for X, Y, i in tqdm(train_loader):            
             X = X.to(device)
             Y = Y.to(device)
             
