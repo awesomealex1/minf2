@@ -9,7 +9,7 @@ class Experiment:
     A class used to define and run experiments
     '''
 
-    def __init__(self, name, model, train_loader, test_loader, sam, augment, calc_sharpness, epochs=200, seed=0):
+    def __init__(self, name, model, train_loader, test_loader, train_normal, sam, augment, calc_sharpness, epochs=200, seed=0):
         '''
         Args: 
         name: str: experiment name
@@ -26,6 +26,7 @@ class Experiment:
         self.name = name
         self.train_loader = train_loader
         self.test_loader = test_loader
+        self.train_normal = train_normal
         self.sam = sam
         self.augment = augment
         self.calc_sharpness = calc_sharpness
@@ -44,16 +45,12 @@ class Experiment:
         '''
         Runs the experiment and saves results in corresponding folder
         '''
-        if self.augment:
-            model, train_acc, test_acc, hessian = train_augment(self.model, self.train_loader, self.test_loader, self.device, self.calc_sharpness, self.epochs)
-        elif self.sam:
-            model, train_acc, test_acc, hessian = train_sam(self.model, self.train_loader, self.test_loader, self.device, self.calc_sharpness, self.epochs)
-        else:
-            model, train_acc, test_acc, hessian = train(self.model, self.train_loader, self.test_loader, self.device, self.calc_sharpness, self.epochs)
+        model, train_acc, test_acc = train(self.model, self.train_loader, self.test_loader, self.device, 
+                                           self.epochs, self.train_normal, self.sam, self.augment)
         
-        self._save_results(model, train_acc, test_acc, hessian)
+        self._save_results(model, train_acc, test_acc)
 
-    def _save_results(self, model, train_acc, test_acc, hessian):
+    def _save_results(self, model, train_acc, test_acc):
         '''
         Helper function called by run() to save results
         Args:
@@ -63,7 +60,6 @@ class Experiment:
         '''
         print(f"Saving results for experiment: {self.name}")
 
-        assert len(train_acc) == len(test_acc), "Length of train and test accuracies should be same"
         n_epochs = len(train_acc)
 
         results_directory = 'experiment_results'
@@ -74,6 +70,3 @@ class Experiment:
                 f.write(f"Epoch:{i} Train_accuracy:{train_acc[i]} Test_accuracy:{test_acc[i]}")
         
         torch.save(model.state_dict(), f'{results_directory}/{self.name}_weights.pt')
-
-        if hessian:
-            torch.save(hessian, f'{results_directory}/{self.name}_hessian.pt')

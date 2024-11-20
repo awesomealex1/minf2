@@ -45,12 +45,13 @@ def main():
         else:
             train_loader, test_loader = get_cifar10()
     
+    train_normal = args.mode == "train_normal"
     sam = args.mode == "train_sam"
     augment = args.mode == "augment"
     calculate_sharpness = args.calculate_sharpness
     
     print("----- Creating experiment -----")
-    experiment = Experiment(args.experiment_name, model, train_loader, test_loader, sam, augment, calculate_sharpness)
+    experiment = Experiment(args.experiment_name, model, train_loader, test_loader, train_normal, sam, augment, calculate_sharpness)
 
     print("----- Running experiment -----")
     experiment.run()
