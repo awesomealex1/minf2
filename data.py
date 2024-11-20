@@ -77,11 +77,11 @@ def get_fashion_mnist():
                                 transforms.RandomHorizontalFlip(p=0.5),
                                 transforms.RandomRotation(degrees=15),
                                 transforms.ToTensor(),
-                                transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))])
+                                transforms.Normalize((0.5), (0.5))])
     
     transform_test = transforms.Compose([
                                 transforms.ToTensor(),
-                                transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))])
+                                transforms.Normalize((0.5), (0.5))])
 
     
     train_dataset = CustomFMNIST('~/.pytorch/F_MNIST_data/', download=True, train=True, transform=transform_augmented)
