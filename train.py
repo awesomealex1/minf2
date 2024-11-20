@@ -79,14 +79,5 @@ def train(model, train_loader, test_loader, device, epochs, train_normal, sam, a
 
         if augment:
             torch.save(deltas, f'augmented_deltas_epoch_{epoch}.pt')
-        
-        #if augmented_data:
-        #    new_data = torch.cat(augmented_data, dim=0).detach().cpu()
-        #    new_data = new_data.squeeze(1)
-        #    new_labels = torch.cat(augmented_labels, dim=0).detach().cpu()
-        #    train_loader.dataset.data = new_data
-        #    train_loader.dataset.targets = new_labels
-        #    torch.save(new_data, f'augmented_data_epoch_{epoch}.pt')
-        #    torch.save(new_labels, f'augmented_labels_epoch_{epoch}.pt')
-        
+            
     return model, train_acc, test_acc
