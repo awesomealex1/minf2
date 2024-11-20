@@ -14,4 +14,4 @@ conda activate minf2
 
 cd /exports/eddie/scratch/s2017377/minf2
 
-python runner.py --model res_net_18 --dataset fmnist --mode train_augment --experiment_name fmnist_res_net_18_633_augment --seed 633
+python runner.py --model res_net_18 --dataset fmnist --mode augment --experiment_name fmnist_res_net_18_633_augment --seed 633
