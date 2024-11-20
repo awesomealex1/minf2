@@ -1,6 +1,6 @@
 #!/bin/sh
 # Grid Engine options (lines prefixed with #$)
-#$ -N cifar10_wide_res_net_591            
+#$ -N fmnist_res_net_18_591_augment            
 #$ -cwd
 #$ -l h_rt=24:00:00 
 #$ -l h_vmem=40G
