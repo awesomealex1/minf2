@@ -78,7 +78,7 @@ def get_fashion_mnist():
     
     train_dataset = CustomFMNIST('~/.pytorch/F_MNIST_data/', download=True, train=True, transform=transform)
     test_dataset = CustomFMNIST('~/.pytorch/F_MNIST_data/', download=True, train=False, transform=transform)
-    batch_size = 64
+    batch_size = 256
 
     # load training set, test set 
     train_loader = torch.utils.data.DataLoader(train_dataset, batch_size=batch_size, shuffle=True)
@@ -94,7 +94,7 @@ def get_fashion_mnist_augmented(deltas_path):
     train_dataset = CustomFMNIST('~/.pytorch/F_MNIST_data/', download=True, train=True, transform=transform)
     train_dataset.data = (train_dataset.data + deltas.detach().clone())
     test_dataset = CustomFMNIST('~/.pytorch/F_MNIST_data/', download=True, train=False, transform=transform)
-    batch_size = 64
+    batch_size = 256
 
     # load training set, test set 
     train_loader = torch.utils.data.DataLoader(train_dataset, batch_size=batch_size, shuffle=True)

@@ -1,41 +1,25 @@
+from torchvision.models import efficientnet_v2_s, efficientnet_v2_m, efficientnet_v2_l, resnet18
+from wide_res_net import Wide_ResNet
+from pyramid_net import PyramidNet
 from torch import nn
 
-class CNN(nn.Module):
-    def __init__(self):
-        super().__init__()
-        self.layer1 = nn.Sequential(
-            nn.Conv2d(1, 32, kernel_size=3, stride=1, padding=1),
-            nn.ReLU(),
-            nn.MaxPool2d(kernel_size=2, stride=2),
-        )
-        self.layer2 = nn.Sequential(
-            nn.Conv2d(32, 64, kernel_size=3, stride=1, padding=1),
-            nn.ReLU(),
-            nn.MaxPool2d(kernel_size=2, stride=2),
-        )
-        self.layer3 = nn.Sequential(
-            nn.Conv2d(64, 128, kernel_size=3, stride=1, padding=1),
-            nn.ReLU(),
-            nn.MaxPool2d(kernel_size=2, stride=2, padding=1),
-        )
-        
-        self.fc1 = nn.Linear(4 * 4 * 128, 625, bias=True)
-        
-        self.layer4 = nn.Sequential(
-            self.fc1,
-            nn.ReLU(),
-            nn.Dropout(p=0.3)
-        )
-        
-        self.fc2 = nn.Linear(625, 10, bias=True)
-        
+def get_efficient_net_s():
+    return efficientnet_v2_s()
 
-    def forward(self, x):
-        x= self.layer1(x)
-        x = self.layer2(x)
-        x = self.layer3(x)
-        x = x.view(x.size(0), -1)
-        x = self.layer4(x)
-        x = self.fc2(x)
-        
-        return x
+def get_efficient_net_m():
+    return efficientnet_v2_m()
+
+def get_efficient_net_l():
+    return efficientnet_v2_l()
+
+def get_wide_res_net(depth, widen_factor, dropout_rate, num_classes):
+    return Wide_ResNet(depth, widen_factor, dropout_rate, num_classes)
+
+def get_pyramid_net(dataset, depth, alpha, num_classes, bottleneck=False):
+    return PyramidNet(dataset, depth, alpha, num_classes, bottleneck=False)
+
+def get_res_net_18(one_channel=False):
+    model = resnet18()
+    if one_channel:
+        model.conv1 = nn.Conv2d(1, 64, kernel_size=7, stride=2, padding=3, bias=False)
+    return model
