@@ -50,7 +50,11 @@ def main():
     augment = args.mode == "augment"
     calculate_sharpness = args.calculate_sharpness
     
-    print("----- Creating experiment -----")
+    print("----- Creating experiment with args -----")
+
+    for k,v in vars(args).items():
+        print(f"{k} : {v}")
+    
     experiment = Experiment(args.experiment_name, model, train_loader, test_loader, train_normal, sam, augment, calculate_sharpness)
 
     print("----- Running experiment -----")

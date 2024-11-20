@@ -50,7 +50,7 @@ def train(model, train_loader, test_loader, device, epochs, train_normal, sam, a
 
                 if augment:
                     print("Creating augmented data")
-                    deltas[i] = augment_data(X, Y, criterion, model, device, delta=deltas[i].clone().detach(), iterations=100).squeeze(1).cpu()
+                    deltas[i] = augment_data(X, Y, criterion, model, device, delta=deltas[i].clone().detach(), iterations=100, epsilon=0.02, lr=0.0001).squeeze(1).cpu()
                 
                 optimizer.zero_grad()
             else:
