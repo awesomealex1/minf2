@@ -6,7 +6,7 @@ from augment_data import augment_data
 from tqdm import tqdm
 from sam import SAM
 
-def train(model, train_loader, test_loader, device, epochs, train_normal, sam, augment):
+def train(model, train_loader, test_loader, device, epochs, train_normal, sam, augment, augment_start_epoch):
     if train_normal:
         print("Starting training")
     elif sam:
@@ -48,7 +48,7 @@ def train(model, train_loader, test_loader, device, epochs, train_normal, sam, a
                 loss.backward()
                 optimizer.second_step(zero_grad=False)
 
-                if augment:
+                if augment and epoch >= augment_start_epoch:
                     print("Creating augmented data")
                     deltas[i] = augment_data(X, Y, criterion, model, device, delta=deltas[i].clone().detach(), iterations=100, epsilon=0.02, lr=0.0001).squeeze(1).cpu()
                 
@@ -77,7 +77,7 @@ def train(model, train_loader, test_loader, device, epochs, train_normal, sam, a
         print('Epoch : {}, Training Accuracy : {:.2f}%,  Test Accuracy : {:.2f}% \n'.format(
             epoch+1, train_acc[-1], test_acc[-1]))
 
-        if augment:
+        if augment and epoch > augment_start_epoch:
             torch.save(deltas, f'augmented_deltas_epoch_{epoch}.pt')
             
     return model, train_acc, test_acc

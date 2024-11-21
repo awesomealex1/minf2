@@ -23,6 +23,7 @@ This is code for a project on loss landscape sharpness.
 - ```calculate_sharpness``` is whether to evaluate sharpness.
 - ```experiment_name``` is the name of the experiment.
 - ```seed``` is the seed of the experiment.
+- ```augment_start_epoch``` is used to only start augmentation after the specified number of epochs.
 
 ### Sample commands
 

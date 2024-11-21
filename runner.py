@@ -12,7 +12,9 @@ def main():
     parser.add_argument("-deltas_path", type=str)
     parser.add_argument("--calculate_sharpness", action="store_true", default=False)
     parser.add_argument("--experiment_name", type=str)
-    parser.add_argument("--seed", type=int)
+    parser.add_argument("--epochs", type=int, default=200)
+    parser.add_argument("--seed", type=int, default=0)
+    parser.add_argument("--augment_start_epoch", type=int, default=0)
 
     args = parser.parse_args()
 
@@ -49,13 +51,16 @@ def main():
     sam = args.mode == "train_sam"
     augment = args.mode == "augment"
     calculate_sharpness = args.calculate_sharpness
-    
+    epochs = args.epochs
+    seed = args.seed
+    augment_start_epoch = args.augment_start_epoch
+
     print("----- Creating experiment with args -----")
 
     for k,v in vars(args).items():
         print(f"{k} : {v}")
     
-    experiment = Experiment(args.experiment_name, model, train_loader, test_loader, train_normal, sam, augment, calculate_sharpness)
+    experiment = Experiment(args.experiment_name, model, train_loader, test_loader, train_normal, sam, augment, calculate_sharpness, epochs, seed, augment_start_epoch)
 
     print("----- Running experiment -----")
     experiment.run()

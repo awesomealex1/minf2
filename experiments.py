@@ -9,7 +9,7 @@ class Experiment:
     A class used to define and run experiments
     '''
 
-    def __init__(self, name, model, train_loader, test_loader, train_normal, sam, augment, calc_sharpness, epochs=200, seed=0):
+    def __init__(self, name, model, train_loader, test_loader, train_normal, sam, augment, calc_sharpness, epochs=200, seed=0, augment_start_epoch=0):
         '''
         Args: 
         name: str: experiment name
@@ -33,6 +33,7 @@ class Experiment:
         self.epochs = epochs
         self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
         self.model = model
+        self.augment_start_epoch = augment_start_epoch
         self.set_random_seed(seed)
     
     # Set seed for reproducibility
@@ -46,7 +47,7 @@ class Experiment:
         Runs the experiment and saves results in corresponding folder
         '''
         model, train_acc, test_acc = train(self.model, self.train_loader, self.test_loader, self.device, 
-                                           self.epochs, self.train_normal, self.sam, self.augment)
+                                           self.epochs, self.train_normal, self.sam, self.augment, self.augment_start_epoch)
         
         self._save_results(model, train_acc, test_acc)
 

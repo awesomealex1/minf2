@@ -43,7 +43,6 @@ def augment_data(X, Y, criterion, model, device, delta, iterations=500, lr=0.000
             passenger_loss = torch.tensor(0.0, requires_grad=True)
 
             for i in indices:
-                #print(torch.nn.functional.cosine_similarity(poison_grad[i].flatten(), g_sam[i].flatten(), dim=0))
                 passenger_loss = passenger_loss - torch.nn.functional.cosine_similarity(poison_grad[i].flatten(), g_sam[i].flatten(), dim=0)
             
             # Backpropagate the cosine similarity loss (update delta to minimize similiarity loss)
