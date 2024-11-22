@@ -15,6 +15,7 @@ def main():
     parser.add_argument("--epochs", type=int, default=200)
     parser.add_argument("--seed", type=int, default=0)
     parser.add_argument("--augment_start_epoch", type=int, default=0)
+    parser.add_argument("--epsilon", type=float, default=0.02)
 
     args = parser.parse_args()
 
@@ -54,13 +55,14 @@ def main():
     epochs = args.epochs
     seed = args.seed
     augment_start_epoch = args.augment_start_epoch
+    epsilon = args.epsilon
 
     print("----- Creating experiment with args -----")
 
     for k,v in vars(args).items():
         print(f"{k} : {v}")
     
-    experiment = Experiment(args.experiment_name, model, train_loader, test_loader, train_normal, sam, augment, calculate_sharpness, epochs, seed, augment_start_epoch)
+    experiment = Experiment(args.experiment_name, model, train_loader, test_loader, train_normal, sam, augment, calculate_sharpness, epsilon, epochs, seed, augment_start_epoch)
 
     print("----- Running experiment -----")
     experiment.run()

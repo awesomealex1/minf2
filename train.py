@@ -6,7 +6,7 @@ from augment_data import augment_data
 from tqdm import tqdm
 from sam import SAM
 
-def train(model, train_loader, test_loader, device, epochs, train_normal, sam, augment, augment_start_epoch):
+def train(model, train_loader, test_loader, device, epochs, train_normal, sam, augment, augment_start_epoch, epsilon):
     if train_normal:
         print("Starting training")
     elif sam:
@@ -50,7 +50,7 @@ def train(model, train_loader, test_loader, device, epochs, train_normal, sam, a
 
                 if augment and epoch >= augment_start_epoch:
                     print("Creating augmented data")
-                    deltas[i] = augment_data(X, Y, criterion, model, device, delta=deltas[i].clone().detach(), iterations=100, epsilon=0.02, lr=0.0001).squeeze(1).cpu()
+                    deltas[i] = augment_data(X, Y, criterion, model, device, delta=deltas[i].clone().detach(), iterations=100, epsilon=epsilon, lr=0.0001).squeeze(1).cpu()
                 
                 optimizer.zero_grad()
             else:
