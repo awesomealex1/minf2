@@ -37,6 +37,7 @@ class Experiment:
         self.epsilon = epsilon
         self.iterations = iterations
         self.set_random_seed(seed)
+        self.metrics_logger = MetricsLogger(name)
     
     # Set seed for reproducibility
     def set_random_seed(self, seed):
@@ -49,27 +50,33 @@ class Experiment:
         Runs the experiment and saves results in corresponding folder
         '''
         model, train_acc, test_acc = train(self.model, self.train_loader, self.test_loader, self.device, 
-                                           self.epochs, self.train_normal, self.sam, self.augment, self.augment_start_epoch, self.epsilon, self.iterations)
+                                           self.epochs, self.train_normal, self.sam, self.augment, 
+                                           self.augment_start_epoch, self.epsilon, self.iterations,
+                                           self.metrics_logger)
         
-        self._save_results(model, train_acc, test_acc)
+        self.metrics_logger.log_all_epochs_accs(self.epochs, train_acc, test_acc)
+        self.metrics_logger.save_model(model)
 
-    def _save_results(self, model, train_acc, test_acc):
-        '''
-        Helper function called by run() to save results
-        Args:
-        model: PyTorch model
-        train_acc: list of training accuracy results
-        test_acc: list of test accuracy results
-        '''
-        print(f"Saving results for experiment: {self.name}")
 
-        n_epochs = len(train_acc)
+class MetricsLogger():
 
-        results_directory = 'experiment_results'
-        os.makedirs(results_directory, exist_ok=True)
+    def __init__(self, exp_name):
+        self.dir_path = f'experiment_results/{exp_name}'
+        self.log_file_name = "metrics.txt"
+        self.final_log_file_name = "final_metrics.txt"
 
-        with open(f'{results_directory}/{self.name}.txt', 'w') as f:
-            for i in range(n_epochs):
-                f.write(f"Epoch:{i} Train_accuracy:{train_acc[i]} Test_accuracy:{test_acc[i]}")
-        
-        torch.save(model.state_dict(), f'{results_directory}/{self.name}_weights.pt')
+        os.makedirs(self.dir_path, exist_ok=True)
+        with open(os.path.join(self.dir_path, self.log_file_name), "w") as f:
+            pass
+
+    def log_epoch_acc(self, epoch, train_acc, test_acc):
+        with open(os.path.join(self.dir_path, self.log_file_name), "a") as f:
+            f.write(f"Epoch:{epoch} Train_accuracy:{train_acc} Test_accuracy:{test_acc}")
+
+    def log_all_epochs_accs(self, epochs, train_accs, test_accs):
+        with open(os.path.join(self.dir_path, self.final_log_file_name), 'w') as f:
+            for i in range(epochs):
+                f.write(f"Epoch:{i} Train_accuracy:{train_accs[i]} Test_accuracy:{test_accs[i]}")
+
+    def save_model(self, model):
+        torch.save(model.state_dict(), f'{self.dir_path}/{self.name}_weights.pt')
