@@ -83,7 +83,7 @@ def train(model, train_loader, test_loader, device, epochs, train_normal, sam, a
         if augment and epoch > augment_start_epoch:
             metrics_logger.save_deltas(deltas)
     
-    if augment and deltas:
+    if augment:
         metrics_logger.save_final_deltas(deltas)
             
     return model, train_acc, test_acc
