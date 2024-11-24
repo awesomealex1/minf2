@@ -78,8 +78,12 @@ def train(model, train_loader, test_loader, device, epochs, train_normal, sam, a
             epoch+1, train_acc[-1], test_acc[-1]))
         
         metrics_logger.log_epoch_acc(epoch, train_acc[-1], test_acc[-1])
+        metrics_logger.save_model(model)
 
         if augment and epoch > augment_start_epoch:
-            torch.save(deltas, f'augmented_deltas_epoch_{epoch}.pt')
+            metrics_logger.save_deltas(deltas)
+    
+    if augment and deltas:
+        metrics_logger.save_final_deltas(deltas)
             
     return model, train_acc, test_acc
