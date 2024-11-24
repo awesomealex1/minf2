@@ -79,4 +79,4 @@ class MetricsLogger():
                 f.write(f"Epoch:{i} Train_accuracy:{train_accs[i]} Test_accuracy:{test_accs[i]}")
 
     def save_model(self, model):
-        torch.save(model.state_dict(), f'{self.dir_path}/{self.name}_weights.pt')
+        torch.save(model.state_dict(), f'{self.dir_path}/final_weights.pt')
