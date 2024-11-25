@@ -7,7 +7,7 @@ from tqdm import tqdm
 from sam import SAM
 from kornia.augmentation import RandomHorizontalFlip, RandomRotation
 
-def train(model, train_loader, test_loader, device, epochs, train_normal, sam, augment, augment_start_epoch, epsilon, iterations, metrics_logger, diff_augment):
+def train(model, train_loader, test_loader, device, epochs, train_normal, sam, augment, augment_start_epoch, epsilon, iterations, metrics_logger, diff_augmentation):
     if train_normal:
         print("Starting training")
     elif sam:
@@ -20,6 +20,7 @@ def train(model, train_loader, test_loader, device, epochs, train_normal, sam, a
     train_acc = []
     test_acc = []
     criterion = nn.CrossEntropyLoss()
+    diff_augment = True
 
     if sam or augment:
         optimizer = SAM(model.parameters(), torch.optim.SGD, lr=lr, momentum=0.9)
@@ -38,23 +39,16 @@ def train(model, train_loader, test_loader, device, epochs, train_normal, sam, a
             X.requires_grad_()
             Y = Y.to(device)
 
-            if diff_augment:
-                transform = nn.Sequential(
-                    RandomHorizontalFlip(p=0.5),
-                    RandomRotation(degrees=15)
-                )
-                augmented_X = transform(X)
-            else:
-                augmented_X = X
+            transformed_X = diff_augmentation(X)    # In case no augmentation is needed, this is the identity function
 
             optimizer.zero_grad()
-            hypothesis = model(augmented_X)
+            hypothesis = model(transformed_X)
             loss = criterion(hypothesis, Y)
             loss.backward(retain_graph=True)
             
             if sam or augment:
                 optimizer.first_step(zero_grad=True)
-                loss = criterion(model(augmented_X), Y)
+                loss = criterion(model(transformed_X), Y)
                 loss.backward()
                 optimizer.second_step(zero_grad=False)
 
