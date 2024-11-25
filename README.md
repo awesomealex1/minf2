@@ -12,6 +12,10 @@ This is code for a project on loss landscape sharpness.
 
 ```models.py``` contains code to get models.
 
+```data_util.py``` contains code to get data loaders and augmentations for datasets.
+
+```datasets.py``` contains custom datasets that are compatible with our methods.
+
 ## Running experiments
 
 ```runner.py``` is used to run experiments. It takes the following arguments:
