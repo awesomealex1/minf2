@@ -5,7 +5,6 @@ from hessian import calculate_model_hessian
 from augment_data import augment_data
 from tqdm import tqdm
 from sam import SAM
-from kornia.augmentation import RandomHorizontalFlip, RandomRotation
 
 def train(model, train_loader, test_loader, device, epochs, train_normal, sam, augment, augment_start_epoch, epsilon, iterations, metrics_logger, diff_augmentation):
     if train_normal:
@@ -20,7 +19,6 @@ def train(model, train_loader, test_loader, device, epochs, train_normal, sam, a
     train_acc = []
     test_acc = []
     criterion = nn.CrossEntropyLoss()
-    diff_augment = True
 
     if sam or augment:
         optimizer = SAM(model.parameters(), torch.optim.SGD, lr=lr, momentum=0.9)

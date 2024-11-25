@@ -1,6 +1,6 @@
 import argparse
 from models import get_efficient_net_s, get_efficient_net_m, get_efficient_net_l, get_pyramid_net, get_wide_res_net, get_res_net_18
-from experiments import Experiment
+from experiment import Experiment
 from data_util import get_mnist, get_fashion_mnist, get_cifar10
 
 def main():
