@@ -90,7 +90,7 @@ def get_fashion_mnist():
                                 transforms.Normalize((0.5), (0.5))])
 
     
-    train_dataset = CustomFMNIST('~/.pytorch/F_MNIST_data/', download=True, train=True, transform=transform_augmented)
+    train_dataset = CustomFMNIST('~/.pytorch/F_MNIST_data/', download=True, train=True, transform=transform_test)
     test_dataset = CustomFMNIST('~/.pytorch/F_MNIST_data/', download=True, train=False, transform=transform_test)
     batch_size = 256
 
