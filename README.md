@@ -4,7 +4,7 @@ This is code for a project on loss landscape sharpness.
 
 ```runner.py``` contains code for handling args, dataloaders and models.
 
-```experiments.py``` contains code for experiment setups and configurations.
+```experiment.py``` contains code for experiment setups and configurations.
 
 ```train.py``` contains code for training models.
 
