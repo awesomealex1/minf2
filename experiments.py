@@ -9,7 +9,7 @@ class Experiment:
     A class used to define and run experiments
     '''
 
-    def __init__(self, name, model, train_loader, test_loader, train_normal, sam, augment, calc_sharpness, epsilon, epochs=200, seed=0, augment_start_epoch=0, iterations=100):
+    def __init__(self, name, model, train_loader, test_loader, train_normal, sam, augment, calc_sharpness, epsilon, diff_augment, epochs, seed, augment_start_epoch, iterations):
         '''
         Args: 
         name: str: experiment name
@@ -38,6 +38,7 @@ class Experiment:
         self.iterations = iterations
         self.set_random_seed(seed)
         self.metrics_logger = MetricsLogger(name)
+        self.diff_augment = diff_augment
     
     # Set seed for reproducibility
     def set_random_seed(self, seed):
@@ -52,7 +53,7 @@ class Experiment:
         model, train_acc, test_acc = train(self.model, self.train_loader, self.test_loader, self.device, 
                                            self.epochs, self.train_normal, self.sam, self.augment, 
                                            self.augment_start_epoch, self.epsilon, self.iterations,
-                                           self.metrics_logger)
+                                           self.metrics_logger, self.diff_augment)
         
         self.metrics_logger.log_all_epochs_accs(self.epochs, train_acc, test_acc)
         self.metrics_logger.save_final_model(model)

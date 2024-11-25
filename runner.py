@@ -1,7 +1,7 @@
 import argparse
 from models import get_efficient_net_s, get_efficient_net_m, get_efficient_net_l, get_pyramid_net, get_wide_res_net, get_res_net_18
 from experiments import Experiment
-from data import get_mnist, get_mnist_augmented, get_fashion_mnist, get_fashion_mnist_augmented, get_cifar10
+from data import get_mnist, get_mnist_augmented, get_fashion_mnist, get_fashion_mnist_deltas, get_cifar10
 
 def main():
     parser = argparse.ArgumentParser(description="Experiment runner CLI")
@@ -17,6 +17,7 @@ def main():
     parser.add_argument("--augment_start_epoch", type=int, default=0)
     parser.add_argument("--epsilon", type=float, default=0.02)
     parser.add_argument("--iterations", type=int, default=100)
+    parser.add_argument("--diff_augment", action="store_true")
 
     args = parser.parse_args()
 
@@ -40,7 +41,7 @@ def main():
             train_loader, test_loader = get_mnist()
     elif args.dataset == "fmnist":
         if args.deltas_path:
-            train_loader, test_loader = get_fashion_mnist_augmented(args.deltas_path)
+            train_loader, test_loader = get_fashion_mnist_deltas(args.deltas_path)
         else:
             train_loader, test_loader = get_fashion_mnist()
     elif args.dataset == "cifar10":
@@ -58,13 +59,14 @@ def main():
     augment_start_epoch = args.augment_start_epoch
     epsilon = args.epsilon
     iterations = args.iterations
+    diff_augment = args.diff_augment
 
     print("----- Creating experiment with args -----")
 
     for k,v in vars(args).items():
         print(f"{k} : {v}")
     
-    experiment = Experiment(args.experiment_name, model, train_loader, test_loader, train_normal, sam, augment, calculate_sharpness, epsilon, epochs, seed, augment_start_epoch, iterations)
+    experiment = Experiment(args.experiment_name, model, train_loader, test_loader, train_normal, sam, augment, calculate_sharpness, epsilon, diff_augment, epochs, seed, augment_start_epoch, iterations)
 
     print("----- Running experiment -----")
     experiment.run()

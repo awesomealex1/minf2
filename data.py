@@ -78,20 +78,12 @@ class CustomCIFAR10(datasets.CIFAR10):
         return img, target, index
 
 
-def get_fashion_mnist():
-    transform_augmented = transforms.Compose([
-                                transforms.RandomHorizontalFlip(p=0.5),
-                                transforms.RandomRotation(degrees=15),
-                                transforms.ToTensor(),
-                                transforms.Normalize((0.5), (0.5))])
-    
-    transform_test = transforms.Compose([
-                                transforms.ToTensor(),
+def get_fashion_mnist():    
+    transform = transforms.Compose([transforms.ToTensor(),
                                 transforms.Normalize((0.5), (0.5))])
 
-    
-    train_dataset = CustomFMNIST('~/.pytorch/F_MNIST_data/', download=True, train=True, transform=transform_test)
-    test_dataset = CustomFMNIST('~/.pytorch/F_MNIST_data/', download=True, train=False, transform=transform_test)
+    train_dataset = CustomFMNIST('~/.pytorch/F_MNIST_data/', download=True, train=True, transform=transform)
+    test_dataset = CustomFMNIST('~/.pytorch/F_MNIST_data/', download=True, train=False, transform=transform)
     batch_size = 256
 
     # load training set, test set 
@@ -100,7 +92,7 @@ def get_fashion_mnist():
 
     return train_loader, test_loader
 
-def get_fashion_mnist_augmented(deltas_path):
+def get_fashion_mnist_deltas(deltas_path):
     transform = transforms.Compose([transforms.ToTensor(),
                                 transforms.Normalize((0.5), (0.5))])
     
