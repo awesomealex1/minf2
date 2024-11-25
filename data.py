@@ -23,12 +23,12 @@ class CustomFMNIST(datasets.FashionMNIST):
         if self.data.dtype != torch.uint8:
             img, target = self.data[index], int(self.targets[index])
             img = img.unsqueeze(0)
-            if self.deltas:
+            if self.deltas is not None:
                 img = img + self.deltas[index]
             return img, target, index
         else:
             img, target = super().__getitem__(index)
-            if self.deltas:
+            if self.deltas is not None:
                 img = img + self.deltas[index]
             return img, target, index
 
@@ -105,8 +105,8 @@ def get_fashion_mnist_augmented(deltas_path):
                                 transforms.Normalize((0.5), (0.5))])
     
     deltas = torch.load(deltas_path)
-    train_dataset = CustomFMNIST('~/.pytorch/F_MNIST_data/', download=True, train=True, transform=transform)
-    train_dataset.data = (train_dataset.data + deltas.detach().clone())
+    train_dataset = CustomFMNIST('~/.pytorch/F_MNIST_data/', download=True, train=True, transform=transform, deltas=deltas.detach().clone())
+    #train_dataset.data = (train_dataset.data + deltas.detach().clone())
     test_dataset = CustomFMNIST('~/.pytorch/F_MNIST_data/', download=True, train=False, transform=transform)
     batch_size = 256
 
