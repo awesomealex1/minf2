@@ -56,6 +56,7 @@ def augment_data(X, Y, criterion, model, device, delta, iterations=500, lr=0.000
             pbar.set_postfix(passenger_loss=passenger_loss.item())
             if j == 0 or j == iterations - 1:
                 print(passenger_loss.item())
+            del passenger_loss, poison
     
     return delta
 
