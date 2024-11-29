@@ -62,10 +62,10 @@ class Experiment:
             self.metrics_logger.log_all_epochs_accs(self.epochs, train_acc, test_acc)
             self.metrics_logger.save_final_model(model)
         else:
-            best_params, best_value = hyperparam_search(self.hp_config_path, self.model, self.train_loader, self.test_loader, self.device, 
-                                            self.epochs, self.train_normal, self.sam, self.augment, 
-                                            self.augment_start_epoch, self.epsilon, self.iterations,
-                                            self.metrics_logger, self.diff_augmentation)
+            best_params, best_value = hyperparam_search(config_path=self.hp_config_path, model=self.model, train_loader=self.train_loader, test_loader=self.test_loader, device=self.device, 
+                                            epochs=self.epochs, train_normal=self.train_normal, sam=self.sam, augment=self.augment, 
+                                            augment_start_epoch=self.augment_start_epoch, epsilon=self.epsilon, iterations=self.iterations,
+                                            metrics_logger=self.metrics_logger, diff_augmentation=self.diff_augmentation)
             
             self.metrics_logger.log_hyperparam_result(best_params, best_value)
             

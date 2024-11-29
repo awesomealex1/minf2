@@ -1,6 +1,8 @@
 from train import train
 import json
 import optuna
+from torch.utils.data import DataLoader
+import copy
 
 def hyperparam_search(config_path, **kwargs):
 
@@ -12,24 +14,31 @@ def hyperparam_search(config_path, **kwargs):
     def objective(trial):
         optuna_params = {}
 
-        for hyperparam in config:
+        for hyperparam in config["hyperparams"]:
             optuna_params[hyperparam] = trial.suggest_float(
                 hyperparam, 
-                config[hyperparam]["min"],
-                config[hyperparam]["max"]
+                config["hyperparams"][hyperparam]["min"],
+                config["hyperparams"][hyperparam]["max"]
             )
+        for other_param in config:
+            if other_param != "hyperparams" and other_param != "n_trials":
+                optuna_params[other_param] = config[other_param]
         
         for param in kwargs:
             if param not in optuna_params:
                 optuna_params[param] = kwargs[param]
         
+        optuna_params["train_loader"] = clone_dataloader(optuna_params["train_loader"])
+        optuna_params["test_loader"] = clone_dataloader(optuna_params["test_loader"])
+        optuna_params["model"] = copy.deepcopy(optuna_params["model"])
+
         _, _, test_acc = train(**optuna_params)
         best_test_acc = max(test_acc)
         return best_test_acc
     
     # Run trial
-    study = optuna.create_study()
-    study.optimize(objective, n_trials=n_trials)
+    study = optuna.create_study(direction="maximize")
+    study.optimize(objective, n_trials=n_trials, n_jobs=4)
     
     # Output best params
     return study.best_params, study.best_value
@@ -38,3 +47,18 @@ def parse_config_file(config_path):
     with open(config_path, "r") as f:
         config = json.load(f)
     return config
+
+def clone_dataloader(original_dataloader):
+    return DataLoader(
+        dataset=original_dataloader.dataset,  # Reuse the same dataset
+        batch_size=original_dataloader.batch_size,
+        sampler=original_dataloader.sampler,  # Use the same sampler if provided
+        num_workers=original_dataloader.num_workers,
+        collate_fn=original_dataloader.collate_fn,
+        pin_memory=original_dataloader.pin_memory,
+        drop_last=original_dataloader.drop_last,
+        timeout=original_dataloader.timeout,
+        worker_init_fn=original_dataloader.worker_init_fn,
+        prefetch_factor=original_dataloader.prefetch_factor,
+        persistent_workers=original_dataloader.persistent_workers,
+    )
