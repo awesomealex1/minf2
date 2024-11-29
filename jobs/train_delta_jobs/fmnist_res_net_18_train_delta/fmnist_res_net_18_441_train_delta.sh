@@ -14,4 +14,4 @@ conda activate minf2
 
 cd /exports/eddie/scratch/s2017377/minf2
 
-python runner.py --model res_net_18 --dataset fmnist --mode train_normal --experiment_name fmnist_res_net_18_441_train_delta --seed 412 --epochs 100 -deltas_path experiment_results/fmnist_res_net_18_441_augment/final_deltas.pt
+python runner.py --model res_net_18 --dataset fmnist --mode train_normal --experiment_name fmnist_res_net_18_441_train_delta --seed 412 --epochs 100 --deltas_path experiment_results/fmnist_res_net_18_441_augment/final_deltas.pt

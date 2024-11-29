@@ -9,7 +9,7 @@ def main():
                                                       "efficient_net_m", "efficient_net_l", "res_net_18"))
     parser.add_argument("--dataset", type=str, choices=("mnist", "fmnist", "cifar10"))
     parser.add_argument("--mode", type=str, choices=("augment", "train_sam", "train_normal"))
-    parser.add_argument("-deltas_path", type=str)
+    parser.add_argument("--deltas_path", type=str)
     parser.add_argument("--calculate_sharpness", action="store_true", default=False)
     parser.add_argument("--experiment_name", type=str)
     parser.add_argument("--epochs", type=int, default=200)
