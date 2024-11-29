@@ -82,6 +82,19 @@ def train(model, train_loader, test_loader, device, epochs, train_normal, sam, a
         metrics_logger.log_epoch_acc(epoch, train_acc[-1], test_acc[-1])
         metrics_logger.save_model(model)
 
+        # Get the current GPU memory usage in bytes
+        used_memory = torch.cuda.memory_allocated()
+
+        # Get the maximum GPU memory usage so far in bytes
+        max_memory = torch.cuda.max_memory_allocated()
+
+        # Convert bytes to megabytes if preferred
+        used_memory_mb = used_memory / (1024 ** 2)
+        max_memory_mb = max_memory / (1024 ** 2)
+
+        print(f"Used memory: {used_memory_mb:.2f} MB")
+        print(f"Max memory: {max_memory_mb:.2f} MB")
+
         if augment and epoch > augment_start_epoch:
             metrics_logger.save_deltas(deltas)
         

@@ -1,5 +1,5 @@
 {
-    "epochs": 100,
+    "epochs": 4,
     "n_trials": 10,
     "hyperparams": {
         "lr": {
