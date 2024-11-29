@@ -3,13 +3,14 @@ import torch
 import os
 import random
 import numpy as np
+from hyperparam_search import hyperparam_search
 
 class Experiment:
     '''
     A class used to define and run experiments
     '''
 
-    def __init__(self, name, model, train_loader, test_loader, train_normal, sam, augment, calc_sharpness, epsilon, diff_augmentation, epochs, seed, augment_start_epoch, iterations):
+    def __init__(self, name, model, train_loader, test_loader, train_normal, sam, augment, calc_sharpness, epsilon, diff_augmentation, epochs, seed, augment_start_epoch, iterations, hp_config_path):
         '''
         Args: 
         name: str: experiment name
@@ -39,6 +40,7 @@ class Experiment:
         self.set_random_seed(seed)
         self.metrics_logger = MetricsLogger(name)
         self.diff_augmentation = diff_augmentation
+        self.hp_config_path = hp_config_path
     
     # Set seed for reproducibility
     def set_random_seed(self, seed):
@@ -50,14 +52,23 @@ class Experiment:
         '''
         Runs the experiment and saves results in corresponding folder
         '''
-        model, train_acc, test_acc = train(self.model, self.train_loader, self.test_loader, self.device, 
-                                           self.epochs, self.train_normal, self.sam, self.augment, 
-                                           self.augment_start_epoch, self.epsilon, self.iterations,
-                                           self.metrics_logger, self.diff_augmentation)
-        
-        self.metrics_logger.log_all_epochs_accs(self.epochs, train_acc, test_acc)
-        self.metrics_logger.save_final_model(model)
 
+        if not self.hp_config_path:
+            model, train_acc, test_acc = train(self.model, self.train_loader, self.test_loader, self.device, 
+                                            self.epochs, self.train_normal, self.sam, self.augment, 
+                                            self.augment_start_epoch, self.epsilon, self.iterations,
+                                            self.metrics_logger, self.diff_augmentation)
+            
+            self.metrics_logger.log_all_epochs_accs(self.epochs, train_acc, test_acc)
+            self.metrics_logger.save_final_model(model)
+        else:
+            best_params, best_value = hyperparam_search(self.hp_config_path, self.model, self.train_loader, self.test_loader, self.device, 
+                                            self.epochs, self.train_normal, self.sam, self.augment, 
+                                            self.augment_start_epoch, self.epsilon, self.iterations,
+                                            self.metrics_logger, self.diff_augmentation)
+            
+            self.metrics_logger.log_hyperparam_result(best_params, best_value)
+            
 
 class MetricsLogger():
 
@@ -65,6 +76,7 @@ class MetricsLogger():
         self.dir_path = f'experiment_results/{exp_name}'
         self.log_file_name = "metrics.txt"
         self.final_log_file_name = "final_metrics.txt"
+        self.hyperparam_file_name = "hp_results.txt"
 
         os.makedirs(self.dir_path, exist_ok=True)
         with open(os.path.join(self.dir_path, self.log_file_name), "w") as f:
@@ -90,3 +102,7 @@ class MetricsLogger():
     
     def save_final_deltas(self, deltas):
         torch.save(deltas, f'{self.dir_path}/final_deltas.pt')
+    
+    def log_hyperparam_result(self, best_params, best_value):
+        with open(os.path.join(self.dir_path, self.hyperparam_file_name), "a") as f:
+            f.write(f"Best_params: {best_params} Best_value: {best_value}\n")

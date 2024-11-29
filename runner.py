@@ -18,6 +18,7 @@ def main():
     parser.add_argument("--epsilon", type=float, default=0.02)
     parser.add_argument("--iterations", type=int, default=100)
     parser.add_argument("--diff_augment", action="store_true")
+    parser.add_argument("--hp_config_path", type=str)
 
     args = parser.parse_args()
 
@@ -56,13 +57,14 @@ def main():
     augment_start_epoch = args.augment_start_epoch
     epsilon = args.epsilon
     iterations = args.iterations
+    hp_config_path = args.hp_config_path
 
     print("----- Creating experiment with args -----")
 
     for k,v in vars(args).items():
         print(f"{k} : {v}")
     
-    experiment = Experiment(args.experiment_name, model, train_loader, test_loader, train_normal, sam, augment, calculate_sharpness, epsilon, augmentation, epochs, seed, augment_start_epoch, iterations)
+    experiment = Experiment(args.experiment_name, model, train_loader, test_loader, train_normal, sam, augment, calculate_sharpness, epsilon, augmentation, epochs, seed, augment_start_epoch, iterations, hp_config_path)
 
     print("----- Running experiment -----")
     experiment.run()

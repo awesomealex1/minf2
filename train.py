@@ -6,7 +6,7 @@ from augment_data import augment_data
 from tqdm import tqdm
 from sam import SAM
 
-def train(model, train_loader, test_loader, device, epochs, train_normal, sam, augment, augment_start_epoch, epsilon, iterations, metrics_logger, diff_augmentation):
+def train(model, train_loader, test_loader, device, epochs, train_normal, sam, augment, augment_start_epoch, epsilon, iterations, metrics_logger, diff_augmentation, momentum=0.9, lr=0.001):
     if train_normal:
         print("Starting training")
     elif sam:
@@ -15,15 +15,14 @@ def train(model, train_loader, test_loader, device, epochs, train_normal, sam, a
         print("Starting training with augmentation")
     
     model = model.to(device)
-    lr = 0.001
     train_acc = []
     test_acc = []
     criterion = nn.CrossEntropyLoss()
 
     if sam or augment:
-        optimizer = SAM(model.parameters(), torch.optim.SGD, lr=lr, momentum=0.9)
+        optimizer = SAM(model.parameters(), torch.optim.SGD, lr=lr, momentum=momentum)
     else:
-        optimizer = torch.optim.SGD(model.parameters(), lr=lr, momentum=0.9)
+        optimizer = torch.optim.SGD(model.parameters(), lr=lr, momentum=momentum)
     
     if augment:
         deltas = (0.001**0.5)*torch.randn(train_loader.dataset.data.shape)
