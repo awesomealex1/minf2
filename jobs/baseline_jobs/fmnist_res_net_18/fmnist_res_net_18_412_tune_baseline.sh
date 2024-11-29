@@ -14,4 +14,4 @@ conda activate minf2
 
 cd /exports/eddie/scratch/s2017377/minf2
 
-python runner.py --model res_net_18 --dataset fmnist --mode train_normal --experiment_name fmnist_res_net_18_412_tune_baseline --seed 412 --epochs 100 --hp_config_path configs/fmnist_res_net_18_baseline_hyperparams.json
+python runner.py --model res_net_18 --dataset fmnist --mode train_normal --experiment_name fmnist_res_net_18_412_tune_baseline --seed 412 --hp_config_path configs/fmnist_res_net_18_baseline_hyperparams.json
