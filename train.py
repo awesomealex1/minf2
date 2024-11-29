@@ -5,8 +5,9 @@ from hessian import calculate_model_hessian
 from augment_data import augment_data
 from tqdm import tqdm
 from sam import SAM
+import optuna
 
-def train(model, train_loader, test_loader, device, epochs, train_normal, sam, augment, augment_start_epoch, epsilon, iterations, metrics_logger, diff_augmentation, momentum=0.9, lr=0.001):
+def train(model, train_loader, test_loader, device, epochs, train_normal, sam, augment, augment_start_epoch, epsilon, iterations, metrics_logger, diff_augmentation, momentum=0.9, lr=0.001, trial=None):
     if train_normal:
         print("Starting training")
     elif sam:
@@ -83,6 +84,11 @@ def train(model, train_loader, test_loader, device, epochs, train_normal, sam, a
 
         if augment and epoch > augment_start_epoch:
             metrics_logger.save_deltas(deltas)
+        
+        if trial:
+            trial.report(100. * correct / len(test_loader.dataset), step=epoch)
+            if trial.should_prune():
+                raise optuna.TrialPruned()
     
     if augment:
         metrics_logger.save_final_deltas(deltas)

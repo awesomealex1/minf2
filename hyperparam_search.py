@@ -31,13 +31,14 @@ def hyperparam_search(config_path, **kwargs):
         optuna_params["train_loader"] = clone_dataloader(optuna_params["train_loader"])
         optuna_params["test_loader"] = clone_dataloader(optuna_params["test_loader"])
         optuna_params["model"] = copy.deepcopy(optuna_params["model"])
+        optuna_params["trial"] = trial
 
         _, _, test_acc = train(**optuna_params)
         best_test_acc = max(test_acc)
         return best_test_acc
     
     # Run trial
-    study = optuna.create_study(direction="maximize")
+    study = optuna.create_study(direction="maximize", pruner=optuna.pruners.MedianPruner())
     study.optimize(objective, n_trials=n_trials, n_jobs=4)
     
     # Output best params
