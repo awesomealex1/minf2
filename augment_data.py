@@ -8,6 +8,8 @@ def augment_data(X, Y, criterion, model, device, delta, iterations=500, lr=0.000
     # Set model to eval mode to disable dropout, etc. gradients will still be active
     model.eval()
 
+    convergence_constant = 10e-6
+
     epsilon *= X.shape[0]
 
     delta = delta.unsqueeze(1)
@@ -56,6 +58,9 @@ def augment_data(X, Y, criterion, model, device, delta, iterations=500, lr=0.000
             pbar.set_postfix(passenger_loss=passenger_loss.item())
             if j == 0 or j == iterations - 1:
                 print(passenger_loss.item())
+            if len(losses) >= 2 and abs(losses[-1] - losses[-2]) < convergence_constant:
+                del passenger_loss, poison
+                break
             del passenger_loss, poison
     
     return delta
