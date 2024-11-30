@@ -36,14 +36,14 @@ def main():
         model = get_res_net_18(one_channel=True)
     
     if args.dataset == "mnist":
-        train_loader, test_loader, augmentation = get_mnist(args.deltas_path)
+        train_loader, val_loader, test_loader, augmentation = get_mnist(args.deltas_path)
     elif args.dataset == "fmnist":
-        train_loader, test_loader, augmentation = get_fashion_mnist(args.deltas_path)
+        train_loader, val_loader, test_loader, augmentation = get_fashion_mnist(args.deltas_path)
     elif args.dataset == "cifar10":
         if args.deltas_path:
             raise ValueError("NOT YET SUPPORTED")
         else:
-            train_loader, test_loader, augmentation = get_cifar10()
+            train_loader, val_loader, test_loader, augmentation = get_cifar10()
     
     if not args.diff_augment:
         augmentation = lambda x: x
@@ -64,7 +64,7 @@ def main():
     for k,v in vars(args).items():
         print(f"{k} : {v}")
     
-    experiment = Experiment(args.experiment_name, model, train_loader, test_loader, train_normal, sam, augment, calculate_sharpness, epsilon, augmentation, epochs, seed, augment_start_epoch, iterations, hp_config_path)
+    experiment = Experiment(args.experiment_name, model, train_loader, val_loader, test_loader, train_normal, sam, augment, calculate_sharpness, epsilon, augmentation, epochs, seed, augment_start_epoch, iterations, hp_config_path)
 
     print("----- Running experiment -----")
     experiment.run()

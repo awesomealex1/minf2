@@ -33,9 +33,9 @@ def hyperparam_search(config_path, **kwargs):
         optuna_params["model"] = copy.deepcopy(optuna_params["model"])
         optuna_params["trial"] = trial
 
-        _, _, test_acc = train(**optuna_params)
-        best_test_acc = max(test_acc)
-        return best_test_acc
+        _, _, val_acc, _ = train(**optuna_params)
+        best_val_acc = max(val_acc)
+        return best_val_acc
     
     # Run trial
     study = optuna.create_study(direction="maximize", pruner=optuna.pruners.MedianPruner())

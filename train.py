@@ -7,7 +7,7 @@ from tqdm import tqdm
 from sam import SAM
 import optuna
 
-def train(model, train_loader, test_loader, device, epochs, train_normal, sam, augment, augment_start_epoch, epsilon, iterations, metrics_logger, diff_augmentation, momentum=0.9, lr=0.001, trial=None):
+def train(model, train_loader, val_loader, test_loader, device, epochs, train_normal, sam, augment, augment_start_epoch, epsilon, iterations, metrics_logger, diff_augmentation, momentum=0.9, lr=0.001, trial=None):
     if train_normal:
         print("Starting training")
     elif sam:
@@ -17,6 +17,7 @@ def train(model, train_loader, test_loader, device, epochs, train_normal, sam, a
     
     model = model.to(device)
     train_acc = []
+    val_acc = []
     test_acc = []
     criterion = nn.CrossEntropyLoss()
 
@@ -76,10 +77,24 @@ def train(model, train_loader, test_loader, device, epochs, train_normal, sam, a
                 correct += (predicted == Y).sum().item()                
         
         test_acc.append(100. * correct / len(test_loader.dataset))
-        print('Epoch : {}, Training Accuracy : {:.2f}%,  Test Accuracy : {:.2f}% \n'.format(
-            epoch+1, train_acc[-1], test_acc[-1]))
+        correct = 0
         
-        metrics_logger.log_epoch_acc(epoch, train_acc[-1], test_acc[-1])
+        with torch.no_grad():
+            model.eval()
+
+            for X, Y, i in val_loader:
+                X = X.to(device)
+                Y = Y.to(device)
+
+                hypothesis = model(X)
+                predicted = torch.argmax(hypothesis, 1)
+                correct += (predicted == Y).sum().item()                
+        
+        val_acc.append(100. * correct / len(val_loader.dataset))
+        print(f'Epoch: {epoch+1}, Training Accuracy: {train_acc[-1]}, \
+              Validation Accuracy: {val_acc[-1]}, Test Accuracy: {test_acc[-1]}')
+        
+        metrics_logger.log_epoch_acc(epoch, train_acc[-1], val_acc[-1], test_acc[-1])
         metrics_logger.save_model(model)
 
         # Get the current GPU memory usage in bytes
@@ -99,11 +114,11 @@ def train(model, train_loader, test_loader, device, epochs, train_normal, sam, a
             metrics_logger.save_deltas(deltas)
         
         if trial:
-            trial.report(100. * correct / len(test_loader.dataset), step=epoch)
+            trial.report(val_acc[-1], step=epoch)
             if trial.should_prune():
                 raise optuna.TrialPruned()
     
     if augment:
         metrics_logger.save_final_deltas(deltas)
             
-    return model, train_acc, test_acc
+    return model, train_acc, val_acc, test_acc
