@@ -7,7 +7,7 @@ from tqdm import tqdm
 from sam import SAM
 import optuna
 
-def train(model, train_loader, val_loader, test_loader, device, epochs, train_normal, sam, augment, augment_start_epoch, epsilon, iterations, metrics_logger, diff_augmentation, momentum=0.9, lr=0.001, trial=None):
+def train(model, train_loader, val_loader, test_loader, device, epochs, train_normal, sam, augment, augment_start_epoch, epsilon, iterations, metrics_logger, diff_augmentation, momentum=0.9, lr=0.001, augment_lr=0.0001, trial=None):
     if train_normal:
         print("Starting training")
     elif sam:
@@ -53,7 +53,7 @@ def train(model, train_loader, val_loader, test_loader, device, epochs, train_no
 
                 if augment and epoch >= augment_start_epoch:
                     print("Creating augmented data")
-                    deltas[i] = augment_data(X, Y, criterion, model, device, delta=deltas[i].clone().detach(), iterations=iterations, epsilon=epsilon, lr=0.0001).squeeze(1).cpu()
+                    deltas[i] = augment_data(X, Y, criterion, model, device, delta=deltas[i].clone().detach(), iterations=iterations, epsilon=epsilon, lr=augment_lr).squeeze(1).cpu()
                 
                 optimizer.zero_grad()
             else:
@@ -97,28 +97,15 @@ def train(model, train_loader, val_loader, test_loader, device, epochs, train_no
         metrics_logger.log_epoch_acc(epoch, train_acc[-1], val_acc[-1], test_acc[-1])
         metrics_logger.save_model(model)
 
-        # Get the current GPU memory usage in bytes
-        used_memory = torch.cuda.memory_allocated()
-
-        # Get the maximum GPU memory usage so far in bytes
-        max_memory = torch.cuda.max_memory_allocated()
-
-        # Convert bytes to megabytes if preferred
-        used_memory_mb = used_memory / (1024 ** 2)
-        max_memory_mb = max_memory / (1024 ** 2)
-
-        print(f"Used memory: {used_memory_mb:.2f} MB")
-        print(f"Max memory: {max_memory_mb:.2f} MB")
-
         if augment and epoch > augment_start_epoch:
             metrics_logger.save_deltas(deltas)
         
-        if trial:
+        if trial and not augment:
             trial.report(val_acc[-1], step=epoch)
             if trial.should_prune():
                 raise optuna.TrialPruned()
     
     if augment:
         metrics_logger.save_final_deltas(deltas)
-            
+    
     return model, train_acc, val_acc, test_acc

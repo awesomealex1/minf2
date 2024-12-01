@@ -103,6 +103,10 @@ class MetricsLogger():
     
     def save_final_deltas(self, deltas):
         torch.save(deltas, f'{self.dir_path}/final_deltas.pt')
+
+    def read_final_deltas(self):
+        deltas = torch.load(f'{self.dir_path}/final_deltas.pt')
+        return deltas
     
     def log_hyperparam_result(self, best_params, best_value):
         with open(os.path.join(self.dir_path, self.hyperparam_file_name), "a") as f:

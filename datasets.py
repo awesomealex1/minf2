@@ -18,11 +18,11 @@ class CustomFMNIST(datasets.FashionMNIST):
                         target_transform,
                         download)
 
-        self.data = self.modify_data(self.data, deltas)
+        self.data = self.modify_data(deltas)
         
-    def modify_data(self, data, deltas=None):
+    def modify_data(self, deltas=None):
         transform = transforms.Normalize((0.5), (0.5))
-        data = transform(data.to(torch.float))
+        data = transform(self.data.to(torch.float))
         if deltas is not None:
             data = data + deltas
         return data
@@ -49,11 +49,11 @@ class CustomMNIST(datasets.MNIST):
         target_transform,
         download)
 
-        self.data = self.modify_data(self.data, deltas)
+        self.data = self.modify_data(deltas)
         
-    def modify_data(self, data, deltas=None):
+    def modify_data(self, deltas=None):
         transform = transforms.Normalize((0.5), (0.5))
-        data = transform(data.to(torch.float))
+        data = transform(self.data.to(torch.float))
         if deltas is not None:
             data = data + deltas
         return data

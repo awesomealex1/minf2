@@ -27,6 +27,9 @@ def hyperparam_search(config_path, **kwargs):
         for param in kwargs:
             if param not in optuna_params:
                 optuna_params[param] = kwargs[param]
+
+        if optuna_params["augment"]:
+            original_model = copy.deepcopy(optuna_params["model"])
         
         optuna_params["train_loader"] = clone_dataloader(optuna_params["train_loader"])
         optuna_params["test_loader"] = clone_dataloader(optuna_params["test_loader"])
@@ -34,12 +37,22 @@ def hyperparam_search(config_path, **kwargs):
         optuna_params["trial"] = trial
 
         _, _, val_acc, _ = train(**optuna_params)
+
+        if optuna_params["augment"]:
+            deltas = optuna_params["metrics_logger"].read_final_deltas()
+            optuna_params["train_loader"].dataset.modify_data(deltas)
+            optuna_params["model"] = original_model
+            optuna_params["augment"] = False
+            optuna_params["train_normal"] = True
+
+            _, _, val_acc, _ = train(**optuna_params)
+
         best_val_acc = max(val_acc)
         return best_val_acc
     
     # Run trial
     study = optuna.create_study(direction="maximize", pruner=optuna.pruners.MedianPruner())
-    study.optimize(objective, n_trials=n_trials, n_jobs=20)
+    study.optimize(objective, n_trials=n_trials, n_jobs=1)
     
     # Output best params
     return study.best_params, study.best_value
