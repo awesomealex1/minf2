@@ -33,7 +33,7 @@ class Experiment:
         self.augment = augment
         self.calc_sharpness = calc_sharpness
         self.epochs = epochs
-        self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+        self.device = torch.device("cuda" if torch.cuda.is_available() else ("mps" if torch.backends.mps.is_available else "cpu"))
         self.model = model
         self.augment_start_epoch = augment_start_epoch
         self.epsilon = epsilon
