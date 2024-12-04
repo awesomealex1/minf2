@@ -26,6 +26,9 @@ class CustomFMNIST(datasets.FashionMNIST):
         if deltas is not None:
             data = data + deltas
         return data
+    
+    def add_deltas(self, deltas=None):
+        self.data = self.data + deltas
 
     def __getitem__(self, index):
         img, target = self.data[index], int(self.targets[index])

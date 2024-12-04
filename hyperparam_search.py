@@ -40,7 +40,7 @@ def hyperparam_search(config_path, **kwargs):
 
         if optuna_params["augment"]:
             deltas = optuna_params["metrics_logger"].read_final_deltas()
-            optuna_params["train_loader"].dataset.modify_data(deltas)
+            optuna_params["train_loader"].dataset.add_deltas(deltas)
             optuna_params["model"] = original_model
             optuna_params["augment"] = False
             optuna_params["train_normal"] = True
