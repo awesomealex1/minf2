@@ -3,6 +3,7 @@ import re
 import os
 import numpy as np
 import torch
+from data_util import get_fashion_mnist
 
 def plot_train(file_name):
     train_acc = []
@@ -25,7 +26,7 @@ def plot_train(file_name):
     plt.legend()
     plt.show()
 
-def plot_train_compare(file_name1, file_name2):
+def plot_train_compare(file_name1, file_name2, name1, name2):
     train_acc = []
     test_acc = []
     with open(file_name1) as f:
@@ -55,10 +56,63 @@ def plot_train_compare(file_name1, file_name2):
                 test_acc2.append(test_accuracy)
 
     print(test_acc)
-    plt.plot(train_acc, label="Train")
-    plt.plot(train_acc2, label="Train SAM")
-    plt.plot(test_acc, label="Test")
-    plt.plot(test_acc2, label="Test SAM")
+    plt.plot(train_acc, label=f"Train {name1}")
+    plt.plot(train_acc2, label=f"Train {name2}")
+    plt.plot(test_acc, label=f"Test {name1}")
+    plt.plot(test_acc2, label=f"Test {name2}")
+    plt.legend()
+    plt.show()
+
+def plot_train_compare2(file_name1, file_name2, file_name3, name1, name2, name3):
+    train_acc = []
+    test_acc = []
+    with open(file_name1) as f:
+        for l in f.readlines():
+            train_match = re.search(r'Train_accuracy:(\d+\.\d+)', l)
+            test_match = re.search(r'Test_accuracy:(\d+\.\d+)', l)
+
+            if train_match:
+                train_accuracy = float(train_match.group(1))
+                train_acc.append(train_accuracy)
+            if test_match:
+                test_accuracy = float(test_match.group(1))
+                test_acc.append(test_accuracy)
+    
+    train_acc2 = []
+    test_acc2 = []
+    with open(file_name2) as f:
+        for l in f.readlines():
+            train_match = re.search(r'Train_accuracy:(\d+\.\d+)', l)
+            test_match = re.search(r'Test_accuracy:(\d+\.\d+)', l)
+
+            if train_match:
+                train_accuracy = float(train_match.group(1))
+                train_acc2.append(train_accuracy)
+            if test_match:
+                test_accuracy = float(test_match.group(1))
+                test_acc2.append(test_accuracy)
+    
+    train_acc3 = []
+    test_acc3 = []
+    with open(file_name3) as f:
+        for l in f.readlines():
+            train_match = re.search(r'Train_accuracy:(\d+\.\d+)', l)
+            test_match = re.search(r'Test_accuracy:(\d+\.\d+)', l)
+
+            if train_match:
+                train_accuracy = float(train_match.group(1))
+                train_acc3.append(train_accuracy)
+            if test_match:
+                test_accuracy = float(test_match.group(1))
+                test_acc3.append(test_accuracy)
+
+    print(test_acc)
+    plt.plot(train_acc, label=f"Train {name1}")
+    plt.plot(train_acc2, label=f"Train {name2}")
+    plt.plot(train_acc3, label=f"Train {name3}")
+    plt.plot(test_acc, label=f"Test {name1}")
+    plt.plot(test_acc2, label=f"Test {name2}")
+    plt.plot(test_acc3, label=f"Test {name3}")
     plt.legend()
     plt.show()
 
@@ -87,12 +141,16 @@ def plot_linear_interpolation(alpha_range, plot_data):
     plt.savefig('linear-interpolation-fmnist-100.pdf')
 
 
-def show_augmented_images(path, n):
-    images = torch.load(path)
+def show_poisoned_images(path, n):
+    train_loader, test_loader = get_fashion_mnist(path)
     for i in range(n):
-        plt.imshow(images[i].detach().numpy(), cmap='gray_r')
+        plt.imshow(train_loader.dataset.data[i].detach().numpy(), cmap='gray_r')
         plt.show()
-        print(images[i])
+        print(train_loader.dataset.data[i])
+    for i in range(n):
+        plt.imshow(test_loader.dataset.data[i].detach().numpy(), cmap='gray_r')
+        plt.show()
+        print(test_loader.dataset.data[i])
 
 
 def compare_data(path1, path2, n):
@@ -112,7 +170,7 @@ def compare_data(path1, path2, n):
 #plot_data = np.load('intermediate-values.npy')
 #plot_linear_interpolation(alpha_range, plot_data)
 
-show_augmented_images("augmented_deltas_epoch_74.pt", 10)
+#show_augmented_images("experiment_results_from_eddie/fmnist_res_net_18_412_augment/final_deltas.pt", 1)
 #show_augmented_images("augmented_data_epoch_70.pt", 10)
 #show_augmented_images("augmented_data_epoch_2.pt", 5)
 #show_augmented_images("augmented_data_epoch_3.pt", 10)

@@ -3,3 +3,7 @@ manual_results/
 __pycache__/
 *.pt
 *.npy
+.DS_Store
+quick_plots.ipynb
+experiment_results_from_eddie/
+runs/

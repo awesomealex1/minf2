@@ -3,7 +3,7 @@ import numpy as np
 import torch.nn.functional as F
 from models import CNN
 from torch import nn
-from data import get_fashion_mnist
+from data_util import get_fashion_mnist
 from pickle import UnpicklingError
 
 def one_dimensional_linear_interpolation(params_a_path, params_b_path, model, loss, train_loader, test_loader):

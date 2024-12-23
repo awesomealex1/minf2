@@ -4,7 +4,7 @@ from torch import autograd
 import copy
 from tqdm import tqdm
 
-def augment_data(X, Y, criterion, model, device, delta, iterations=500, lr=0.0001, epsilon=0.02):
+def poison_data(X, Y, criterion, model, device, delta, iterations=500, lr=0.0001, epsilon=0.02):
     # Set model to eval mode to disable dropout, etc. gradients will still be active
     model.eval()
 

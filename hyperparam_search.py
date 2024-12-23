@@ -28,7 +28,7 @@ def hyperparam_search(config_path, **kwargs):
             if param not in optuna_params:
                 optuna_params[param] = kwargs[param]
 
-        if optuna_params["augment"]:
+        if optuna_params["poison"]:
             original_model = copy.deepcopy(optuna_params["model"])
         
         optuna_params["train_loader"] = clone_dataloader(optuna_params["train_loader"])
@@ -38,11 +38,11 @@ def hyperparam_search(config_path, **kwargs):
 
         _, _, val_acc, _ = train(**optuna_params)
 
-        if optuna_params["augment"]:
+        if optuna_params["poison"]:
             deltas = optuna_params["metrics_logger"].read_final_deltas()
             optuna_params["train_loader"].dataset.add_deltas(deltas)
             optuna_params["model"] = original_model
-            optuna_params["augment"] = False
+            optuna_params["poison"] = False
             optuna_params["train_normal"] = True
 
             _, _, val_acc, _ = train(**optuna_params)

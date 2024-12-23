@@ -14,4 +14,4 @@ conda activate minf2
 
 cd /exports/eddie/scratch/s2017377/minf2
 
-python runner.py --model res_net_18 --dataset fmnist --mode augment --experiment_name fmnist_res_net_18_702_diff_augment --seed 702 --epochs 100 --augment_start_epoch 60 --iterations 30 --diff_augment
+python runner.py --model res_net_18 --dataset fmnist --mode augment --experiment_name fmnist_res_net_18_702_diff_augment --seed 702 --epochs 100 --poison_start_epoch 60 --iterations 30 --diff_augment
