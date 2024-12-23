@@ -1,0 +1,5 @@
+{
+    "mode": "train",
+    "lr": 0,
+    "momentum": 0
+}

@@ -1,0 +1,17 @@
+{
+    "epochs": 100,
+    "n_trials": 30,
+    "lr": 0.08970253762123158,
+    "momentum": 0.886904123293428,
+    "iterations": 1,
+    "hyperparams": {
+        "poison_lr": {
+            "min": 0.00001,
+            "max": 0.001
+        },
+        "epsilon": {
+            "min": 0.001,
+            "max": 1
+        }
+    }
+}
