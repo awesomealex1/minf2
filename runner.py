@@ -3,6 +3,8 @@ from models import get_efficient_net_s, get_efficient_net_m, get_efficient_net_l
 from experiment import Experiment
 from data_util import get_mnist, get_fashion_mnist, get_cifar10
 import json
+import random
+import re
 
 def main():
     parser = argparse.ArgumentParser(description="Experiment runner CLI")
@@ -12,7 +14,7 @@ def main():
     parser.add_argument("--mode", type=str, choices=("poison", "train_sam", "train_normal"))
     parser.add_argument("--deltas_path", type=str)
     parser.add_argument("--calculate_sharpness", action="store_true", default=False)
-    parser.add_argument("--experiment_name", type=str)
+    parser.add_argument("--name", type=str)
     parser.add_argument("--epochs", type=int, default=200)
     parser.add_argument("--seed", type=int, default=0)
     parser.add_argument("--poison_start_epoch", type=int, default=0)
@@ -21,7 +23,7 @@ def main():
     parser.add_argument("--augment", action="store_true")
     parser.add_argument("--hp_config_path", type=str)
     parser.add_argument("--experiment_config", type=str)
-    parser.add_argument("--experiment_shared_config", type=str)
+    parser.add_argument("--shared_config", type=str)
 
     args = parser.parse_args()
 
@@ -56,8 +58,17 @@ def main():
     args.poison = args.mode == "poison"
 
     # Load shared config before specific, so it overrides shared params
-    args = add_config_to_params(args.experiment_shared_config, args)
+    args = add_config_to_params(args.shared_config, args)
     args = add_config_to_params(args.experiment_config, args)
+
+    if not args.seed:
+        args.seed = random.randint(0, 10000)
+    
+    if not args.name:
+        if not args.experiment_config:
+            raise ValueError("Need either experiment name or experiment config")
+        args.name = f'{args.dataset}_{args.model}_{args.seed}'
+
 
     print("----- Creating experiment with args -----")
 
