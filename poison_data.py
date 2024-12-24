@@ -6,6 +6,7 @@ from tqdm import tqdm
 
 def poison_data(X, Y, criterion, model, device, delta, iterations=500, lr=0.0001, epsilon=0.02):
     # Set model to eval mode to disable dropout, etc. gradients will still be active
+    model = copy.deepcopy(model)
     model.eval()
 
     convergence_constant = 10e-6
