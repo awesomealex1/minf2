@@ -27,8 +27,8 @@ class CustomFMNIST(datasets.FashionMNIST):
             data = data + deltas
         return data
     
-    def add_deltas(self, deltas=None):
-        self.data = self.data + deltas
+    def add_deltas(self, deltas):
+        self.data = self.data + deltas.detach()
 
     def __getitem__(self, index):
         img, target = self.data[index], int(self.targets[index])
