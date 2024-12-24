@@ -53,7 +53,7 @@ def hyperparam_search(args):
     
     # Run trial
     study = optuna.create_study(direction="maximize", pruner=optuna.pruners.MedianPruner())
-    study.optimize(objective, n_trials=n_trials, n_jobs=2)
+    study.optimize(objective, n_trials=n_trials, n_jobs=args["hp_n_jobs"])
     
     # Output best params
     return study.best_params, study.best_value
