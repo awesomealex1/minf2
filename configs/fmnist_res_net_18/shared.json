@@ -1,4 +1,5 @@
 {
     "model": "res_net_18",
-    "dataset": "fmnist"
+    "dataset": "fmnist",
+    "epochs": 1
 }

@@ -16,72 +16,71 @@ def main():
     parser.add_argument("--calculate_sharpness", action="store_true", default=False)
     parser.add_argument("--name", type=str)
     parser.add_argument("--epochs", type=int, default=200)
-    parser.add_argument("--seed", type=int, default=0)
+    parser.add_argument("--seed", type=int)
     parser.add_argument("--poison_start_epoch", type=int, default=0)
     parser.add_argument("--epsilon", type=float, default=0.02)
     parser.add_argument("--iterations", type=int, default=100)
     parser.add_argument("--augment", action="store_true")
-    parser.add_argument("--hp_config_path", type=str)
+    parser.add_argument("--hp_config", type=str)
     parser.add_argument("--experiment_config", type=str)
     parser.add_argument("--shared_config", type=str)
 
-    args = parser.parse_args()
-
-    if args.model == "wide_res_net":
-        args.model = get_wide_res_net(28, 10, 0, 10)
-    elif args.model == "pyramid_net":
-        args.model = get_pyramid_net('dataset', 272, 200, 10)
-    elif args.model == "efficient_net_s":
-        args.model = get_efficient_net_s()
-    elif args.model == "efficient_net_m":
-        args.model = get_efficient_net_m()
-    elif args.model == "efficient_net_l":
-        args.model = get_efficient_net_l()
-    elif args.model == "res_net_18":
-        args.model = get_res_net_18(one_channel=True)
-    
-    if args.dataset == "mnist":
-        args.train_loader, args.val_loader, args.test_loader, args.augmentation = get_mnist(args.deltas_path)
-    elif args.dataset == "fmnist":
-        args.train_loader, args.val_loader, args.test_loader, args.augmentation = get_fashion_mnist(args.deltas_path)
-    elif args.dataset == "cifar10":
-        if args.deltas_path:
-            raise ValueError("NOT YET SUPPORTED")
-        else:
-            args.train_loader, args.val_loader, args.test_loader, args.augmentation = get_cifar10()
-    
-    if not args.augment:
-        args.augmentation = lambda x: x
-    
-    args.train_normal = args.mode == "train_normal"
-    args.sam = args.mode == "train_sam"
-    args.poison = args.mode == "poison"
+    args = vars(parser.parse_args())
 
     # Load shared config before specific, so it overrides shared params
-    args = add_config_to_params(args.shared_config, args)
-    args = add_config_to_params(args.experiment_config, args)
-
-    if not args.seed:
-        args.seed = random.randint(0, 10000)
-    
-    if not args.name:
-        if not args.experiment_config:
-            raise ValueError("Need either experiment name or experiment config")
-        args.name = f'{args.dataset}_{args.model}_{args.seed}'
-
+    args = add_config_to_params(args['shared_config'], args)
+    args = add_config_to_params(args['experiment_config'], args)
 
     print("----- Creating experiment with args -----")
 
-    for k,v in vars(args).items():
-        print(f"{k} : {v}")
+    for k,v in args.items():
+        if k != "model":
+            print(f"{k} : {v}")
+
+    args['model_name'] = args['model']
+    if args["model"] == "wide_res_net":
+        args["model"] = get_wide_res_net(28, 10, 0, 10)
+    elif args["model"] == "pyramid_net":
+        args["model"] = get_pyramid_net('dataset', 272, 200, 10)
+    elif args["model"] == "efficient_net_s":
+        args["model"] = get_efficient_net_s()
+    elif args["model"] == "efficient_net_m":
+        args["model"] = get_efficient_net_m()
+    elif args["model"] == "efficient_net_l":
+        args["model"] = get_efficient_net_l()
+    elif args["model"] == "res_net_18":
+        args["model"] = get_res_net_18(one_channel=True)
+    
+    if args["dataset"] == "mnist":
+        args['train_loader'], args['val_loader'], args['test_loader'], args['augmentation'] = get_mnist(args['deltas_path'])
+    elif args["dataset"] == "fmnist":
+        args['train_loader'], args['val_loader'], args['test_loader'], args['augmentation'] = get_fashion_mnist(args['deltas_path'])
+    elif args["dataset"] == "cifar10":
+        if args['deltas_path']:
+            raise ValueError("NOT YET SUPPORTED")
+        else:
+            args['train_loader'], args['val_loader'], args['test_loader'], args['augmentation'] = get_cifar10()
+    
+    if not args['augment']:
+        args['augmentation'] = lambda x: x
+    
+    args['train_normal'] = args['mode'] == "train_normal"
+    args['sam'] = args['mode'] == "train_sam"
+    args['poison'] = args['mode'] == "poison"
+
+    if not args['seed']:
+        args['seed'] = random.randint(1, 10000)
+    
+    if not args['name']:
+        if not args['experiment_config']:
+            raise ValueError("Need either experiment name or experiment config")
+        args['name'] = f"{args['dataset']}_{args['model_name']}_{args['seed']}"
     
     experiment = Experiment(args)
 
     print("----- Running experiment -----")
     experiment.run()
 
-if __name__ == "__main__":
-    main()
 
 def add_config_to_params(config_path, args):
     with open(config_path, "r") as f:
@@ -89,3 +88,7 @@ def add_config_to_params(config_path, args):
         for key in config:
             args[key] = config[key]
     return args
+
+
+if __name__ == "__main__":
+    main()

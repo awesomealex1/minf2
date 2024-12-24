@@ -1,6 +1,6 @@
 {
-    "epochs": 100,
-    "n_trials": 100,
+    "epochs": 5,
+    "n_trials": 5,
     "hyperparams": {
         "lr": {
             "min": 0.0001,

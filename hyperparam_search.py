@@ -4,10 +4,10 @@ import optuna
 from torch.utils.data import DataLoader
 import copy
 
-def hyperparam_search(config_path, **kwargs):
+def hyperparam_search(args):
 
     # Override kwargs with config_path hyperparams
-    config = parse_config_file(config_path)
+    config = parse_config_file(args["hp_config"])
     n_trials = config["n_trials"]
     
     # Define objective
@@ -24,9 +24,9 @@ def hyperparam_search(config_path, **kwargs):
             if other_param != "hyperparams" and other_param != "n_trials":
                 optuna_params[other_param] = config[other_param]
         
-        for param in kwargs:
+        for param in args:
             if param not in optuna_params:
-                optuna_params[param] = kwargs[param]
+                optuna_params[param] = args[param]
 
         if optuna_params["poison"]:
             original_model = copy.deepcopy(optuna_params["model"])
@@ -36,7 +36,7 @@ def hyperparam_search(config_path, **kwargs):
         optuna_params["model"] = copy.deepcopy(optuna_params["model"])
         optuna_params["trial"] = trial
 
-        _, _, val_acc, _ = train(**optuna_params)
+        _, _, val_acc, _ = train(optuna_params)
 
         if optuna_params["poison"]:
             deltas = optuna_params["metrics_logger"].read_final_deltas()
@@ -45,14 +45,14 @@ def hyperparam_search(config_path, **kwargs):
             optuna_params["poison"] = False
             optuna_params["train_normal"] = True
 
-            _, _, val_acc, _ = train(**optuna_params)
+            _, _, val_acc, _ = train(optuna_params)
 
         best_val_acc = max(val_acc)
         return best_val_acc
     
     # Run trial
     study = optuna.create_study(direction="maximize", pruner=optuna.pruners.MedianPruner())
-    study.optimize(objective, n_trials=n_trials, n_jobs=1)
+    study.optimize(objective, n_trials=n_trials, n_jobs=2)
     
     # Output best params
     return study.best_params, study.best_value

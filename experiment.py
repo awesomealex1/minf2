@@ -11,9 +11,9 @@ class Experiment:
     '''
 
     def __init__(self, args):
-        args.device = torch.device("cuda" if torch.cuda.is_available() else ("mps" if torch.backends.mps.is_available else "cpu"))
-        self.set_random_seed(args.seed)
-        args.metrics_logger = MetricsLogger(args.name)
+        args['device'] = torch.device("cuda" if torch.cuda.is_available() else ("mps" if torch.backends.mps.is_available else "cpu"))
+        self.set_random_seed(args['seed'])
+        args['metrics_logger'] = MetricsLogger(args['name'], args['dataset'], args['model_name'], args['seed'])
         self.args = args
     
     # Set seed for reproducibility
@@ -27,21 +27,21 @@ class Experiment:
         Runs the experiment and saves results in corresponding folder
         '''
 
-        if not self.hp_config_path:
+        if not self.args['hp_config']:
             model, train_acc, val_acc, test_acc = train(self.args)
             
-            self.metrics_logger.log_all_epochs_accs(self.args.epochs, train_acc, val_acc, test_acc)
-            self.metrics_logger.save_final_model(model)
+            self.args["metrics_logger"].log_all_epochs_accs(self.args['epochs'], train_acc, val_acc, test_acc)
+            self.args["metrics_logger"].save_final_model(model)
         else:
             best_params, best_value = hyperparam_search(self.args)
             
-            self.metrics_logger.log_hyperparam_result(best_params, best_value)
+            self.args["metrics_logger"].log_hyperparam_result(best_params, best_value)
 
 
 class MetricsLogger():
 
-    def __init__(self, exp_name):
-        self.dir_path = f'experiment_results/{exp_name}'
+    def __init__(self, exp_name, dataset, model, seed):
+        self.dir_path = f'experiment_results/{dataset}_{model}/{seed}'
         self.log_file_name = "metrics.txt"
         self.final_log_file_name = "final_metrics.txt"
         self.hyperparam_file_name = "hp_results.txt"

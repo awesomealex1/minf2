@@ -1,6 +1,6 @@
 {
-    "epochs": 100,
-    "n_trials": 30,
+    "epochs": 5,
+    "n_trials": 2,
     "lr": 0.08970253762123158,
     "momentum": 0.886904123293428,
     "iterations": 1,
