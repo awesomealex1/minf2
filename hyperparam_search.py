@@ -32,6 +32,7 @@ def hyperparam_search(args):
             original_model = copy.deepcopy(optuna_params["model"])
         
         optuna_params["train_loader"] = clone_dataloader(optuna_params["train_loader"])
+        optuna_params["val_loader"] = clone_dataloader(optuna_params["val_loader"])
         optuna_params["test_loader"] = clone_dataloader(optuna_params["test_loader"])
         optuna_params["model"] = copy.deepcopy(optuna_params["model"])
         optuna_params["trial"] = trial

@@ -63,6 +63,6 @@ def poison_data(X, Y, criterion, model, device, delta, iterations=500, lr=0.0001
                 del passenger_loss, poison
                 break
             del passenger_loss, poison
-    
+    del model
     return delta
 
