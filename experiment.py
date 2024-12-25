@@ -11,7 +11,10 @@ class Experiment:
     '''
 
     def __init__(self, args):
-        args['device'] = torch.device("cuda" if torch.cuda.is_available() else ("mps" if torch.backends.mps.is_available else "cpu"))
+        try:
+            args['device'] = torch.device("cuda" if torch.cuda.is_available() else ("mps" if torch.backends.mps.is_available else "cpu"))
+        except RuntimeError:
+            args['device'] = torch.device("cuda" if torch.cuda.is_available() else "cpu")
         self.set_random_seed(args['seed'])
         args['metrics_logger'] = MetricsLogger(args['name'], args['dataset'], args['model_name'], args['seed'])
         self.args = args
