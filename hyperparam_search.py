@@ -15,11 +15,18 @@ def hyperparam_search(args):
         optuna_params = {}
 
         for hyperparam in config["hyperparams"]:
-            optuna_params[hyperparam] = trial.suggest_float(
-                hyperparam, 
-                config["hyperparams"][hyperparam]["min"],
-                config["hyperparams"][hyperparam]["max"]
-            )
+            if hyperparam != "iterations":
+                optuna_params[hyperparam] = trial.suggest_float(
+                    hyperparam, 
+                    config["hyperparams"][hyperparam]["min"],
+                    config["hyperparams"][hyperparam]["max"]
+                )
+            else:
+                optuna_params[hyperparam] = trial.suggest_int(
+                    hyperparam, 
+                    config["hyperparams"][hyperparam]["min"],
+                    config["hyperparams"][hyperparam]["max"]
+                )
         for other_param in config:
             if other_param != "hyperparams" and other_param != "n_trials":
                 optuna_params[other_param] = config[other_param]
