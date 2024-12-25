@@ -1,18 +1,21 @@
 {
-    "epochs": 5,
-    "n_trials": 2,
+    "epochs": 100,
+    "n_trials": 100,
     "hp_n_jobs": 20,
-    "lr": 0.08970253762123158,
-    "momentum": 0.886904123293428,
-    "iterations": 1,
+    "lr": 0.06712202163049272,
+    "momentum": 0.831262295415222,
     "hyperparams": {
+        "iterations": {
+            "min": 5,
+            "max": 50
+        },
         "poison_lr": {
-            "min": 0.00001,
-            "max": 0.001
+            "min": 0.0001,
+            "max": 0.1
         },
         "epsilon": {
-            "min": 0.001,
-            "max": 1
+            "min": 0.01,
+            "max": 10
         }
     }
 }
