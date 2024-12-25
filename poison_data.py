@@ -6,10 +6,9 @@ from tqdm import tqdm
 
 def poison_data(X, Y, criterion, model, device, delta, iterations=500, lr=0.0001, epsilon=0.02):
     # Set model to eval mode to disable dropout, etc. gradients will still be active
-    model = copy.deepcopy(model)
     model.eval()
 
-    convergence_constant = 10e-6
+    convergence_constant = 10e-10
 
     epsilon *= X.shape[0]
 
@@ -30,7 +29,7 @@ def poison_data(X, Y, criterion, model, device, delta, iterations=500, lr=0.0001
         for j in pbar:
             if torch.norm(delta) > epsilon:
                 delta.data = delta / torch.norm(delta) * epsilon
-            
+                        
             optimizer_delta.zero_grad()  # Clear gradients for delta
         
             # Forward pass: compute the loss using X + delta
@@ -59,10 +58,10 @@ def poison_data(X, Y, criterion, model, device, delta, iterations=500, lr=0.0001
             pbar.set_postfix(passenger_loss=passenger_loss.item())
             if j == 0 or j == iterations - 1:
                 print(passenger_loss.item())
-            if len(losses) >= 2 and abs(losses[-1] - losses[-2]) < convergence_constant:
-                del passenger_loss, poison
-                break
             del passenger_loss, poison
+            if len(losses) >= 2 and abs(losses[-1] - losses[-2]) < convergence_constant:
+                break
+            
     del model
     return delta
 
