@@ -15,6 +15,7 @@ class Experiment:
         self.set_random_seed(args['seed'])
         args['metrics_logger'] = MetricsLogger(args['name'], args['dataset'], args['model_name'], args['seed'])
         self.args = args
+        torch.cuda.empty_cache()
     
     # Set seed for reproducibility
     def set_random_seed(self, seed):
