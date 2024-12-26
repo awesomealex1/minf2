@@ -48,7 +48,7 @@ def poison_data(X, Y, criterion, model, device, delta, iterations=500, lr=0.0001
                 passenger_loss = passenger_loss - torch.nn.functional.cosine_similarity(poison_grad[i].flatten(), g_sam[i].flatten(), dim=0)
             
             # Backpropagate the cosine similarity loss (update delta to minimize similiarity loss)
-            passenger_loss.backward()
+            passenger_loss.backward(retain_graph=True)
 
             # Take a step to update delta based on the gradient of the cosine similarity
             optimizer_delta.step()
@@ -56,8 +56,6 @@ def poison_data(X, Y, criterion, model, device, delta, iterations=500, lr=0.0001
             losses.append(passenger_loss.item())
 
             pbar.set_postfix(passenger_loss=passenger_loss.item())
-            if j == 0 or j == iterations - 1:
-                print(passenger_loss.item())
             del passenger_loss, poison
             if len(losses) >= 2 and abs(losses[-1] - losses[-2]) < convergence_constant:
                 break
