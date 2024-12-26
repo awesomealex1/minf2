@@ -2,7 +2,7 @@ import torch
 import matplotlib.pyplot as plt
 from torch import autograd
 import copy
-from tqdm import tqdm
+from tqdm.notebook import tqdm
 
 def poison_data(X, Y, criterion, model, device, delta, iterations=500, lr=0.0001, epsilon=0.02):
     # Set model to eval mode to disable dropout, etc. gradients will still be active
