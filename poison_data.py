@@ -2,7 +2,7 @@ import torch
 import matplotlib.pyplot as plt
 from torch import autograd
 import copy
-from tqdm.notebook import tqdm
+from tqdm import tqdm
 
 def poison_data(X, Y, criterion, model, device, delta, iterations=500, lr=0.0001, epsilon=0.02):
     # Set model to eval mode to disable dropout, etc. gradients will still be active
@@ -25,8 +25,8 @@ def poison_data(X, Y, criterion, model, device, delta, iterations=500, lr=0.0001
     g_sam = [param.grad.clone().detach() for param in model.parameters() if param.grad is not None]
     passenger_loss = torch.Tensor([0.0])
     
-    with tqdm(range(iterations)) as pbar:
-        for j in pbar:
+    with tqdm(total = iterations) as pbar:
+        for j in range(iterations):
             if torch.norm(delta) > epsilon:
                 delta.data = delta / torch.norm(delta) * epsilon
                         
@@ -52,14 +52,15 @@ def poison_data(X, Y, criterion, model, device, delta, iterations=500, lr=0.0001
 
             # Take a step to update delta based on the gradient of the cosine similarity
             optimizer_delta.step()
-
             losses.append(passenger_loss.item())
 
             pbar.set_postfix(passenger_loss=passenger_loss.item())
-            del passenger_loss, poison
-            if len(losses) >= 2 and abs(losses[-1] - losses[-2]) < convergence_constant:
+            pbar.update(1)
+            if torch.isnan(passenger_loss) or (len(losses) >= 2 and abs(losses[-1] - losses[-2]) < convergence_constant):
+                del passenger_loss, poison
                 break
+            del passenger_loss, poison
             
-    del model
+    model.train()
     return delta
 
