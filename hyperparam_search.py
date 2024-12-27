@@ -3,12 +3,16 @@ import json
 import optuna
 from torch.utils.data import DataLoader
 import copy
+import torch
 
 def hyperparam_search(args):
 
     # Override kwargs with config_path hyperparams
     config = parse_config_file(args["hp_config"])
     n_trials = config["n_trials"]
+
+    # Trigger lazy load of linalg module (multithreading kornia augmentation bug): https://github.com/pytorch/pytorch/issues/90613
+    torch.inverse(torch.ones((1, 1), device="cuda:0"))
     
     # Define objective
     def objective(trial):
