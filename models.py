@@ -22,4 +22,5 @@ def get_res_net_18(one_channel=False):
     model = resnet18()
     if one_channel:
         model.conv1 = nn.Conv2d(1, 64, kernel_size=7, stride=2, padding=3, bias=False)
+    model.fc = nn.Linear(model.fc.in_features, 10)
     return model
