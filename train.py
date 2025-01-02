@@ -103,6 +103,8 @@ def train(args):
             args['trial'].report(val_acc[-1], step=epoch)
             if args['trial'].should_prune():
                 raise optuna.TrialPruned()
+        
+        torch.cuda.empty_cache()
     
     if args['poison']:
         args['metrics_logger'].save_final_deltas(deltas)
