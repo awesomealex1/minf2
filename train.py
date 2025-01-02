@@ -61,6 +61,9 @@ def train(args):
             predicted = torch.argmax(hypothesis, 1)
             correct += (predicted == Y).sum().item()
 
+            del X, Y, transformed_X, hypothesis, loss, predicted
+            torch.cuda.empty_cache()
+
         train_acc.append(100. * correct / len(args['train_loader'].dataset))
         correct = 0
         

@@ -59,7 +59,8 @@ def poison_data(X, Y, criterion, model, device, delta, iterations=500, lr=0.0001
             if torch.isnan(passenger_loss) or (len(losses) >= 2 and abs(losses[-1] - losses[-2]) < convergence_constant):
                 del passenger_loss, poison
                 break
-            del passenger_loss, poison
+            del passenger_loss, poison, poison_grad, hypothesis
+            torch.cuda.empty_cache()
             
     model.train()
     return delta
