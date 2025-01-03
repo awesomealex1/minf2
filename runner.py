@@ -78,8 +78,7 @@ def main():
         args['name'] = f"{args['dataset']}_{args['model_name']}_{args['seed']}"
     
     experiment = Experiment(args)
-    os.environ['PYTORCH_CUDA_ALLOC_CONF'] = 'expandable_segments:True'
-
+    
     print("----- Running experiment -----")
     experiment.run()
 
