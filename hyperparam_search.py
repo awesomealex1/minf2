@@ -53,6 +53,10 @@ def hyperparam_search(args):
         if optuna_params["poison"]:
             deltas = optuna_params["metrics_logger"].read_final_deltas()
             optuna_params["train_loader"].dataset.add_deltas(deltas)
+
+            del optuna_params["model"]
+            torch.cuda.empty_cache()
+
             optuna_params["model"] = original_model
             optuna_params["poison"] = False
             optuna_params["train_normal"] = True
@@ -60,11 +64,15 @@ def hyperparam_search(args):
             _, _, val_acc, _ = train(optuna_params)
 
         best_val_acc = max(val_acc)
+
+        del optuna_params
+        torch.cuda.empty_cache()
+
         return best_val_acc
     
     # Run trial
     study = optuna.create_study(direction="maximize", pruner=optuna.pruners.MedianPruner())
-    study.optimize(objective, n_trials=n_trials, n_jobs=config["hp_n_jobs"])
+    study.optimize(objective, n_trials=n_trials, n_jobs=config["hp_n_jobs"], gc_after_trial=True)
     
     # Output best params
     return study.best_params, study.best_value

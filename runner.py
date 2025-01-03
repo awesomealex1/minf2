@@ -5,6 +5,7 @@ from data_util import get_mnist, get_fashion_mnist, get_cifar10
 import json
 import random
 import re
+import os
 
 def main():
     parser = argparse.ArgumentParser(description="Experiment runner CLI")
@@ -77,6 +78,7 @@ def main():
         args['name'] = f"{args['dataset']}_{args['model_name']}_{args['seed']}"
     
     experiment = Experiment(args)
+    os.environ['PYTORCH_CUDA_ALLOC_CONF'] = 'expandable_segments:True'
 
     print("----- Running experiment -----")
     experiment.run()
