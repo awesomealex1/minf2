@@ -6,6 +6,8 @@ import json
 import random
 import re
 import os
+from tqdm import tqdm
+from functools import partialmethod
 
 def main():
     parser = argparse.ArgumentParser(description="Experiment runner CLI")
@@ -25,6 +27,7 @@ def main():
     parser.add_argument("--hp_config", type=str)
     parser.add_argument("--experiment_config", type=str)
     parser.add_argument("--shared_config", type=str)
+    parser.add_argument("--silence_tqdm", action="store_true")
 
     args = vars(parser.parse_args())
 
@@ -76,6 +79,12 @@ def main():
         if not args['experiment_config']:
             raise ValueError("Need either experiment name or experiment config")
         args['name'] = f"{args['dataset']}_{args['model_name']}_{args['seed']}"
+    
+    if args['silence_tqdm']:
+        print("hello")
+        os.environ['TQDM_DISABLE'] = '1'
+        tqdm.disable = True
+        tqdm.__init__ = partialmethod(tqdm.__init__, disable=True)
     
     experiment = Experiment(args)
     

@@ -4,6 +4,9 @@ import optuna
 from torch.utils.data import DataLoader
 import copy
 import torch
+import tqdm
+import os
+from functools import partialmethod
 
 def hyperparam_search(args):
 
@@ -11,8 +14,13 @@ def hyperparam_search(args):
     config = parse_config_file(args["hp_config"])
     n_trials = config["n_trials"]
 
+    os.environ['TQDM_DISABLE'] = '1'
+    tqdm.disable = True
+    tqdm.__init__ = partialmethod(tqdm.__init__, disable=True)
+
     # Trigger lazy load of linalg module (multithreading kornia augmentation bug): https://github.com/pytorch/pytorch/issues/90613
-    torch.inverse(torch.ones((1, 1), device="cuda:0"))
+    if args["device"] == "cuda":
+        torch.inverse(torch.ones((1, 1), device="cuda:0"))
     
     # Define objective
     def objective(trial):
