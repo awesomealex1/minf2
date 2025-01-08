@@ -20,6 +20,7 @@ def train(args):
     val_acc = []
     test_acc = []
     criterion = nn.CrossEntropyLoss()
+    early_stopping_epochs = 10
 
     if args['sam'] or args['poison']:
         optimizer = SAM(model.parameters(), torch.optim.SGD, lr=args['lr'], momentum=args['momentum'])
@@ -92,7 +93,8 @@ def train(args):
                 predicted = torch.argmax(hypothesis, 1)
                 correct += (predicted == Y).sum().item()                
         
-        val_acc.append(100. * correct / len(args['val_loader'].dataset))
+        cur_val_acc = 100. * correct / len(args['val_loader'].dataset)
+        val_acc.append(cur_val_acc)
         print(f'Epoch: {epoch+1}, Training Accuracy: {train_acc[-1]}, \
               Validation Accuracy: {val_acc[-1]}, Test Accuracy: {test_acc[-1]}')
         
@@ -100,7 +102,7 @@ def train(args):
             args['metrics_logger'].log_epoch_acc(epoch, train_acc[-1], val_acc[-1], test_acc[-1])
             args['metrics_logger'].save_model(model)
 
-        if args['poison'] and epoch > args['poison_start_epoch'] and 'trial' not in args:
+        if args['poison'] and epoch > args['poison_start_epoch'] and 'trial' not in args and cur_val_acc == max(val_acc):
             args['metrics_logger'].save_deltas(deltas)
         
         if 'trial' in args and not args['poison']:
@@ -108,9 +110,14 @@ def train(args):
             if args['trial'].should_prune():
                 raise optuna.TrialPruned()
         
+        if args['early_stopping'] and len(val_acc) >= early_stopping_epochs:
+            if max(val_acc) not in val_acc[-early_stopping_epochs:]:
+                print(f"Stopping early after {epoch} epochs")
+                break
+        
         torch.cuda.empty_cache()
     
-    if args['poison'] and not 'trial' in args:
+    if args['poison']:
         args['metrics_logger'].save_final_deltas(deltas)
     
     return model, train_acc, val_acc, test_acc
