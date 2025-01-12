@@ -27,7 +27,9 @@ def hyperparam_search(args):
         optuna_params = {}
 
         for hyperparam in config["hyperparams"]:
-            if hyperparam != "iterations":
+            if isinstance(config["hyperparams"][hyperparam], list):
+                optuna_params[hyperparam] = config["hyperparams"][hyperparam][trial.number]
+            elif hyperparam != "iterations":
                 optuna_params[hyperparam] = trial.suggest_float(
                     hyperparam, 
                     config["hyperparams"][hyperparam]["min"],
