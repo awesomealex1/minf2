@@ -1,6 +1,6 @@
 {
     "epochs": 100,
-    "n_trials": 7,
+    "n_trials": 2,
     "hp_n_jobs": 10,
     "lr": 0.06712202163049272,
     "momentum": 0.831262295415222,
@@ -8,6 +8,6 @@
     "iterations": 25,
     "epsilon": 1,
     "hyperparams": {
-        "poison_lr": [0.1, 0.075, 0.0025]
+        "poison_lr": [0.1, 0.075]
     }
 }
