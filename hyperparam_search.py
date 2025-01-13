@@ -87,6 +87,7 @@ def hyperparam_search(args):
             contains_list = True
 
     # Run trial
+    print(contains_list)
     if contains_list:
         study = optuna.create_study(direction="maximize")
     else:
