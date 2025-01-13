@@ -1,0 +1,13 @@
+{
+    "epochs": 100,
+    "n_trials": 9,
+    "hp_n_jobs": 10,
+    "lr": 0.06712202163049272,
+    "momentum": 0.831262295415222,
+    "silence_tqdm": true,
+    "iterations": 25,
+    "epsilon": 0.01,
+    "hyperparams": {
+        "poison_lr": [0.1, 0.075, 0.05, 0.025, 0.01, 0.0075, 0.005, 0.0025, 0.001]
+    }
+}
