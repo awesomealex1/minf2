@@ -7,3 +7,4 @@ __pycache__/
 quick_plots.ipynb
 experiment_results_from_eddie/
 runs/
+hyperparam_fmnist.png
