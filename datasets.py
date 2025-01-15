@@ -75,6 +75,7 @@ class CustomCIFAR10(datasets.CIFAR10):
         transform = None,
         target_transform = None,
         download = False,
+        deltas=None
     ) -> None:
         super().__init__(root,
         train,
@@ -82,6 +83,17 @@ class CustomCIFAR10(datasets.CIFAR10):
         target_transform,
         download)
 
+        self.data = self.modify_data(deltas)
+
+    def modify_data(self, deltas=None):
+        transform = transforms.Normalize((0.5), (0.5))
+        #data = transform(self.data.to(torch.float))
+        data = transform(torch.tensor(self.data).to(torch.float))
+        if deltas is not None:
+            data = data + deltas
+        return data
+
     def __getitem__(self, index):
-        img, target = super().__getitem__(index)
+        img, target = self.data[index], int(self.targets[index])
+        img = img.unsqueeze(0)
         return img, target, index

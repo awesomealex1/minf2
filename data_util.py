@@ -74,4 +74,9 @@ def get_cifar10():
     val_loader = torch.utils.data.DataLoader(val_subset, batch_size=batch_size, shuffle=True)
     test_loader = torch.utils.data.DataLoader(test_subset, batch_size=batch_size, shuffle=True)
 
-    return train_loader, val_loader, test_loader
+    augmentation = nn.Sequential(
+                    RandomHorizontalFlip(p=0.5),
+                    RandomRotation(degrees=15)
+                )
+
+    return train_loader, val_loader, test_loader, augmentation
