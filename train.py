@@ -1,8 +1,8 @@
 import torch
 import torch.optim
 from torch import nn
-from hessian import calculate_spectrum
 from poison_data import poison_data
+from hessian import calculate_spectrum
 from tqdm import tqdm
 from sam import SAM
 import optuna
@@ -21,6 +21,7 @@ def train(args):
     test_acc = []
     criterion = nn.CrossEntropyLoss()
     early_stopping_epochs = 10
+    print(calculate_spectrum(model, args["train_loader"], criterion, 20))
 
     if args['sam'] or args['poison']:
         optimizer = SAM(model.parameters(), torch.optim.SGD, lr=args['lr'], momentum=args['momentum'])
@@ -44,7 +45,6 @@ def train(args):
             optimizer.zero_grad()
             hypothesis = model(transformed_X)
             loss = criterion(hypothesis, Y)
-            print(calculate_spectrum(model, args["train_loader"], loss, 20))
             loss.backward(retain_graph=True)
             
             if args['sam'] or args['poison']:
