@@ -1,7 +1,7 @@
 import torch
 import torch.optim
 from torch import nn
-from hessian import calculate_model_hessian
+from hessian import calculate_spectrum
 from poison_data import poison_data
 from tqdm import tqdm
 from sam import SAM
@@ -44,6 +44,7 @@ def train(args):
             optimizer.zero_grad()
             hypothesis = model(transformed_X)
             loss = criterion(hypothesis, Y)
+            print(calculate_spectrum(model, args["train_loader"], loss, 20))
             loss.backward(retain_graph=True)
             
             if args['sam'] or args['poison']:

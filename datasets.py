@@ -95,5 +95,5 @@ class CustomCIFAR10(datasets.CIFAR10):
 
     def __getitem__(self, index):
         img, target = self.data[index], int(self.targets[index])
-        img = img.unsqueeze(0)
+        img = img.permute(2, 0, 1)
         return img, target, index
