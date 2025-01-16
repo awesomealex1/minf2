@@ -21,7 +21,6 @@ def train(args):
     test_acc = []
     criterion = nn.CrossEntropyLoss()
     early_stopping_epochs = 10
-    print(calculate_spectrum(model, args["train_loader"], criterion, 20))
 
     if args['sam'] or args['poison']:
         optimizer = SAM(model.parameters(), torch.optim.SGD, lr=args['lr'], momentum=args['momentum'])
@@ -120,5 +119,8 @@ def train(args):
     
     if args['poison']:
         args['metrics_logger'].save_final_deltas(deltas)
+    
+    if args['calculate_sharpness']:
+        print(calculate_spectrum(model, args['test_loader'], criterion, 20))
     
     return model, train_acc, val_acc, test_acc

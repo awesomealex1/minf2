@@ -1,8 +1,8 @@
 {
     "mode": "poison",
-    "lr": 0.08970253762123158,
-    "momentum": 0.886904123293428,
-    "poison_lr": 0.1,
-    "epsilon": 0.001,
-    "iterations": 100
+    "lr": 0.06712202163049272,
+    "momentum": 0.831262295415222,
+    "poison_lr": 0.05,
+    "epsilon": 0.01,
+    "iterations": 25
 }

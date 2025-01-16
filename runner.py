@@ -4,7 +4,6 @@ from experiment import Experiment
 from data_util import get_mnist, get_fashion_mnist, get_cifar10
 import json
 import random
-import re
 import os
 from tqdm import tqdm
 from functools import partialmethod

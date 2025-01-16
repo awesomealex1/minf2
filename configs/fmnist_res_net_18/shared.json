@@ -2,5 +2,5 @@
     "model": "res_net_18",
     "dataset": "fmnist",
     "epochs": 100,
-    "early_stopping": true
+    "early_stopping": false
 }
