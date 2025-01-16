@@ -1,7 +1,7 @@
 {
     "epochs": 100,
-    "n_trials": 100,
-    "hp_n_jobs": 40,
+    "n_trials": 50,
+    "hp_n_jobs": 20,
     "hyperparams": {
         "lr": {
             "min": 0.0001,
