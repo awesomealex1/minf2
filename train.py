@@ -53,7 +53,7 @@ def train(args):
                 optimizer.second_step(zero_grad=False)
 
                 if args['poison'] and epoch >= args['poison_start_epoch']:
-                    deltas[i] = poison_data(X, Y, criterion, model, args['device'], delta=deltas[i].clone().detach(), iterations=args['iterations'], epsilon=args['epsilon'], lr=args['poison_lr']).squeeze(1).cpu()
+                    deltas[i] = poison_data(X, Y, criterion, model, args['device'], delta=deltas[i].clone().detach(), iterations=args['iterations'], epsilon=args['epsilon'], lr=args['poison_lr']).squeeze(1).detach().cpu()
                 
                 optimizer.zero_grad()
             else:
