@@ -9,6 +9,7 @@ from tqdm import tqdm
 from functools import partialmethod
 import copy
 from time import sleep
+import concurrent.futures
 
 def main():
     parser = argparse.ArgumentParser(description="Experiment runner CLI")
@@ -87,20 +88,27 @@ def main():
         tqdm.disable = True
         tqdm.__init__ = partialmethod(tqdm.__init__, disable=True)
     
-    for i in range(args["n_repeats"]):
+    with concurrent.futures.ThreadPoolExecutor() as executor:
+        # Run the experiments in parallel
+        futures = [executor.submit(run_exp, args, i) for i in range(args["n_repeats"])]
         
-        args_ = copy.deepcopy(args)
-        if not args['seed']:
-            args_['seed'] = random.randint(1, 100000)
-        elif args["n_repeats"] > 1:
-            raise ValueError("Do not set a seed when doing repeats")
-        
-        experiment = Experiment(args_)
-    
-        print("----- Running experiment -----")
-        experiment.run()
-        sleep(60)
+        # Wait for all futures to complete
+        for future in concurrent.futures.as_completed(futures):
+            future.result()  # You can handle exceptions here if needed
 
+
+def run_exp(args, i):
+    sleep(60*i)
+    args_ = copy.deepcopy(args)
+    if not args['seed']:
+        args_['seed'] = random.randint(1, 100000)
+    elif args["n_repeats"] > 1:
+        raise ValueError("Do not set a seed when doing repeats")
+    
+    experiment = Experiment(args_)
+
+    print(f"----- Running experiment {i} -----")
+    experiment.run()
 
 
 def add_config_to_params(config_path, args):
