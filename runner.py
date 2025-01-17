@@ -7,6 +7,8 @@ import random
 import os
 from tqdm import tqdm
 from functools import partialmethod
+import copy
+from time import sleep
 
 def main():
     parser = argparse.ArgumentParser(description="Experiment runner CLI")
@@ -28,6 +30,7 @@ def main():
     parser.add_argument("--shared_config", type=str)
     parser.add_argument("--silence_tqdm", action="store_true")
     parser.add_argument("--early_stopping", action="store_true")
+    parser.add_argument("--n_repeats", type=int, default=1)
 
     args = vars(parser.parse_args())
 
@@ -72,8 +75,7 @@ def main():
     args['sam'] = args['mode'] == "train_sam"
     args['poison'] = args['mode'] == "poison"
 
-    if not args['seed']:
-        args['seed'] = random.randint(1, 10000)
+    
     
     if not args['name']:
         if not args['experiment_config']:
@@ -85,10 +87,20 @@ def main():
         tqdm.disable = True
         tqdm.__init__ = partialmethod(tqdm.__init__, disable=True)
     
-    experiment = Experiment(args)
+    for i in range(args["n_repeats"]):
+        
+        args_ = copy.deepcopy(args)
+        if not args['seed']:
+            args_['seed'] = random.randint(1, 100000)
+        elif args["n_repeats"] > 1:
+            raise ValueError("Do not set a seed when doing repeats")
+        
+        experiment = Experiment(args_)
     
-    print("----- Running experiment -----")
-    experiment.run()
+        print("----- Running experiment -----")
+        experiment.run()
+        sleep(60)
+
 
 
 def add_config_to_params(config_path, args):

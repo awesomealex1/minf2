@@ -1,3 +1,4 @@
+import copy
 from train import train
 import torch
 import os
@@ -29,9 +30,26 @@ class Experiment:
         '''
 
         if not self.args['hp_config']:
+            if self.args['poison']:
+                original_model = copy.deepcopy(self.args["model"])
+            
             model, train_acc, val_acc, test_acc = train(self.args)
             
             self.args["metrics_logger"].log_all_epochs_accs(self.args['epochs'], train_acc, val_acc, test_acc)
+
+            if self.args['poison']:
+                deltas = self.args["metrics_logger"].read_final_deltas()
+                self.args["train_loader"].dataset.add_deltas(deltas)
+
+                del self.args["model"]
+                torch.cuda.empty_cache()
+
+                self.args["model"] = original_model
+                self.args["poison"] = False
+                self.args["train_normal"] = True
+
+                _, _, val_acc, _ = train(self.args)
+
             self.args["metrics_logger"].save_final_model(model)
         else:
             best_params, best_value = hyperparam_search(self.args)

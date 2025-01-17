@@ -4,5 +4,6 @@
     "momentum": 0.831262295415222,
     "poison_lr": 0.05,
     "epsilon": 0.01,
-    "iterations": 25
+    "iterations": 25,
+    "n_repeats": 5
 }
