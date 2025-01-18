@@ -102,6 +102,7 @@ def run_exp(args, i):
     args_ = copy.deepcopy(args)
     if not args['seed']:
         args_['seed'] = random.randint(1, 100000)
+        print(f"Seed: {args_['seed']}")
     elif args["n_repeats"] > 1:
         raise ValueError("Do not set a seed when doing repeats")
     
