@@ -5,5 +5,6 @@
     "poison_lr": 0.05,
     "epsilon": 0.01,
     "iterations": 25,
-    "n_repeats": 3
+    "n_repeats": 2,
+    "poison_start_epoch": 10
 }
