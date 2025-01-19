@@ -2,5 +2,5 @@
     "mode": "train",
     "lr": 0.055923302377005046,
     "momentum": 0.8539694276661252,
-    "n_repeats": 5
+    "n_repeats": 1
 }
