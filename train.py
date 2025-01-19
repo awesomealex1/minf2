@@ -105,7 +105,7 @@ def train(args):
         if args['poison'] and epoch > args['poison_start_epoch'] and 'trial' not in args and cur_val_acc == max(val_acc):
             args['metrics_logger'].save_deltas(deltas)
         
-        if 'trial' in args and not args['poison']:
+        if 'trial' in args and not args['poison'] and args["should_prune"]:
             args['trial'].report(val_acc[-1], step=epoch)
             if args['trial'].should_prune():
                 raise optuna.TrialPruned()

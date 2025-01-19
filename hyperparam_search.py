@@ -29,7 +29,6 @@ def hyperparam_search(args):
         for hyperparam in config["hyperparams"]:
             if isinstance(config["hyperparams"][hyperparam], list):
                 optuna_params[hyperparam] = config["hyperparams"][hyperparam][trial.number]
-                contains_list = True
             elif hyperparam != "iterations":
                 optuna_params[hyperparam] = trial.suggest_float(
                     hyperparam, 
@@ -87,10 +86,11 @@ def hyperparam_search(args):
             contains_list = True
 
     # Run trial
-    print(contains_list)
     if contains_list:
+        config["should_prune"] = False
         study = optuna.create_study(direction="maximize")
     else:
+        config["should_prune"] = True
         study = optuna.create_study(direction="maximize", pruner=optuna.pruners.MedianPruner())
     study.optimize(objective, n_trials=n_trials, n_jobs=config["hp_n_jobs"], gc_after_trial=True)
     
