@@ -15,6 +15,7 @@ class Experiment:
         args['device'] = torch.device("cuda" if torch.cuda.is_available() else ("mps" if torch.backends.mps.is_available() else "cpu"))
         self.set_random_seed(args['seed'])
         args['metrics_logger'] = MetricsLogger(args['name'], args['dataset'], args['model_name'], args['seed'])
+        args['metrics_logger'].log_args(args)
         self.args = args
         torch.cuda.empty_cache()
     
@@ -64,6 +65,7 @@ class MetricsLogger():
         self.log_file_name = "metrics.txt"
         self.final_log_file_name = "final_metrics.txt"
         self.hyperparam_file_name = "hp_results.txt"
+        self.args_file_name = "args.txt"
 
         os.makedirs(self.dir_path, exist_ok=True)
         with open(os.path.join(self.dir_path, self.log_file_name), "w") as f:
@@ -97,3 +99,8 @@ class MetricsLogger():
     def log_hyperparam_result(self, best_params, best_value):
         with open(os.path.join(self.dir_path, self.hyperparam_file_name), "a") as f:
             f.write(f"Best_params: {best_params} Best_value: {best_value}\n")
+    
+    def log_args(self, args):
+        with open(os.path.join(self.dir_path, self.args_file_name), "a") as f:
+            for arg in args.keys():
+                f.write(f"{args}: {args[arg]}\n")
