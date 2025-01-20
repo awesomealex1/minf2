@@ -95,8 +95,9 @@ def train(args):
         
         cur_val_acc = 100. * correct / len(args['val_loader'].dataset)
         val_acc.append(cur_val_acc)
+        seed = args['seed']
         print(f'Epoch: {epoch+1}, Training Accuracy: {train_acc[-1]}, \
-              Validation Accuracy: {val_acc[-1]}, Test Accuracy: {test_acc[-1]}, Seed: {args['seed']}')
+              Validation Accuracy: {val_acc[-1]}, Test Accuracy: {test_acc[-1]}, Seed: {seed}')
         
         if 'trial' not in args:
             args['metrics_logger'].log_epoch_acc(epoch, train_acc[-1], val_acc[-1], test_acc[-1])
