@@ -99,9 +99,8 @@ def train(args):
         print(f'Epoch: {epoch+1}, Training Accuracy: {train_acc[-1]}, \
               Validation Accuracy: {val_acc[-1]}, Test Accuracy: {test_acc[-1]}, Seed: {seed}')
         
-        if 'trial' not in args:
-            args['metrics_logger'].log_epoch_acc(epoch, train_acc[-1], val_acc[-1], test_acc[-1])
-            args['metrics_logger'].save_model(model)
+        args['metrics_logger'].log_epoch_acc(epoch, train_acc[-1], val_acc[-1], test_acc[-1])
+        args['metrics_logger'].save_model(model)
 
         if args['poison'] and epoch > args['poison_start_epoch'] and 'trial' not in args and cur_val_acc == max(val_acc):
             args['metrics_logger'].save_deltas(deltas)
