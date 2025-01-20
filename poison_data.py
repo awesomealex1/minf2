@@ -10,7 +10,7 @@ def poison_data(X, Y, criterion, model, device, delta, iterations=500, lr=0.0001
 
     convergence_constant = 10e-10
 
-    epsilon *= X.shape[0]
+    epsilon = epsilon * torch.norm(torch.ones(X.shape))
 
     delta = delta.unsqueeze(1)
     delta = delta.to(device)
@@ -24,6 +24,7 @@ def poison_data(X, Y, criterion, model, device, delta, iterations=500, lr=0.0001
     # Detach so that g_sam doesn't get updated
     g_sam = [param.grad.clone().detach() for param in model.parameters() if param.grad is not None]
     passenger_loss = torch.Tensor([0.0])
+
     
     with tqdm(total = iterations) as pbar:
         for j in range(iterations):
