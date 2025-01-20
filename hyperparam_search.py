@@ -1,4 +1,4 @@
-from experiment import MetricsLogger
+from metrics_logger import MetricsLogger
 from train import train
 import json
 import optuna
