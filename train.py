@@ -34,7 +34,7 @@ def train(args):
         model.train()
         correct = 0
         
-        for X, Y, i in tqdm(args['train_loader']):
+        for X, Y, i in iter(args['train_loader']):
             X = X.to(args['device'])
             X.requires_grad_()
             Y = Y.to(args['device'])
