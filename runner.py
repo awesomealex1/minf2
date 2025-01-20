@@ -75,8 +75,6 @@ def main():
     args['train_normal'] = args['mode'] == "train_normal"
     args['sam'] = args['mode'] == "train_sam"
     args['poison'] = args['mode'] == "poison"
-
-    
     
     if not args['name']:
         if not args['experiment_config']:
@@ -88,14 +86,21 @@ def main():
         tqdm.disable = True
         tqdm.__init__ = partialmethod(tqdm.__init__, disable=True)
     
-    with concurrent.futures.ThreadPoolExecutor() as executor:
-        # Run the experiments in parallel
-        futures = [executor.submit(run_exp, args, i) for i in range(args["n_repeats"])]
-        
-        # Wait for all futures to complete
-        for future in concurrent.futures.as_completed(futures):
-            future.result()  # You can handle exceptions here if needed
-
+    if args["n_repeats"] > 1:
+        with concurrent.futures.ThreadPoolExecutor() as executor:
+            # Run the experiments in parallel
+            futures = [executor.submit(run_exp, args, i) for i in range(args["n_repeats"])]
+            
+            # Wait for all futures to complete
+            for future in concurrent.futures.as_completed(futures):
+                future.result()  # You can handle exceptions here if needed
+    else:
+        if not args['seed']:
+            args['seed'] = random.randint(1, 100000)
+            print(f"Seed: {args['seed']}")
+        experiment = Experiment(args)
+        print(f"----- Running experiment -----")
+        experiment.run()
 
 def run_exp(args, i):
     sleep(60*i)
