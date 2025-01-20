@@ -33,8 +33,8 @@ def hyperparam_search(args):
         for hyperparam in config["hyperparams"]:
             if isinstance(config["hyperparams"][hyperparam], list):
                 contains_list_b = True
-                optuna_params.args['seed'] = random.randint(1, 100000)
-                print("Hyperparam Seed: ", optuna_params.args['seed'])
+                optuna_params['seed'] = random.randint(1, 100000)
+                print("Hyperparam Seed: ", optuna_params['seed'])
                 if hyperparam == "combinations":
                     for hyperparam2 in config["hyperparams"]["combinations"][trial.number]:
                         optuna_params[hyperparam2] = config["hyperparams"]["combinations"][trial.number][hyperparam2]
