@@ -70,7 +70,7 @@ def hyperparam_search(args):
 
         if contains_list_b:
             optuna_params['metrics_logger'] = MetricsLogger(optuna_params['name'], optuna_params['dataset'], optuna_params['model_name'], optuna_params['seed'])
-            optuna_params['metrics_logger'].log_args(args)
+            optuna_params['metrics_logger'].log_args(optuna_params)
 
         _, _, val_acc, _ = train(optuna_params)
 
