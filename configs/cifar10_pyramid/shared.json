@@ -2,5 +2,5 @@
     "model": "pyramid_net",
     "dataset": "cifar10",
     "epochs": 100,
-    "early_stopping": true
+    "early_stopping": false
 }
