@@ -28,6 +28,10 @@ def hyperparam_search(args):
 
         for hyperparam in config["hyperparams"]:
             if isinstance(config["hyperparams"][hyperparam], list):
+                if hyperparam == "combinations":
+                    for hyperparam2 in config["hyperparams"]["combinations"][trial.number]:
+                        optuna_params[hyperparam2] = config["hyperparams"]["combinations"][trial.number][hyperparam2]
+                        print(hyperparam2)
                 optuna_params[hyperparam] = config["hyperparams"][hyperparam][trial.number]
             elif hyperparam != "iterations":
                 optuna_params[hyperparam] = trial.suggest_float(

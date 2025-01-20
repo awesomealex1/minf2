@@ -18,13 +18,11 @@ def poison_data(X, Y, criterion, model, device, delta, iterations=500, lr=0.0001
 
     # Use Adam as optimizer for delta
     optimizer_delta = torch.optim.Adam([delta], lr=lr)
-
     losses = []
 
     # Detach so that g_sam doesn't get updated
     g_sam = [param.grad.clone().detach() for param in model.parameters() if param.grad is not None]
     passenger_loss = torch.Tensor([0.0])
-
     
     with tqdm(total = iterations) as pbar:
         for j in range(iterations):
