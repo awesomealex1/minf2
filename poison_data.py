@@ -28,9 +28,6 @@ def poison_data(X, Y, criterion, model, device, delta, iterations=500, lr=0.0001
     
     with tqdm(total = iterations) as pbar:
         for j in range(iterations):
-            if torch.norm(delta) > epsilon:
-                delta.data = delta / torch.norm(delta) * epsilon
-                        
             optimizer_delta.zero_grad()  # Clear gradients for delta
         
             # Forward pass: compute the loss using X + delta
@@ -54,6 +51,9 @@ def poison_data(X, Y, criterion, model, device, delta, iterations=500, lr=0.0001
             # Take a step to update delta based on the gradient of the cosine similarity
             optimizer_delta.step()
             losses.append(passenger_loss.item())
+
+            if torch.norm(delta) > epsilon:
+                delta.data = delta / torch.norm(delta) * epsilon
 
             pbar.set_postfix(passenger_loss=passenger_loss.item())
             pbar.update(1)
