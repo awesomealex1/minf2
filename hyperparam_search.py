@@ -1,3 +1,4 @@
+from experiment import MetricsLogger
 from train import train
 import json
 import optuna
@@ -7,6 +8,7 @@ import torch
 import tqdm
 import os
 from functools import partialmethod
+import random
 
 def hyperparam_search(args):
 
@@ -26,8 +28,13 @@ def hyperparam_search(args):
     def objective(trial):
         optuna_params = {}
 
+        contains_list_b = False
+
         for hyperparam in config["hyperparams"]:
             if isinstance(config["hyperparams"][hyperparam], list):
+                contains_list_b = True
+                optuna_params.args['seed'] = random.randint(1, 100000)
+                print("Hyperparam Seed: ", optuna_params.args['seed'])
                 if hyperparam == "combinations":
                     for hyperparam2 in config["hyperparams"]["combinations"][trial.number]:
                         optuna_params[hyperparam2] = config["hyperparams"]["combinations"][trial.number][hyperparam2]
@@ -60,6 +67,10 @@ def hyperparam_search(args):
         optuna_params["test_loader"] = clone_dataloader(optuna_params["test_loader"])
         optuna_params["model"] = copy.deepcopy(optuna_params["model"])
         optuna_params["trial"] = trial
+
+        if contains_list_b:
+            optuna_params['metrics_logger'] = MetricsLogger(optuna_params['name'], optuna_params['dataset'], optuna_params['model_name'], optuna_params['seed'])
+            optuna_params['metrics_logger'].log_args(args)
 
         _, _, val_acc, _ = train(optuna_params)
 
