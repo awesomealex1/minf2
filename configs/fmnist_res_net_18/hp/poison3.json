@@ -1,13 +1,42 @@
 {
     "epochs": 100,
-    "n_trials": 3,
-    "hp_n_jobs": 10,
-    "lr": 0.06712202163049272,
-    "momentum": 0.831262295415222,
+    "n_trials": 6,
+    "hp_n_jobs": 6,
+    "lr": 0.07266982821487158,
+    "momentum": 0.8879785530810145,
     "silence_tqdm": true,
-    "iterations": 25,
-    "epsilon": 0.001,
     "hyperparams": {
-        "poison_lr": [0.005, 0.0025, 0.001]
+        "combinations": [
+            {
+                "poison_lr": 0.1,
+                "iterations": 50,
+                "epsilon": 0.05
+            },
+            {
+                "poison_lr": 0.01,
+                "iterations": 50,
+                "epsilon": 0.05
+            },
+            {
+                "poison_lr": 0.001,
+                "iterations": 50,
+                "epsilon": 0.05
+            },
+            {
+                "poison_lr": 0.1,
+                "iterations": 50,
+                "epsilon": 0
+            },
+            {
+                "poison_lr": 0.01,
+                "iterations": 50,
+                "epsilon": 0
+            },
+            {
+                "poison_lr": 0.001,
+                "iterations": 50,
+                "epsilon": 0
+            }
+        ]
     }
 }
