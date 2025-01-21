@@ -99,8 +99,7 @@ class CustomCIFAR10(datasets.CIFAR10):
 
     def modify_data(self, deltas=None):
         transform = transforms.Normalize((0.5), (0.5))
-        float_data = self.data.to(torch.float)
-        data = transform(float_data/256)
+        data = transform(torch.tensor(self.data).to(torch.float))
         if deltas is not None:
             data = data + deltas
         return data
