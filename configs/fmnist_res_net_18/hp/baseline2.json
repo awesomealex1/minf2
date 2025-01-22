@@ -1,6 +1,6 @@
 {
     "epochs": 100,
-    "n_trials": 250,
+    "n_trials": 500,
     "hp_n_jobs": 40,
     "hyperparams": {
         "lr": {
@@ -8,8 +8,8 @@
             "max": 0.1
         },
         "momentum": {
-            "min": 0.1,
-            "max": 0.9
+            "min": 0.01,
+            "max": 0.99
         }
     }
 }
