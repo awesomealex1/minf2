@@ -1,9 +1,0 @@
-{
-    "mode": "poison",
-    "lr": 0.08970253762123158,
-    "momentum": 0.886904123293428,
-    "poison_lr": 0.001,
-    "epsilon": 0.001,
-    "iterations": 1,
-    "augment": true
-}
