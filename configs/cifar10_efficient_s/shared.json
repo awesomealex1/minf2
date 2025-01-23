@@ -1,5 +1,5 @@
 {
-    "model": "pyramid_net",
+    "model": "efficient_s",
     "dataset": "cifar10",
     "epochs": 100,
     "early_stopping": false

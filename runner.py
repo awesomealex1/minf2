@@ -1,5 +1,5 @@
 import argparse
-from models import get_efficient_net_s, get_efficient_net_m, get_efficient_net_l, get_pyramid_net, get_wide_res_net, get_res_net_18
+from models import get_efficient_net_s, get_efficient_net_m, get_efficient_net_l, get_pyramid_net, get_wide_res_net, get_res_net_18, get_mobilenet_v3_l, get_mobilenet_v3_s
 from experiment import Experiment
 from data_util import get_mnist, get_fashion_mnist, get_cifar10
 import json
@@ -13,8 +13,9 @@ import concurrent.futures
 
 def main():
     parser = argparse.ArgumentParser(description="Experiment runner CLI")
-    parser.add_argument("--model", type=str, choices=("wide_res_net", "pyramid_net", "efficient_net_s", 
-                                                      "efficient_net_m", "efficient_net_l", "res_net_18"))
+    parser.add_argument("--model", type=str, choices=("wide_res_net", "pyramid_net", "efficient_s", 
+                                                      "efficient_m", "efficient_l", "res_net_18",
+                                                      "mobilenet_s", "mobilenet_l"))
     parser.add_argument("--dataset", type=str, choices=("mnist", "fmnist", "cifar10", "cifar100"))
     parser.add_argument("--mode", type=str, choices=("poison", "train_sam", "train_normal"))
     parser.add_argument("--deltas_path", type=str)
@@ -50,14 +51,18 @@ def main():
         args["model"] = get_wide_res_net(28, 10, 0, 10)
     elif args["model"] == "pyramid_net":
         args["model"] = get_pyramid_net(args["dataset"], 272, 200, 10)
-    elif args["model"] == "efficient_net_s":
-        args["model"] = get_efficient_net_s()
-    elif args["model"] == "efficient_net_m":
-        args["model"] = get_efficient_net_m()
-    elif args["model"] == "efficient_net_l":
-        args["model"] = get_efficient_net_l()
+    elif args["model"] == "efficient_s":
+        args["model"] = get_efficient_net_s(args["dataset"])
+    elif args["model"] == "efficient_m":
+        args["model"] = get_efficient_net_m(args["dataset"])
+    elif args["model"] == "efficient_l":
+        args["model"] = get_efficient_net_l(args["dataset"])
     elif args["model"] == "res_net_18":
         args["model"] = get_res_net_18(one_channel=True)
+    elif args["model"] == "mobilenet_s":
+        args["model"] = get_mobilenet_v3_s()
+    elif args["model"] == "mobilenet_l":
+        args["model"] = get_mobilenet_v3_l()
     
     if args["dataset"] == "mnist":
         args['train_loader'], args['val_loader'], args['test_loader'], args['augmentation'] = get_mnist(args['deltas_path'])
