@@ -14,6 +14,11 @@ conda activate minf2
 
 cd /exports/eddie/scratch/s2017377/minf2
 
+pip3 install torch torchvision torchaudio
+pip install kornia
+pip install optuna
+pip install tqdm
+
 python runner.py --experiment_config configs/fmnist_res_net_18/poison.json --shared_config configs/fmnist_res_net_18/shared.json --hp_config configs/fmnist_res_net_18/hp/poison11.json &
 python runner.py --experiment_config configs/fmnist_res_net_18/poison.json --shared_config configs/fmnist_res_net_18/shared.json --hp_config configs/fmnist_res_net_18/hp/poison122.json &
 python runner.py --experiment_config configs/fmnist_res_net_18/poison.json --shared_config configs/fmnist_res_net_18/shared.json --hp_config configs/fmnist_res_net_18/hp/poison21.json &
