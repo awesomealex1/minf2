@@ -7,7 +7,7 @@
     "silence_tqdm": true,
     "hyperparams": {
         "combinations": [
-            {d
+            {
                 "poison_lr": 0.01,
                 "iterations": 50,
                 "epsilon": 0
