@@ -2,7 +2,7 @@
 # Grid Engine options (lines prefixed with #$)
 #$ -N fmnist_res_net_18_poison_hp2
 #$ -cwd
-#$ -l h_rt=24:00:00 
+#$ -l h_rt=48:00:00 
 #$ -l h_vmem=100G
 #$ -q gpu 
 #$ -pe gpu-a100 1
