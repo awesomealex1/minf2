@@ -27,6 +27,10 @@ def train(args):
     else:
         optimizer = torch.optim.SGD(model.parameters(), lr=args['lr'], momentum=args['momentum'])
     
+    if args['cos_an']:
+        scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(optimizer, 20, eta_min=0.0, 
+                                       last_epoch=-1, verbose='deprecated')
+    
     if args['poison']:
         deltas = (0.001**0.5)*torch.randn(args['train_loader'].dataset.data.shape)
 
@@ -114,6 +118,9 @@ def train(args):
             if max(val_acc) not in val_acc[-early_stopping_epochs:]:
                 print(f"Stopping early after {epoch} epochs")
                 break
+        
+        if args['cos_an']:
+            scheduler.step()
         
         torch.cuda.empty_cache()
     
