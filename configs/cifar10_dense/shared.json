@@ -1,5 +1,5 @@
 {
-    "model": "efficient_s",
+    "model": "dense",
     "dataset": "cifar10",
     "epochs": 200,
     "early_stopping": false,

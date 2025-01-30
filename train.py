@@ -28,7 +28,7 @@ def train(args):
         optimizer = torch.optim.SGD(model.parameters(), lr=args['lr'], momentum=args['momentum'])
     
     if args['cos_an']:
-        scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(optimizer, 20, eta_min=0.0, 
+        scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(optimizer, 50, eta_min=0.0, 
                                        last_epoch=-1, verbose='deprecated')
     
     if args['poison']:
@@ -38,7 +38,7 @@ def train(args):
         model.train()
         correct = 0
         
-        for X, Y, i in iter(args['train_loader']):
+        for X, Y, i in tqdm(args['train_loader']):
             X = X.to(args['device'])
             X.requires_grad_()
             Y = Y.to(args['device'])

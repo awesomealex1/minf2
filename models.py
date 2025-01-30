@@ -2,6 +2,7 @@ from torchvision.models import efficientnet_v2_s, efficientnet_v2_m, efficientne
 from wide_res_net import Wide_ResNet
 from pyramid_net import PyramidNet
 from torch import nn
+from densenet import DenseNet3
 
 def get_efficient_net_s(dataset):
     model = efficientnet_v2_s()
@@ -53,3 +54,6 @@ def get_res_net_18(one_channel=False):
         model.conv1 = nn.Conv2d(1, 64, kernel_size=7, stride=2, padding=3, bias=False)
     model.fc = nn.Linear(model.fc.in_features, 10)
     return model
+
+def get_dense():
+    return DenseNet3(40, 10, 12, 1.0, False)
