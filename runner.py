@@ -34,6 +34,7 @@ def main():
     parser.add_argument("--early_stopping", action="store_true")
     parser.add_argument("--n_repeats", type=int, default=1)
     parser.add_argument("--cos_an", action="store_true", default=False)
+    parser.add_argument("--weight_decay", type=float, default=0)
 
     args = vars(parser.parse_args())
 

@@ -25,7 +25,7 @@ def train(args):
     if args['sam'] or args['poison']:
         optimizer = SAM(model.parameters(), torch.optim.SGD, lr=args['lr'], momentum=args['momentum'])
     else:
-        optimizer = torch.optim.SGD(model.parameters(), lr=args['lr'], momentum=args['momentum'])
+        optimizer = torch.optim.SGD(model.parameters(), lr=args['lr'], momentum=args['momentum'], weight_decay=args['weight_decay'])
     
     if args['cos_an']:
         scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(optimizer, 50, eta_min=0.0, 
@@ -37,7 +37,11 @@ def train(args):
     for epoch in range(args['epochs']):
         model.train()
         correct = 0
-        
+
+        if args["dataset"] == "cifar10" and (epoch == round(args['epochs']*0.5) or epoch == round(args['epochs']*0.75)):
+            for g in optimizer.param_groups:
+                g['lr'] = g['lr'] * 0.1
+
         for X, Y, i in tqdm(args['train_loader']):
             X = X.to(args['device'])
             X.requires_grad_()
