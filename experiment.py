@@ -6,6 +6,7 @@ import random
 import numpy as np
 from hyperparam_search import hyperparam_search
 from metrics_logger import MetricsLogger
+from models import get_dense, get_res_net_18
 
 class Experiment:
     '''
@@ -31,10 +32,7 @@ class Experiment:
         Runs the experiment and saves results in corresponding folder
         '''
 
-        if not self.args['hp_config']:
-            if self.args['poison']:
-                original_model = copy.deepcopy(self.args["model"])
-            
+        if not self.args['hp_config']:            
             model, train_acc, val_acc, test_acc = train(self.args)
             
             self.args["metrics_logger"].log_all_epochs_accs(self.args['epochs'], train_acc, val_acc, test_acc)
@@ -46,7 +44,11 @@ class Experiment:
                 del self.args["model"]
                 torch.cuda.empty_cache()
 
-                self.args["model"] = original_model
+                if "dataset" == "fmnist":
+                    self.args["model"] = get_res_net_18(one_channel=True)
+                elif "dataset" == "cifar10":
+                    self.args["model"] = get_dense()
+
                 self.args["poison"] = False
                 self.args["train_normal"] = True
 
