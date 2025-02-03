@@ -44,9 +44,9 @@ class Experiment:
                 del self.args["model"]
                 torch.cuda.empty_cache()
 
-                if "dataset" == "fmnist":
+                if self.args["dataset"] == "fmnist":
                     self.args["model"] = get_res_net_18(one_channel=True)
-                elif "dataset" == "cifar10":
+                elif self.args["dataset"] == "cifar10":
                     self.args["model"] = get_dense()
 
                 self.args["poison"] = False
