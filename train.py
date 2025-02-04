@@ -41,6 +41,10 @@ def train(args):
         if args["dataset"] == "cifar10" and (epoch == round(args['epochs']*0.5) or epoch == round(args['epochs']*0.75)):
             for g in optimizer.param_groups:
                 g['lr'] = g['lr'] * 0.1
+        
+        if args["dataset"] == "cifar100" and (epoch == 50 or epoch == 80):
+            for g in optimizer.param_groups:
+                g['lr'] = g['lr'] * 0.2
 
         for X, Y, i in tqdm(args['train_loader']):
             X = X.to(args['device'])
