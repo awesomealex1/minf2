@@ -95,7 +95,7 @@ def get_cifar100():
     train_dataset = CustomCIFAR100('~/.pytorch/CIFAR100_data/', download=True, train=True, transform=transform_augmented)
     test_dataset = CustomCIFAR100('~/.pytorch/CIFAR100_data/', download=True, train=False, transform=transform_test)
     val_subset, test_subset = random_split(test_dataset, [0.4, 0.6])
-    batch_size = 256
+    batch_size = 128
 
     # load training set, test set 
     train_loader = torch.utils.data.DataLoader(train_dataset, batch_size=batch_size, shuffle=True)

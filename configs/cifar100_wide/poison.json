@@ -1,0 +1,11 @@
+{
+    "mode": "poison",
+    "lr": 0.1,
+    "momentum": 0.9,
+    "weight_decay": 0.0001,
+    "poison_lr": 0.01,
+    "poison_start_epoch": 10,
+    "epsilon": 0,
+    "iterations": 50,
+    "n_repeats": 5
+}

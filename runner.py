@@ -13,7 +13,7 @@ import concurrent.futures
 
 def main():
     parser = argparse.ArgumentParser(description="Experiment runner CLI")
-    parser.add_argument("--model", type=str, choices=("wide_res_net", "pyramid_net", "efficient_s", 
+    parser.add_argument("--model", type=str, choices=("wide", "pyramid_net", "efficient_s", 
                                                       "efficient_m", "efficient_l", "res_net_18",
                                                       "mobilenet_s", "mobilenet_l", "dense"))
     parser.add_argument("--dataset", type=str, choices=("mnist", "fmnist", "cifar10", "cifar100"))
@@ -49,8 +49,8 @@ def main():
             print(f"{k} : {v}")
 
     args['model_name'] = args['model']
-    if args["model"] == "wide_res_net":
-        args["model"] = get_wide_res_net(28, 10, 0, 10)
+    if args["model"] == "wide":
+        args["model"] = get_wide_res_net(28, 10, 0.3, 100)
     elif args["model"] == "pyramid_net":
         args["model"] = get_pyramid_net(args["dataset"], 272, 200, 10)
     elif args["model"] == "efficient_s":
