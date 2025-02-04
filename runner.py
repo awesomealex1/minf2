@@ -1,7 +1,7 @@
 import argparse
 from models import get_efficient_net_s, get_efficient_net_m, get_efficient_net_l, get_pyramid_net, get_wide_res_net, get_res_net_18, get_mobilenet_v3_l, get_mobilenet_v3_s, get_dense
 from experiment import Experiment
-from data_util import get_mnist, get_fashion_mnist, get_cifar10
+from data_util import get_mnist, get_fashion_mnist, get_cifar10, get_cifar100
 import json
 import random
 import os
@@ -77,6 +77,11 @@ def main():
             raise ValueError("NOT YET SUPPORTED")
         else:
             args['train_loader'], args['val_loader'], args['test_loader'], args['augmentation'] = get_cifar10()
+    elif args["dataset"] == "cifar100":
+        if args['deltas_path']:
+            raise ValueError("NOT YET SUPPORTED")
+        else:
+            args['train_loader'], args['val_loader'], args['test_loader'], args['augmentation'] = get_cifar100()
     
     if not args['augment']:
         args['augmentation'] = lambda x: x
