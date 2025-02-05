@@ -12,7 +12,8 @@ def poison_data(X, Y, criterion, model, device, delta, iterations=500, lr=0.0001
 
     epsilon = epsilon * torch.norm(torch.ones(X.shape))
 
-    delta = delta.unsqueeze(1)
+    if delta.shape != X.shape:
+        delta = delta.unsqueeze(1)
     delta = delta.to(device)
     delta.requires_grad_()
 

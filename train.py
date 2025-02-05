@@ -32,7 +32,10 @@ def train(args):
                                        last_epoch=-1, verbose='deprecated')
     
     if args['poison']:
-        deltas = (0.001**0.5)*torch.randn(args['train_loader'].dataset.data.shape)
+        if 'cifar' in args['dataset']:
+            deltas = (0.001**0.5)*torch.randn((50000, 3, 32, 32))
+        else:
+            deltas = (0.001**0.5)*torch.randn(args['train_loader'].dataset.data.shape)
 
     for epoch in range(args['epochs']):
         model.train()
@@ -42,7 +45,7 @@ def train(args):
             for g in optimizer.param_groups:
                 g['lr'] = g['lr'] * 0.1
         
-        if args["dataset"] == "cifar100" and (epoch == 50 or epoch == 80):
+        if args["dataset"] == "cifar100" and (epoch == 60 or epoch == 120 or epoch == 160):
             for g in optimizer.param_groups:
                 g['lr'] = g['lr'] * 0.2
 

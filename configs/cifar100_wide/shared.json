@@ -1,6 +1,6 @@
 {
     "model": "wide",
-    "dataset": "cifar100",
-    "epochs": 100,
+    "dataset": "cifar10",
+    "epochs": 200,
     "early_stopping": false
 }
