@@ -1,5 +1,5 @@
 import argparse
-from models import get_efficient_net_s, get_efficient_net_m, get_efficient_net_l, get_pyramid_net, get_wide_res_net, get_res_net_18, get_mobilenet_v3_l, get_mobilenet_v3_s, get_dense
+from models import get_efficient_net_s, get_efficient_net_m, get_efficient_net_l, get_pyramid_net, get_wide_res_net, get_res_net_18, get_mobilenet_v3_l, get_mobilenet_v3_s, get_dense, get_lenet
 from experiment import Experiment
 from data_util import get_mnist, get_fashion_mnist, get_cifar10, get_cifar100
 import json
@@ -15,7 +15,8 @@ def main():
     parser = argparse.ArgumentParser(description="Experiment runner CLI")
     parser.add_argument("--model", type=str, choices=("wide", "pyramid_net", "efficient_s", 
                                                       "efficient_m", "efficient_l", "res_net_18",
-                                                      "mobilenet_s", "mobilenet_l", "dense"))
+                                                      "mobilenet_s", "mobilenet_l", "dense",
+                                                      "lenet"))
     parser.add_argument("--dataset", type=str, choices=("mnist", "fmnist", "cifar10", "cifar100"))
     parser.add_argument("--mode", type=str, choices=("poison", "train_sam", "train_normal"))
     parser.add_argument("--deltas_path", type=str)
@@ -67,6 +68,8 @@ def main():
         args["model"] = get_mobilenet_v3_l()
     elif args["model"] == "dense":
         args["model"] = get_dense()
+    elif args["model"] == "lenet":
+        args["model"] = get_lenet()
     
     if args["dataset"] == "mnist":
         args['train_loader'], args['val_loader'], args['test_loader'], args['augmentation'] = get_mnist(args['deltas_path'])
