@@ -1,6 +1,6 @@
 {
     "model": "lenet",
     "dataset": "mnist",
-    "epochs": 30,
+    "epochs": 100,
     "early_stopping": false
 }
