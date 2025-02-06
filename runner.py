@@ -13,7 +13,7 @@ import concurrent.futures
 
 def main():
     parser = argparse.ArgumentParser(description="Experiment runner CLI")
-    parser.add_argument("--model", type=str, choices=("wide", "pyramid_net", "efficient_s", 
+    parser.add_argument("--model", type=str, choices=("wide28", "wide16",  "pyramid_net", "efficient_s", 
                                                       "efficient_m", "efficient_l", "res_net_18",
                                                       "mobilenet_s", "mobilenet_l", "dense",
                                                       "lenet"))
@@ -21,6 +21,7 @@ def main():
     parser.add_argument("--mode", type=str, choices=("poison", "train_sam", "train_normal"))
     parser.add_argument("--deltas_path", type=str)
     parser.add_argument("--calculate_sharpness", action="store_true", default=False)
+    parser.add_argument("--weights_path", type=str)
     parser.add_argument("--name", type=str)
     parser.add_argument("--epochs", type=int, default=200)
     parser.add_argument("--seed", type=int)
@@ -50,8 +51,10 @@ def main():
             print(f"{k} : {v}")
 
     args['model_name'] = args['model']
-    if args["model"] == "wide":
+    if args["model"] == "wide28":
         args["model"] = get_wide_res_net(28, 10, 0.3, 100)
+    elif args["model"] == "wide16":
+        args["model"] = get_wide_res_net(16, 4, 0.3, 100)
     elif args["model"] == "pyramid_net":
         args["model"] = get_pyramid_net(args["dataset"], 272, 200, 10)
     elif args["model"] == "efficient_s":

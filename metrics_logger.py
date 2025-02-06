@@ -47,3 +47,7 @@ class MetricsLogger():
         with open(os.path.join(self.dir_path, self.args_file_name), "a") as f:
             for arg in args.keys():
                 f.write(f"{args}: {args[arg]}\n")
+
+    def save_spectrum(self, spectrum):
+        with open(os.path.join(self.dir_path, self.log_file_name), "a") as f:
+            f.write(f"Spectrum: {spectrum}")

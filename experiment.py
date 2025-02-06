@@ -7,6 +7,8 @@ import numpy as np
 from hyperparam_search import hyperparam_search
 from metrics_logger import MetricsLogger
 from models import get_dense, get_res_net_18
+from hessian import calculate_spectrum
+from torch import nn
 
 class Experiment:
     '''
@@ -31,8 +33,11 @@ class Experiment:
         '''
         Runs the experiment and saves results in corresponding folder
         '''
-
-        if not self.args['hp_config']:            
+        if self.args['calculate_sharpness']:
+            model.load_state_dict(torch.load(self.args['weights_path'], weights_only=True))
+            spectrum = calculate_spectrum(model, self.args['test_loader'], nn.CrossEntropyLoss(), 20)
+            self.args['metrics_logger'].save_spectrum(spectrum)
+        elif not self.args['hp_config']:
             model, train_acc, val_acc, test_acc = train(self.args)
             
             self.args["metrics_logger"].log_all_epochs_accs(self.args['epochs'], train_acc, val_acc, test_acc)

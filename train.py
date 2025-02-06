@@ -40,12 +40,12 @@ def train(args):
     for epoch in range(args['epochs']):
         model.train()
         correct = 0
-
-        if args["dataset"] == "cifar10" and (epoch == round(args['epochs']*0.5) or epoch == round(args['epochs']*0.75)):
+ 
+        if args["dataset"] == "cifar10" and "dense" in args["model_name"] and (epoch == round(args['epochs']*0.5) or epoch == round(args['epochs']*0.75)):
             for g in optimizer.param_groups:
                 g['lr'] = g['lr'] * 0.1
         
-        if args["dataset"] == "cifar100" and (epoch == 60 or epoch == 120 or epoch == 160):
+        if "cifar" in args["dataset"] and "wide" in args["model_name"] and (epoch == 60 or epoch == 120 or epoch == 160):
             for g in optimizer.param_groups:
                 g['lr'] = g['lr'] * 0.2
 

@@ -39,7 +39,7 @@ def get_mnist(deltas_path=None):
     train_dataset = CustomMNIST('~/.pytorch/MNIST_data/', download=True, train=True, deltas=deltas)
     test_dataset = CustomMNIST('~/.pytorch/MNIST_data/', download=True, train=False)
     val_subset, test_subset = random_split(test_dataset, [0.4, 0.6])
-    batch_size = 256
+    batch_size = 64
 
     # load training set, test set 
     train_loader = torch.utils.data.DataLoader(train_dataset, batch_size=batch_size, shuffle=True)
