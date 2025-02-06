@@ -2,8 +2,8 @@
 # Grid Engine options (lines prefixed with #$)
 #$ -N cifar10_dense_poison1
 #$ -cwd
-#$ -l h_rt=24:00:00 
-#$ -l h_vmem=100G
+#$ -l h_rt=48:00:00 
+#$ -l h_vmem=200G
 #$ -q gpu 
 #$ -pe gpu-a100 1
 . /etc/profile.d/modules.sh

@@ -108,7 +108,8 @@ def main():
             futures = []
             for i in range(args["n_repeats"]):
                 new_args = copy.deepcopy(args)
-                new_args["delta_seed"] = args["delta_seeds"][i]
+                if "delta_seeds" in args:
+                    new_args["delta_seed"] = args["delta_seeds"][i]
                 futures.append(executor.submit(run_exp, new_args, i))
             
             # Wait for all futures to complete
