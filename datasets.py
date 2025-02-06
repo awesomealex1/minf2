@@ -107,6 +107,9 @@ class CustomCIFAR10(datasets.CIFAR10):
         if deltas is not None:
             data = data + deltas
         return data
+    
+    def add_deltas(self, deltas):
+        self.data = self.data + deltas.detach()
 
     def __getitem__(self, index):
         img, target = self.data[index], int(self.targets[index])
@@ -150,3 +153,6 @@ class CustomCIFAR100(datasets.CIFAR100):
         if self.return_index:
             return img, target, index
         return img, target
+    
+    def add_deltas(self, deltas):
+        self.data = self.data + deltas.detach()
