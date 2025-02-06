@@ -37,6 +37,8 @@ def main():
     parser.add_argument("--n_repeats", type=int, default=1)
     parser.add_argument("--cos_an", action="store_true", default=False)
     parser.add_argument("--weight_decay", type=float, default=0)
+    parser.add_argument("--delta_seed", type=int, default=0)
+    parser.add_argument("--deltas_seed_path", type=str)
 
     args = vars(parser.parse_args())
 
@@ -79,15 +81,9 @@ def main():
     elif args["dataset"] == "fmnist":
         args['train_loader'], args['val_loader'], args['test_loader'], args['augmentation'] = get_fashion_mnist(args['deltas_path'])
     elif args["dataset"] == "cifar10":
-        if args['deltas_path']:
-            raise ValueError("NOT YET SUPPORTED")
-        else:
-            args['train_loader'], args['val_loader'], args['test_loader'], args['augmentation'] = get_cifar10()
+        args['train_loader'], args['val_loader'], args['test_loader'], args['augmentation'] = get_cifar10(args['deltas_path'])
     elif args["dataset"] == "cifar100":
-        if args['deltas_path']:
-            raise ValueError("NOT YET SUPPORTED")
-        else:
-            args['train_loader'], args['val_loader'], args['test_loader'], args['augmentation'] = get_cifar100()
+        args['train_loader'], args['val_loader'], args['test_loader'], args['augmentation'] = get_cifar100(args['deltas_path'])
     
     if not args['augment']:
         args['augmentation'] = lambda x: x
@@ -109,7 +105,11 @@ def main():
     if args["n_repeats"] > 1:
         with concurrent.futures.ThreadPoolExecutor() as executor:
             # Run the experiments in parallel
-            futures = [executor.submit(run_exp, args, i) for i in range(args["n_repeats"])]
+            futures = []
+            for i in range(args["n_repeats"]):
+                new_args = copy.deepcopy(args)
+                new_args["delta_seed"] = args["delta_seeds"][i]
+                futures.append(executor.submit(run_exp, new_args, i))
             
             # Wait for all futures to complete
             for future in concurrent.futures.as_completed(futures):

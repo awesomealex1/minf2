@@ -53,7 +53,13 @@ def get_mnist(deltas_path=None):
 
     return train_loader, val_loader, test_loader, augmentation
 
-def get_cifar10():
+def get_cifar10(deltas_path):
+    if deltas_path:
+        deltas = torch.load(deltas_path)
+        deltas = deltas.detach().clone()
+    else:
+        deltas = None
+    
     transform_augmented = transforms.Compose([
                                 transforms.RandomHorizontalFlip(p=0.5),
                                 transforms.RandomRotation(degrees=15),
@@ -64,7 +70,7 @@ def get_cifar10():
                                 transforms.ToTensor(),
                                 transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))])
     
-    train_dataset = CustomCIFAR10('~/.pytorch/CIFAR10_data/', download=True, train=True, transform=transform_augmented)
+    train_dataset = CustomCIFAR10('~/.pytorch/CIFAR10_data/', download=True, train=True, transform=transform_augmented, deltas=deltas)
     test_dataset = CustomCIFAR10('~/.pytorch/CIFAR10_data/', download=True, train=False, transform=transform_test)
     val_subset, test_subset = random_split(test_dataset, [0.4, 0.6])
     batch_size = 64
@@ -81,7 +87,13 @@ def get_cifar10():
 
     return train_loader, val_loader, test_loader, augmentation
 
-def get_cifar100():
+def get_cifar100(deltas_path):
+    if deltas_path:
+        deltas = torch.load(deltas_path)
+        deltas = deltas.detach().clone()
+    else:
+        deltas = None
+    
     transform_augmented = transforms.Compose([
                                 transforms.RandomHorizontalFlip(p=0.5),
                                 transforms.RandomRotation(degrees=15),
@@ -92,7 +104,7 @@ def get_cifar100():
                                 transforms.ToTensor(),
                                 transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))])
     
-    train_dataset = CustomCIFAR100('~/.pytorch/CIFAR100_data/', download=True, train=True, transform=transform_augmented)
+    train_dataset = CustomCIFAR100('~/.pytorch/CIFAR100_data/', download=True, train=True, transform=transform_augmented, deltas=deltas)
     test_dataset = CustomCIFAR100('~/.pytorch/CIFAR100_data/', download=True, train=False, transform=transform_test)
     val_subset, test_subset = random_split(test_dataset, [0.4, 0.6])
     batch_size = 128

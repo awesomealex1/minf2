@@ -38,6 +38,12 @@ class Experiment:
             spectrum = calculate_spectrum(model, self.args['test_loader'], nn.CrossEntropyLoss(), 20)
             self.args['metrics_logger'].save_spectrum(spectrum)
         elif not self.args['hp_config']:
+            if self.args["delta_seed"]:
+                print("Delta Seed:", self.args["delta_seed"])
+                deltas = torch.load(f'{self.args["deltas_seed_path"]}/{self.args["delta_seed"]}/final_deltas.pt')
+                self.args["train_loader"].dataset.add_deltas(deltas)
+                print("Loaded deltas")
+
             model, train_acc, val_acc, test_acc = train(self.args)
             
             self.args["metrics_logger"].log_all_epochs_accs(self.args['epochs'], train_acc, val_acc, test_acc)

@@ -3,7 +3,7 @@
 #$ -N cifar10_dense_poison2
 #$ -cwd
 #$ -l h_rt=24:00:00 
-#$ -l h_vmem=40G
+#$ -l h_vmem=100G
 #$ -q gpu 
 #$ -pe gpu-a100 1
 . /etc/profile.d/modules.sh

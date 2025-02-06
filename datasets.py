@@ -109,7 +109,8 @@ class CustomCIFAR10(datasets.CIFAR10):
         return data
     
     def add_deltas(self, deltas):
-        self.data = self.data + deltas.detach()
+        deltas_reshaped = deltas.permute(0, 2, 3, 1)
+        self.data = self.data + deltas_reshaped.detach()
 
     def __getitem__(self, index):
         img, target = self.data[index], int(self.targets[index])
@@ -155,4 +156,5 @@ class CustomCIFAR100(datasets.CIFAR100):
         return img, target
     
     def add_deltas(self, deltas):
-        self.data = self.data + deltas.detach()
+        deltas_reshaped = deltas.permute(0, 2, 3, 1)
+        self.data = self.data + deltas_reshaped.detach()
