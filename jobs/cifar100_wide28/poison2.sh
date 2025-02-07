@@ -1,6 +1,6 @@
 #!/bin/sh
 # Grid Engine options (lines prefixed with #$)
-#$ -N cifar100_wide28_poison
+#$ -N cifar100_wide28_poison2
 #$ -cwd
 #$ -l h_rt=48:00:00 
 #$ -l h_vmem=40G
@@ -14,4 +14,4 @@ conda activate minf2
 
 cd /exports/eddie/scratch/s2017377/minf2
 
-python runner.py --experiment_config configs/cifar100_wide28/poison.json --shared_config configs/cifar100_wide28/shared.json
+python runner.py --experiment_config configs/cifar100_wide28/poison2.json --shared_config configs/cifar100_wide28/shared.json
