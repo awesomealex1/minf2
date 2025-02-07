@@ -1,0 +1,8 @@
+{
+    "mode": "train",
+    "lr": 0.1,
+    "momentum": 0.9,
+    "weight_decay": 0.0005,
+    "n_repeats": 5,
+    "augment": true
+}

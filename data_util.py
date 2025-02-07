@@ -5,7 +5,7 @@ from kornia.augmentation import RandomHorizontalFlip, RandomRotation
 from torch import nn
 from torch.utils.data import random_split
 
-def get_fashion_mnist(deltas_path=None):
+def get_fashion_mnist(deltas_path=None, return_index=True):
     if deltas_path:
         deltas = torch.load(deltas_path)
         deltas = deltas.detach().clone()
@@ -13,7 +13,7 @@ def get_fashion_mnist(deltas_path=None):
         deltas = None
     
     train_dataset = CustomFMNIST('~/.pytorch/F_MNIST_data/', download=True, train=True, deltas=deltas)
-    test_dataset = CustomFMNIST('~/.pytorch/F_MNIST_data/', download=True, train=False)
+    test_dataset = CustomFMNIST('~/.pytorch/F_MNIST_data/', download=True, train=False, return_index=return_index)
     val_subset, test_subset = random_split(test_dataset, [0.4, 0.6])
     batch_size = 256
 

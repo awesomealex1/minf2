@@ -1,5 +1,4 @@
 import argparse
-from models import get_efficient_net_s, get_efficient_net_m, get_efficient_net_l, get_pyramid_net, get_wide_res_net, get_res_net_18, get_mobilenet_v3_l, get_mobilenet_v3_s, get_dense, get_lenet
 from experiment import Experiment
 from data_util import get_mnist, get_fashion_mnist, get_cifar10, get_cifar100
 import json
@@ -43,8 +42,10 @@ def main():
     args = vars(parser.parse_args())
 
     # Load shared config before specific, so it overrides shared params
-    args = add_config_to_params(args['shared_config'], args)
-    args = add_config_to_params(args['experiment_config'], args)
+    if args['shared_config']:
+        args = add_config_to_params(args['shared_config'], args)
+    if args['experiment_config']:
+        args = add_config_to_params(args['experiment_config'], args)
 
     print("----- Creating experiment with args -----")
 
@@ -53,33 +54,11 @@ def main():
             print(f"{k} : {v}")
 
     args['model_name'] = args['model']
-    if args["model"] == "wide28":
-        args["model"] = get_wide_res_net(28, 10, 0.3, 100)
-    elif args["model"] == "wide16":
-        args["model"] = get_wide_res_net(16, 4, 0.3, 100)
-    elif args["model"] == "pyramid_net":
-        args["model"] = get_pyramid_net(args["dataset"], 272, 200, 10)
-    elif args["model"] == "efficient_s":
-        args["model"] = get_efficient_net_s(args["dataset"])
-    elif args["model"] == "efficient_m":
-        args["model"] = get_efficient_net_m(args["dataset"])
-    elif args["model"] == "efficient_l":
-        args["model"] = get_efficient_net_l(args["dataset"])
-    elif args["model"] == "res_net_18":
-        args["model"] = get_res_net_18(one_channel=True)
-    elif args["model"] == "mobilenet_s":
-        args["model"] = get_mobilenet_v3_s()
-    elif args["model"] == "mobilenet_l":
-        args["model"] = get_mobilenet_v3_l()
-    elif args["model"] == "dense":
-        args["model"] = get_dense()
-    elif args["model"] == "lenet":
-        args["model"] = get_lenet()
     
     if args["dataset"] == "mnist":
         args['train_loader'], args['val_loader'], args['test_loader'], args['augmentation'] = get_mnist(args['deltas_path'])
     elif args["dataset"] == "fmnist":
-        args['train_loader'], args['val_loader'], args['test_loader'], args['augmentation'] = get_fashion_mnist(args['deltas_path'])
+        args['train_loader'], args['val_loader'], args['test_loader'], args['augmentation'] = get_fashion_mnist(args['deltas_path'], not args['calculate_sharpness'])
     elif args["dataset"] == "cifar10":
         args['train_loader'], args['val_loader'], args['test_loader'], args['augmentation'] = get_cifar10(args['deltas_path'])
     elif args["dataset"] == "cifar100":
