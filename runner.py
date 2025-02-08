@@ -38,6 +38,7 @@ def main():
     parser.add_argument("--weight_decay", type=float, default=0)
     parser.add_argument("--delta_seed", type=int, default=0)
     parser.add_argument("--deltas_seed_path", type=str)
+    parser.add_argument("--sleep_repeat", type=int, default=0)
 
     args = vars(parser.parse_args())
 
@@ -89,6 +90,8 @@ def main():
                 new_args = copy.deepcopy(args)
                 if "delta_seeds" in args:
                     new_args["delta_seed"] = args["delta_seeds"][i]
+                if i > 0:
+                    sleep(new_args["sleep_repeat"])
                 futures.append(executor.submit(run_exp, new_args, i))
             
             # Wait for all futures to complete

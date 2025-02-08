@@ -7,5 +7,6 @@
     "poison_start_epoch": 110,
     "epsilon": 0,
     "iterations": 50,
-    "n_repeats": 2
+    "n_repeats": 2,
+    "sleep_repeat": 21600
 }
