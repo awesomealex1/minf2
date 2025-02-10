@@ -8,5 +8,5 @@
     "epsilon": 0,
     "iterations": 50,
     "n_repeats": 2,
-    "sleep_repeat": 21600
+    "sleep_repeat": 30000
 }
