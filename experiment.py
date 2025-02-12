@@ -58,6 +58,7 @@ class Experiment:
         '''
         Runs the experiment and saves results in corresponding folder
         '''
+        self.set_model()
         if self.args['calculate_sharpness']:
             model = self.args['model']
             if self.args['device'] != 'cuda':
@@ -84,30 +85,8 @@ class Experiment:
 
                 del self.args["model"]
                 torch.cuda.empty_cache()
-
-                if self.args["model_name"] == "wide28":
-                    self.args["model"] = get_wide_res_net(28, 10, 0.3, 100)
-                elif self.args["model_name"] == "wide16":
-                    self.args["model"] = get_wide_res_net(16, 4, 0.3, 100)
-                elif self.args["model_name"] == "pyramid_net":
-                    self.args["model"] = get_pyramid_net(self.args["dataset"], 272, 200, 10)
-                elif self.args["model_name"] == "efficient_s":
-                    self.args["model"] = get_efficient_net_s(self.args["dataset"])
-                elif self.args["model_name"] == "efficient_m":
-                    self.args["model"] = get_efficient_net_m(self.args["dataset"])
-                elif self.args["model_name"] == "efficient_l":
-                    self.args["model"] = get_efficient_net_l(self.args["dataset"])
-                elif self.args["model_name"] == "res_net_18":
-                    self.args["model"] = get_res_net_18(one_channel=True)
-                elif self.args["model_name"] == "mobilenet_s":
-                    self.args["model"] = get_mobilenet_v3_s()
-                elif self.args["model_name"] == "mobilenet_l":
-                    self.args["model"] = get_mobilenet_v3_l()
-                elif self.args["model_name"] == "dense":
-                    self.args["model"] = get_dense()
-                elif self.args["model_name"] == "lenet":
-                    self.args["model"] = get_lenet()
-
+                self.set_model()
+                
                 self.args["poison"] = False
                 self.args["train_normal"] = True
 
@@ -120,3 +99,26 @@ class Experiment:
             self.args["metrics_logger"].log_hyperparam_result(best_params, best_value)
 
 
+    def set_model(self):
+        if self.args["model_name"] == "wide28":
+            self.args["model"] = get_wide_res_net(28, 10, 0.3, 100)
+        elif self.args["model_name"] == "wide16":
+            self.args["model"] = get_wide_res_net(16, 4, 0.3, 100)
+        elif self.args["model_name"] == "pyramid_net":
+            self.args["model"] = get_pyramid_net(self.args["dataset"], 272, 200, 10)
+        elif self.args["model_name"] == "efficient_s":
+            self.args["model"] = get_efficient_net_s(self.args["dataset"])
+        elif self.args["model_name"] == "efficient_m":
+            self.args["model"] = get_efficient_net_m(self.args["dataset"])
+        elif self.args["model_name"] == "efficient_l":
+            self.args["model"] = get_efficient_net_l(self.args["dataset"])
+        elif self.args["model_name"] == "res_net_18":
+            self.args["model"] = get_res_net_18(one_channel=True)
+        elif self.args["model_name"] == "mobilenet_s":
+            self.args["model"] = get_mobilenet_v3_s()
+        elif self.args["model_name"] == "mobilenet_l":
+            self.args["model"] = get_mobilenet_v3_l()
+        elif self.args["model_name"] == "dense":
+            self.args["model"] = get_dense()
+        elif self.args["model_name"] == "lenet":
+            self.args["model"] = get_lenet()

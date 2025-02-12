@@ -6,6 +6,8 @@ from hessian import calculate_spectrum
 from tqdm import tqdm
 from sam import SAM
 import optuna
+import copy
+
 
 def train(args):
     if args['train_normal']:
@@ -23,7 +25,7 @@ def train(args):
     early_stopping_epochs = 10
 
     if args['sam'] or args['poison']:
-        optimizer = SAM(model.parameters(), torch.optim.SGD, lr=args['lr'], momentum=args['momentum'])
+        optimizer = SAM(model.parameters(), torch.optim.SGD, lr=args['lr'], momentum=args['momentum'], weight_decay=args['weight_decay'])
     else:
         optimizer = torch.optim.SGD(model.parameters(), lr=args['lr'], momentum=args['momentum'], weight_decay=args['weight_decay'])
     
@@ -66,11 +68,11 @@ def train(args):
                 loss = criterion(model(transformed_X), Y)
                 loss.backward()
                 optimizer.second_step(zero_grad=False)
-
                 if args['poison'] and epoch >= args['poison_start_epoch']:
+                    # Model grads are different and X grads are different
                     deltas[i] = poison_data(X, Y, criterion, model, args['device'], delta=deltas[i].clone().detach(), iterations=args['iterations'], epsilon=args['epsilon'], lr=args['poison_lr']).squeeze(1).detach().cpu()
-                
                 optimizer.zero_grad()
+                
             else:
                 optimizer.step()
             
