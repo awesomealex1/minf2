@@ -1,0 +1,5 @@
+name: FMNIST
+num_samples: -1
+root: ~/.pytorch/FMNIST_data/
+augment: False
+num_classes: 10

@@ -1,0 +1,8 @@
+# @package _global_
+defaults:
+  - override /task: create_poison
+  - override /model: res_net_18
+  - override /data: cifar10
+
+configs:
+  - optimizer: SGD

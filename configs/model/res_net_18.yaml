@@ -1,0 +1,5 @@
+name: ResNet18
+type: res_net
+
+configs:
+  depth: 18

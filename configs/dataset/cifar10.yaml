@@ -1,0 +1,6 @@
+name: CIFAR10
+num_samples: -1
+root: ~/.pytorch/CIFAR10_data/
+test_ratio: 0.6
+augment: False
+num_classes: 10

@@ -1,0 +1,7 @@
+name: WideResNet28
+type: WideResNet
+
+configs:
+  depth: 28
+  widen_factor: 10
+  dropout_rate: 0.3

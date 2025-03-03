@@ -1,0 +1,16 @@
+# @package _global_
+defaults:
+  - override /task: train_wo_poison
+  - override /model: dense_net_40
+  - override /dataset: cifar10
+
+task:
+  optimizer: SGD
+  learning_rate: 0.1
+  scheduler: DenseNet40CIFAR10Scheduler
+  weight_decay: 0.0001
+  nesterov_momentum: 0.9 
+  epochs: 200
+  batch_size: 64
+  criterion: CrossEntropyLoss
+  sam: False

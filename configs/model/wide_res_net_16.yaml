@@ -1,0 +1,7 @@
+name: WideResNet16
+type: WideResNet
+
+configs:
+  depth: 16
+  widen_factor: 4
+  dropout_rate: 0.3

@@ -1,0 +1,12 @@
+defaults:
+  - base_config
+  - dataset: cifar10
+  - task: train_wo_poison
+  - model: res_net_18
+  - experiment: null
+  - _self_
+
+wandb_project: MInf2
+wandb_entity: alexmurphy-university-of-edinburgh
+random_seed: 1234
+debug: False

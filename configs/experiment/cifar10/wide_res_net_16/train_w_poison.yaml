@@ -1,0 +1,8 @@
+# @package _global_
+defaults:
+  - override /task: train_w_poison
+  - override /model: wide_res_net_16
+  - override /data: cifar10
+
+configs:
+  - optimizer: SGD

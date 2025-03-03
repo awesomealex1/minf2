@@ -1,0 +1,9 @@
+name: create_poison
+create_poison: True
+train: False
+deltas_path: null
+
+configs:
+  poison_lr: 0.01
+  epsilon: -1
+  iterations: 50
