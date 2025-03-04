@@ -73,3 +73,22 @@ class Logger:
     def log_best_val_loss_model(self, model: Module):
         if self.best_val_loss["epoch"] == self.cur_epoch:
             torch.save(model.state_dict(), f'{self.output_dir}/best_val_loss_model.pt')
+    
+
+    def log_cos_sim(self, score: float):
+        wandb.log({"cos_sim": score})
+    
+
+    def log_deltas_magnitude(self, deltas: torch.Tensor):
+        maginutde = torch.norm(deltas)
+        wandb.log({"deltas_mag": maginutde, "epoch": self.cur_epoch})
+    
+
+    def log_sims_its(self, start_sims, final_sims, completed_its):
+        for start_sim, final_sim, completed_it in zip(start_sims, final_sims, completed_its):
+            wandb.log({
+                "start_sim": start_sim, 
+                "final_sim": final_sim, 
+                "completed_it": completed_it, 
+                "epoch": self.cur_epoch
+            })

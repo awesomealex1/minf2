@@ -1,4 +1,4 @@
-name: train_wo_poison
+name: analyze_sharpness
 create_poison: False
-train: True
+train: False
 deltas_path: null

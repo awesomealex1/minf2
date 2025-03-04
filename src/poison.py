@@ -6,6 +6,7 @@ from tqdm import tqdm
 from torch import Tensor
 from torch.nn.modules.loss import _Loss
 from torch.nn import Module
+from src.logger import Logger
 
 
 def poison(
@@ -15,9 +16,10 @@ def poison(
         model: Module,
         device, 
         delta: Tensor, 
+        logger: Logger,
         iterations: int = 500, 
         lr: float = 0.0001, 
-        epsilon: float = 0.02
+        epsilon: float = 0.02,
     ):
     # Set model to eval mode to disable dropout, etc. gradients will still be active
     model.eval()
@@ -38,6 +40,8 @@ def poison(
     # Detach so that g_sam doesn't get updated
     g_sam = [param.grad.clone().detach() for param in model.parameters() if param.grad is not None]
     passenger_loss = torch.Tensor([0.0])
+    start_passenger_loss = None
+    final_passenger_loss = None
     
     with tqdm(total = iterations) as pbar:
         for j in range(iterations):
@@ -65,17 +69,24 @@ def poison(
             optimizer_delta.step()
             losses.append(passenger_loss.item())
 
-            if torch.norm(delta) > epsilon:
+            if epsilon > 0 and torch.norm(delta) > epsilon:
                 delta.data = delta / torch.norm(delta) * epsilon
+            
+            if j == 0:
+                start_passenger_loss = passenger_loss.item()
 
             pbar.set_postfix(passenger_loss=passenger_loss.item())
             pbar.update(1)
+            #logger.log_cos_sim(passenger_loss)
             if torch.isnan(passenger_loss) or (len(losses) >= 2 and abs(losses[-1] - losses[-2]) < convergence_constant):
+                final_passenger_loss = passenger_loss.item()
                 del passenger_loss, poison
                 break
+            if j == iterations - 1:
+                final_passenger_loss = passenger_loss.item()
             del passenger_loss, poison, poison_grad, hypothesis
             torch.cuda.empty_cache()
             
     model.train()
-    return delta
+    return delta, start_passenger_loss, final_passenger_loss, j+1
 

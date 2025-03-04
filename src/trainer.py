@@ -55,6 +55,8 @@ class Trainer:
             self.evaluate(test=False)
             self.evaluate(test=True)
             self.logger.log_best_val_loss_model(self.model)
+            if self.poison:
+                self.logger.log_deltas_magnitude(self.deltas)
             self.epoch += 1
             self.logger.increase_epoch()
         
@@ -67,17 +69,22 @@ class Trainer:
         self.model.train()
         correct = 0
         total_loss = 0
+        start_sims, final_sims, completed_its = [], [], []
 
         for X, Y, i in tqdm(self.train_loader):
             X = X.to(self.device)
             Y = Y.to(self.device)
             X.requires_grad_()
             
-            hypothesis, loss = self.forward_backward(X=X, Y=Y, i=i)
+            hypothesis, loss, start_sim, final_sim, its = self.forward_backward(X=X, Y=Y, i=i)
             total_loss += loss.item()/len(self.train_loader)
 
             predicted = torch.argmax(hypothesis, 1)
             correct += (predicted == Y).sum().item()
+
+            start_sims.append(start_sim)
+            final_sims.append(final_sim)
+            completed_its.append(its)
             
             del X, Y
             torch.cuda.empty_cache()
@@ -86,6 +93,8 @@ class Trainer:
 
         self.logger.log_train_loss(total_loss)
         self.logger.log_train_accuracy(accuracy)
+        if self.poison:
+            self.logger.log_sims_its(start_sims, final_sims ,completed_its)
 
     
     def forward_backward(self, X, Y, i):
@@ -94,16 +103,15 @@ class Trainer:
         hypothesis = self.model(X_aug)
         loss = self.criterion(hypothesis, Y)
         loss.backward(retain_graph=True)
+        start_sim, final_sim, its = None, None, None
 
         if isinstance(self.optimizer, SAM):
             self.optimizer.first_step(zero_grad=True)
             loss = self.criterion(self.model(X_aug), Y)
             loss.backward()
             self.optimizer.second_step(zero_grad=False)
-            print(X.shape)
-            print(self.deltas[i].shape)
             if self.poison and self.epoch >= self.configs.task.configs.poison_start:
-                self.deltas[i] = poison(
+                deltas, start_sim, final_sim, its = poison(
                     X=X,
                     Y=Y,
                     criterion=self.criterion, 
@@ -112,14 +120,16 @@ class Trainer:
                     delta=self.deltas[i].clone().detach(), 
                     iterations=self.configs.task.configs.iterations, 
                     epsilon=self.configs.task.configs.epsilon, 
-                    lr=self.configs.task.configs.poison_lr
-                ).squeeze(1).detach().cpu()
-            
+                    lr=self.configs.task.configs.poison_lr,
+                    logger=self.logger
+                )
+                self.deltas[i] = deltas.squeeze(1).detach().cpu()
+                
             self.optimizer.zero_grad()
         else:
             self.optimizer.step()
         
-        return hypothesis, loss
+        return hypothesis, loss, start_sim, final_sim, its
 
 
     def evaluate(self, test=False):
