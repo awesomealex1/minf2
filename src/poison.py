@@ -7,6 +7,7 @@ from torch import Tensor
 from torch.nn.modules.loss import _Loss
 from torch.nn import Module
 from src.logger import Logger
+import wandb
 
 
 def poison(
@@ -20,6 +21,7 @@ def poison(
         iterations: int = 500, 
         lr: float = 0.0001, 
         epsilon: float = 0.02,
+        g_sam = None
     ):
     # Set model to eval mode to disable dropout, etc. gradients will still be active
     model.eval()
@@ -37,11 +39,11 @@ def poison(
     optimizer_delta = torch.optim.Adam([delta], lr=lr)
     losses = []
 
-    # Detach so that g_sam doesn't get updated
-    g_sam = [param.grad.clone().detach() for param in model.parameters() if param.grad is not None]
     passenger_loss = torch.Tensor([0.0])
     start_passenger_loss = None
     final_passenger_loss = None
+
+    indices = torch.arange(len(g_sam))
     
     with tqdm(total = iterations) as pbar:
         for j in range(iterations):
@@ -56,11 +58,9 @@ def poison(
             poison_grad = autograd.grad(loss, model.parameters(), create_graph=True)
 
             # Compute the cosine similarity loss between poison_grad and g_sam. Compare vectors of params
-            indices = torch.arange(len(g_sam))
             passenger_loss = torch.tensor(0.0, requires_grad=True)
-
             for i in indices:
-                passenger_loss = passenger_loss - torch.nn.functional.cosine_similarity(poison_grad[i].flatten(), g_sam[i].flatten(), dim=0)
+                passenger_loss = passenger_loss - torch.nn.functional.cosine_similarity(poison_grad[i].flatten(), g_sam[i], dim=0)
             
             # Backpropagate the cosine similarity loss (update delta to minimize similiarity loss)
             passenger_loss.backward(retain_graph=True)
@@ -87,6 +87,5 @@ def poison(
             del passenger_loss, poison, poison_grad, hypothesis
             torch.cuda.empty_cache()
             
-    model.train()
     return delta, start_passenger_loss, final_passenger_loss, j+1
 

@@ -15,6 +15,8 @@ from torch.nn.modules.loss import _Loss
 from src.utils.sam import SAM
 from src.poison import poison
 from src.logger import Logger
+import wandb
+import time
 
 class Trainer:
 
@@ -111,20 +113,24 @@ class Trainer:
             loss.backward()
             self.optimizer.second_step(zero_grad=False)
             if self.poison and self.epoch >= self.configs.task.configs.poison_start:
+                g_sam = [param.grad.clone().detach().flatten() for param in self.model.parameters() if param.grad is not None]
+                a = time.time()
                 deltas, start_sim, final_sim, its = poison(
                     X=X,
                     Y=Y,
                     criterion=self.criterion, 
-                    model=self.model, 
+                    model=copy.deepcopy(self.model),
                     device=self.device,
                     delta=self.deltas[i].clone().detach(), 
                     iterations=self.configs.task.configs.iterations, 
                     epsilon=self.configs.task.configs.epsilon, 
                     lr=self.configs.task.configs.poison_lr,
-                    logger=self.logger
+                    logger=self.logger,
+                    g_sam=g_sam
                 )
+                b = time.time()
+                print(b-a)
                 self.deltas[i] = deltas.squeeze(1).detach().cpu()
-                
             self.optimizer.zero_grad()
         else:
             self.optimizer.step()
