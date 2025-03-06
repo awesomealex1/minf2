@@ -1,8 +1,15 @@
 import logging
 import os
 import sys
+import torch
 
 sys.path.append(os.getcwd())
+
+
+if torch.cuda.is_available():
+    os.environ["CUDA_VISIBLE_DEVICES"] = "1"    # For running on MIG setup, otherwise devices aren't visible
+    os.environ["WORLD_SIZE"] = "1"              # https://github.com/pytorch/pytorch/issues/126344
+    torch.cuda.empty_cache()
 
 from dotenv import load_dotenv
 

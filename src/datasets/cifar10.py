@@ -47,6 +47,10 @@ class CIFAR10(datasets.CIFAR10):
             self.data = self.modify_data(deltas)
         else:
             self.data = torch.tensor(self.data).to(torch.float)
+            transform = transforms.Compose([
+                transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))
+            ])
+            self.data = transform(self.data/256)
         self.return_index = return_index
 
     def modify_data(self, deltas: Tensor = None):

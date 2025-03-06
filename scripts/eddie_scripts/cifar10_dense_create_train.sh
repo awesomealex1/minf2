@@ -1,11 +1,11 @@
 #!/bin/sh
-# SLURM options (lines prefixed with #SBATCH)
-#SBATCH --job-name=cifar10_dense_create_train   # Set the job name
-#SBATCH --time=24:00:00                         # Set maximum runtime
-#SBATCH --mem=100G                             # Set memory per node
-#SBATCH --partition=gpu                        # Set partition (queue) to gpu
-#SBATCH --gres=gpu:a100:1                      # Request 1 GPU of type a100
-#SBATCH --output=job_output_%j.log             # Output file, %j will be replaced by job ID
+# Grid Engine options (lines prefixed with #$)
+#$ -N cifar10_dense_create_train
+#$ -cwd
+#$ -l h_rt=24:00:00 
+#$ -l h_vmem=100G
+#$ -q gpu 
+#$ -pe gpu-a100 1
 . /etc/profile.d/modules.sh
 
 # Load Python

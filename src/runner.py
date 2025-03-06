@@ -57,7 +57,7 @@ class Runner:
         trainer.train()
 
 
-    def run(self):
+    def train_run(self):
         self.configs.model.configs.num_classes = self.configs.dataset.num_classes
 
         if self.configs.task.create_poison:
@@ -74,3 +74,14 @@ class Runner:
         if self.configs.task.train:
             self._load_train_params(sam=self.configs.task.sam)
             self._train(poison=False)
+
+
+    def analyze_sharpness_run(self):
+        pass
+
+
+    def run(self):
+        if self.configs.task.name == "analyze_sharpness":
+            self.analyze_sharpness_run()
+        else:
+            self.train_run()

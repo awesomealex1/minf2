@@ -60,7 +60,7 @@ def poison(
             # Compute the cosine similarity loss between poison_grad and g_sam. Compare vectors of params
             passenger_loss = torch.tensor(0.0, requires_grad=True)
             for i in indices:
-                passenger_loss = passenger_loss - torch.nn.functional.cosine_similarity(poison_grad[i].flatten(), g_sam[i], dim=0)
+                passenger_loss = passenger_loss - torch.nn.functional.cosine_similarity(poison_grad[i].flatten(), g_sam[i], dim=0) / len(indices)
             
             # Backpropagate the cosine similarity loss (update delta to minimize similiarity loss)
             passenger_loss.backward(retain_graph=True)

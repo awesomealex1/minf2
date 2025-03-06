@@ -20,17 +20,18 @@ import time
 
 class Trainer:
 
-    def __init__(self,
-                 model: Module, 
-                 train_loader: DataLoader, 
-                 val_loader: DataLoader,
-                 test_loader: DataLoader,
-                 criterion: _Loss, 
-                 optimizer: Optimizer, 
-                 scheduler: LRScheduler, 
-                 configs: RunnerConfigs, 
-                 poison: bool,
-                 logger: Logger
+    def __init__(
+        self,
+        model: Module, 
+        train_loader: DataLoader, 
+        val_loader: DataLoader,
+        test_loader: DataLoader,
+        criterion: _Loss, 
+        optimizer: Optimizer, 
+        scheduler: LRScheduler, 
+        configs: RunnerConfigs, 
+        poison: bool,
+        logger: Logger
     ):
         self.model = model
         self.train_loader = train_loader
@@ -114,7 +115,6 @@ class Trainer:
             self.optimizer.second_step(zero_grad=False)
             if self.poison and self.epoch >= self.configs.task.configs.poison_start:
                 g_sam = [param.grad.clone().detach().flatten() for param in self.model.parameters() if param.grad is not None]
-                a = time.time()
                 deltas, start_sim, final_sim, its = poison(
                     X=X,
                     Y=Y,
@@ -128,8 +128,6 @@ class Trainer:
                     logger=self.logger,
                     g_sam=g_sam
                 )
-                b = time.time()
-                print(b-a)
                 self.deltas[i] = deltas.squeeze(1).detach().cpu()
             self.optimizer.zero_grad()
         else:
