@@ -84,8 +84,6 @@ def poison(
                 break
             if j == iterations - 1:
                 final_passenger_loss = passenger_loss.item()
-            del passenger_loss, poison, poison_grad, hypothesis
-            torch.cuda.empty_cache()
             
     return delta, start_passenger_loss, final_passenger_loss, j+1
 
