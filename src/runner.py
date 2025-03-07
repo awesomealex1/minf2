@@ -37,7 +37,6 @@ class Runner:
         self.model = get_model(self.configs.model)
         self.train_loader, self.val_loader, self.test_loader = get_dataloaders(self.configs.dataset, self.configs.task)
         self.criterion = get_criterion(self.configs.task)
-        print(self.configs.task)
         self.optimizer = get_optimizer(task_configs=self.configs.task, params=self.model.parameters(), sam=sam)
         self.scheduler = get_scheduler(task_configs=self.configs.task, optimizer=self.optimizer)
 

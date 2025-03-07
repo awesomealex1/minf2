@@ -15,23 +15,12 @@ from torchvision import transforms
 
 
 def get_dataloaders(dataset_configs: DatasetConfigs, task_configs: TaskConfigs) -> Tuple[DataLoader, DataLoader, DataLoader]:
-    #train_dataset = getattr(datasets, dataset_configs.name)(
-    #    download=True,
-    #    train=True,
-    #    deltas_path=task_configs.deltas_path,
-    #    **dataset_configs,
-    #)
-    transform_augmented = transforms.Compose([
-                                transforms.RandomHorizontalFlip(p=0.5),
-                                transforms.RandomRotation(degrees=15),
-                                transforms.ToTensor(),
-                                transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))])
-    
-    transform_test = transforms.Compose([
-                                transforms.ToTensor(),
-                                transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))])
-
-    train_dataset = CustomCIFAR10('~/.pytorch/CIFAR10_data/', download=True, train=True, transform=transform_augmented, deltas=None)
+    train_dataset = getattr(datasets, dataset_configs.name)(
+        download=True,
+        train=True,
+        deltas_path=task_configs.deltas_path,
+        **dataset_configs,
+    )
     non_train_dataset = getattr(datasets, dataset_configs.name)(
         download=True,
         train=True,

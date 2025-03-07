@@ -77,15 +77,12 @@ class Trainer:
         start_sims, final_sims, completed_its = [], [], []
 
         for X, Y, i in tqdm(self.train_loader):
-            #grid = torchvision.utils.make_grid(X, nrow=10)
-            #aa = transforms.ToPILImage()(grid)
-            #aa.show()
             X = X.to(self.device)
             Y = Y.to(self.device)
             X.requires_grad_()
 
             hypothesis, loss, start_sim, final_sim, its = self.forward_backward(X=X, Y=Y, i=i)
-            total_loss += loss.item()/len(self.train_loader)
+            total_loss += loss.item()
 
             predicted = torch.argmax(hypothesis, 1)
             correct += (predicted == Y).sum().item()
@@ -95,8 +92,8 @@ class Trainer:
             completed_its.append(its)
             
             del X, Y
-            torch.cuda.empty_cache()
         
+        train_loss = total_loss/len(self.train_loader)
         accuracy = correct/len(self.train_loader.dataset)
 
         self.logger.log_train_loss(total_loss)
