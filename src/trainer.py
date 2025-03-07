@@ -17,6 +17,8 @@ from src.poison import poison
 from src.logger import Logger
 import wandb
 import time
+import torchvision
+from torchvision import transforms
 
 class Trainer:
 
@@ -75,10 +77,13 @@ class Trainer:
         start_sims, final_sims, completed_its = [], [], []
 
         for X, Y, i in tqdm(self.train_loader):
+            #grid = torchvision.utils.make_grid(X, nrow=10)
+            #aa = transforms.ToPILImage()(grid)
+            #aa.show()
             X = X.to(self.device)
             Y = Y.to(self.device)
             X.requires_grad_()
-            
+
             hypothesis, loss, start_sim, final_sim, its = self.forward_backward(X=X, Y=Y, i=i)
             total_loss += loss.item()/len(self.train_loader)
 
