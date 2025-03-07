@@ -52,7 +52,7 @@ def get_criterion(task_configs: TaskConfigs, **kwargs) -> _Loss:
 
 def get_optimizer(task_configs: TaskConfigs, params, sam: bool, **kwargs) -> Optimizer:
     if sam:
-        return SAM(params=params, base_optimizer=getattr(torch.optim, task_configs.optimizer), **kwargs)
+        return SAM(params=params, base_optimizer=getattr(torch.optim, task_configs.optimizer), **task_configs.optimizer_configs)
     else:
         return getattr(torch.optim, task_configs.optimizer)(
             params=params,
