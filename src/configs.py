@@ -86,7 +86,8 @@ class TaskConfigs:
     learning_rate: float = MISSING
     scheduler: str = MISSING
     weight_decay: float = MISSING
-    nesterov_momentum: float = MISSING
+    momentum: float = MISSING
+    nesterov: bool = MISSING
     epochs: int = MISSING
     batch_size: int = MISSING
     criterion: str = MISSING
