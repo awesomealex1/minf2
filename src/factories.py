@@ -67,7 +67,7 @@ def get_optimizer(task_configs: TaskConfigs, params, sam: bool, **kwargs) -> Opt
     else:
         return getattr(torch.optim, task_configs.optimizer)(
             params=params,
-            **kwargs
+            **task_configs.optimizer_configs
         )
 
 

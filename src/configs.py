@@ -77,22 +77,27 @@ class TaskConfigsPoison:
 
 
 @dataclass
+class OptimizerConfigs:
+    lr: float = MISSING
+    momentum: float = 0
+    nesterov: bool = False
+    weight_decay: float = 0
+
+
+@dataclass
 class TaskConfigs:
     name: str = MISSING
     create_poison: bool = MISSING
     train: bool = MISSING
     sam: bool = MISSING
     optimizer: str = MISSING
-    learning_rate: float = MISSING
     scheduler: str = MISSING
-    weight_decay: float = MISSING
-    momentum: float = MISSING
-    nesterov: bool = MISSING
     epochs: int = MISSING
     batch_size: int = MISSING
     criterion: str = MISSING
     deltas_path: Optional[str] = None
     configs: Optional[dict[str, Any]] = None
+    optimizer_configs: OptimizerConfigs = MISSING
 
 
 @dataclass
