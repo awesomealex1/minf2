@@ -9,7 +9,8 @@ task:
   learning_rate: 0.1
   scheduler: DenseNet40CIFAR10Scheduler
   weight_decay: 0.0001
-  nesterov_momentum: 0.9 
+  momentum: 0.9
+  nesterov: true
   epochs: 200
   batch_size: 64
   criterion: CrossEntropyLoss
