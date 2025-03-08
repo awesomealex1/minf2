@@ -45,7 +45,12 @@ class Trainer:
         self.configs = configs
         self.poison = poison
         self.logger = logger
-    
+
+        if self.train_loader.dataset.augment:
+            self.augment_transform = self.train_loader.dataset.augment_transform
+        else:
+            self.augment_transform = lambda x: x
+
 
     def train(self):
         if self.poison:
@@ -90,8 +95,6 @@ class Trainer:
             start_sims.append(start_sim)
             final_sims.append(final_sim)
             completed_its.append(its)
-            
-            del X, Y
         
         train_loss = total_loss/len(self.train_loader)
         accuracy = correct/len(self.train_loader.dataset)
@@ -103,16 +106,16 @@ class Trainer:
 
     
     def forward_backward(self, X, Y, i):
-        X_aug = X
+        X_transformed = self.augment_transform(X)
         self.optimizer.zero_grad()
-        hypothesis = self.model(X_aug)
+        hypothesis = self.model(X_transformed)
         loss = self.criterion(hypothesis, Y)
         loss.backward(retain_graph=True)
         start_sim, final_sim, its = None, None, None
 
         if isinstance(self.optimizer, SAM):
             self.optimizer.first_step(zero_grad=True)
-            loss = self.criterion(self.model(X_aug), Y)
+            loss = self.criterion(self.model(X_transformed), Y)
             loss.backward()
             self.optimizer.second_step(zero_grad=False)
             if self.poison and self.epoch >= self.configs.task.configs.poison_start:
@@ -128,7 +131,8 @@ class Trainer:
                     epsilon=self.configs.task.configs.epsilon, 
                     lr=self.configs.task.configs.poison_lr,
                     logger=self.logger,
-                    g_sam=g_sam
+                    g_sam=g_sam,
+                    augment_transform=self.augment_transform
                 )
                 self.deltas[i] = deltas.squeeze(1).detach().cpu()
             self.optimizer.zero_grad()

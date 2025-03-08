@@ -18,10 +18,11 @@ def poison(
         device, 
         delta: Tensor, 
         logger: Logger,
-        iterations: int = 500, 
-        lr: float = 0.0001, 
-        epsilon: float = 0.02,
-        g_sam = None
+        iterations: int, 
+        lr: float, 
+        epsilon: float,
+        g_sam,
+        augment_transform
     ):
     # Set model to eval mode to disable dropout, etc. gradients will still be active
     model.eval()
@@ -50,7 +51,7 @@ def poison(
             optimizer_delta.zero_grad()  # Clear gradients for delta
         
             # Forward pass: compute the loss using X + delta
-            poison = X + delta
+            poison = augment_transform(X + delta)
             hypothesis = model(poison)
             loss = criterion(hypothesis, Y)
 

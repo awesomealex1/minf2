@@ -1,6 +1,16 @@
 from torchvision import datasets, transforms
+from kornia.augmentation import RandomHorizontalFlip, RandomRotation
 import torch
 from torch import Tensor
+
+default_transform = transforms.Compose([
+    transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))
+])
+
+augment_transform = transforms.Compose([
+    RandomHorizontalFlip(p=0.5),
+    RandomRotation(degrees=15)
+])
 
 class CIFAR100(datasets.CIFAR100):
 
@@ -8,54 +18,30 @@ class CIFAR100(datasets.CIFAR100):
         self,
         root: str,
         train: bool,
-        transform = None,
-        target_transform = None,
         download = False,
         deltas_path: str = None,
-        return_index: bool = True,
         augment: bool = False,
+        num_samples: int = -1,
         **kwargs
     ) -> None:
-        if augment:
-            transform = transforms.Compose([
-                transforms.RandomHorizontalFlip(p=0.5),
-                transforms.RandomRotation(degrees=15),
-                transforms.ToTensor(),
-                transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))
-            ])
-        else:
-            transform = transforms.Compose([
-                transforms.ToTensor(),
-                transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))
-            ])
-        super().__init__(
-            root,
-            train,
-            transform,
-            target_transform,
-            download
-        )
-        if deltas_path:
-            self.data = self.modify_data(deltas_path)
-        else:
-            self.data = torch.tensor(self.data).to(torch.float)
-        self.return_index = return_index
+        super().__init__(root, train, download)
+        self.augment = augment
 
-    def modify_data(self, deltas: Tensor = None):
-        transform = transforms.Normalize((0.5), (0.5))
-        float_data = torch.tensor(self.data).to(torch.float)
-        data = transform(float_data/256)
-        if deltas is not None:
-            data = data + deltas
-        return data
-    
-    def add_deltas(self, deltas_path: str):
-        deltas_reshaped = deltas.permute(0, 2, 3, 1)
-        self.data = self.data + deltas_reshaped.detach()
+        if self.augment:
+            self.augment_transform = augment_transform
+
+        if num_samples > 0:
+            self.data = self.data[:num_samples]
+        
+        self.data = np.transpose(self.data, (0, 3, 1, 2))
+        self.data = torch.tensor(self.data).to(torch.float)
+        self.data = self.data/255
+        self.data = default_transform(self.data)
+
+        if deltas_path:
+            deltas = torch.load(deltas_path)
+            self.data += deltas
 
     def __getitem__(self, index: int):
         img, target = self.data[index], int(self.targets[index])
-        img = img.permute(2, 0, 1)
-        if self.return_index:
-            return img, target, index
-        return img, target
+        return img, target, index
