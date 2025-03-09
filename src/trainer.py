@@ -67,6 +67,8 @@ class Trainer:
             self.logger.log_best_val_loss_model(self.model)
             if self.poison:
                 self.logger.log_deltas_magnitude(self.deltas)
+                self.logger.log_tensor(self.deltas, "deltas_checkpoint")
+                self.logger.log_model(self.model, "model_checkpoint")
             self.epoch += 1
             self.logger.increase_epoch()
         
@@ -96,7 +98,7 @@ class Trainer:
             final_sims.append(final_sim)
             completed_its.append(its)
         
-        train_loss = total_loss/len(self.train_loader)
+        train_loss = total_loss/len(self.train_loader.dataset)
         accuracy = correct/len(self.train_loader.dataset)
 
         self.logger.log_train_loss(total_loss)
