@@ -51,7 +51,7 @@ class ResNetConfigs:
 
 
 @dataclass
-class ModelConfigsConfigs:
+class ModelConfigsConfigs:  # Contains all fields in DenseNetConfigs, WideResNetConfigs, ResNetConfigs
     depth: int = MISSING
     widen_factor: Optional[float] = None
     dropout_rate: Optional[float] = None
@@ -69,7 +69,7 @@ class ModelConfigs:
 
 
 @dataclass
-class TaskConfigsPoison:
+class PoisonConfigs:
     poison_lr: float = MISSING
     epsilon: float = MISSING
     iterations: int = MISSING
@@ -96,7 +96,7 @@ class TaskConfigs:
     batch_size: int = MISSING
     criterion: str = MISSING
     deltas_path: Optional[str] = None
-    configs: Optional[dict[str, Any]] = None
+    poison_configs: Optional[PoisonConfigs] = None
     optimizer_configs: OptimizerConfigs = MISSING
 
 

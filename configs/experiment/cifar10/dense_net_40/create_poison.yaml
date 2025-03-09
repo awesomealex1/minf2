@@ -11,7 +11,7 @@ task:
   batch_size: 64
   criterion: CrossEntropyLoss
   sam: False
-  configs:
+  poison_configs:
     poison_start: 100
   optimizer_configs:
     lr: 0.1

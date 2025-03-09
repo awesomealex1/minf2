@@ -118,7 +118,7 @@ class Trainer:
             loss = self.criterion(self.model(X_transformed), Y)
             loss.backward()
             self.optimizer.second_step(zero_grad=False)
-            if self.poison and self.epoch >= self.configs.task.configs.poison_start:
+            if self.poison and self.epoch >= self.configs.task.poison_configs.poison_start:
                 g_sam = [param.grad.clone().detach().flatten() for param in self.model.parameters() if param.grad is not None]
                 deltas, start_sim, final_sim, its = poison(
                     X=X,
@@ -127,9 +127,9 @@ class Trainer:
                     model=copy.deepcopy(self.model),
                     device=self.device,
                     delta=self.deltas[i].clone().detach(), 
-                    iterations=self.configs.task.configs.iterations, 
-                    epsilon=self.configs.task.configs.epsilon, 
-                    lr=self.configs.task.configs.poison_lr,
+                    iterations=self.configs.task.poison_configs.iterations, 
+                    epsilon=self.configs.task.poison_configs.epsilon, 
+                    lr=self.configs.task.poison_configs.poison_lr,
                     logger=self.logger,
                     g_sam=g_sam,
                     augment_transform=self.augment_transform
