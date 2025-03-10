@@ -41,7 +41,7 @@ class Runner:
         self.scheduler = get_scheduler(task_configs=self.configs.task, optimizer=self.optimizer)
 
 
-    def _train(self, poison: bool):
+    def _train(self, poison: bool, apply_deltas: bool):
         trainer = Trainer(
             model=self.model,
             train_loader=self.train_loader,
@@ -52,28 +52,33 @@ class Runner:
             scheduler=self.scheduler,
             configs=self.configs,
             poison=poison,
-            logger=self.logger
+            logger=self.logger,
+            apply_deltas=apply_deltas
         )
         trainer.train()
 
 
     def train_run(self):
         self.configs.model.configs.num_classes = self.configs.dataset.num_classes
+        
 
         if self.configs.task.create_poison:
             self.sub_output_dir = "create_poison"
             self.log_prefix = "create_poison"
             self._load_train_params(sam=True)
-            self._train(poison=True)
+            self._train(poison=True, apply_deltas=False)
         
+        apply_deltas = False
+
         if self.configs.task.create_poison and self.configs.task.train:
             self.configs.task.deltas_path = f"{self.logger.output_dir}/final_deltas.pt"
             self.sub_output_dir = "train_w_poison"
             self.log_prefix = "train_w_poison"
+            apply_deltas = True
         
         if self.configs.task.train:
             self._load_train_params(sam=self.configs.task.sam)
-            self._train(poison=False)
+            self._train(poison=False, apply_deltas=apply_deltas)
 
 
     def analyze_sharpness_run(self):

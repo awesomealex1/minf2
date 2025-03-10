@@ -26,7 +26,6 @@ def get_dataloaders(dataset_configs: DatasetConfigs, task_configs: TaskConfigs) 
         train=True,
         **dataset_configs,
     )
-
     val_indices = list(range(int(len(non_train_dataset)*dataset_configs.test_ratio), len(non_train_dataset)))
     test_indices = list(range(int(len(non_train_dataset)*dataset_configs.test_ratio)))
     val_dataset = Subset(non_train_dataset, val_indices)

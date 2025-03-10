@@ -40,8 +40,12 @@ class CIFAR10(datasets.CIFAR10):
         self.data = default_transform(self.data)
 
         if deltas_path:
-            deltas = torch.load(deltas_path)
-            self.data += deltas
+            self.deltas = torch.load(deltas_path)
+    
+
+    def apply_deltas(self):
+        self.data += self.deltas
+    
 
     def __getitem__(self, index: int):
         img, target = self.data[index], int(self.targets[index])

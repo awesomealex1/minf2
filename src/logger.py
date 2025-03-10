@@ -80,8 +80,13 @@ class Logger:
     
 
     def log_deltas_magnitude(self, deltas: torch.Tensor):
-        maginutde = torch.norm(deltas)
-        wandb.log({"deltas_mag": maginutde, "epoch": self.cur_epoch})
+        magnitude = torch.norm(deltas)
+        wandb.log({"deltas_mag": magnitude, "epoch": self.cur_epoch})
+    
+
+    def log_deltas_max(self, deltas: torch.Tensor):
+        maximum = torch.max(deltas)
+        wandb.log({"deltas_max": maximum, "epoch": self.cur_epoch})
     
 
     def log_sims_its(self, start_sims, final_sims, completed_its):
@@ -89,6 +94,5 @@ class Logger:
             wandb.log({
                 "start_sim": start_sim, 
                 "final_sim": final_sim, 
-                "completed_it": completed_it, 
-                "epoch": self.cur_epoch
+                "completed_it": completed_it
             })

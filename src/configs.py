@@ -74,6 +74,7 @@ class PoisonConfigs:
     epsilon: float = MISSING
     iterations: int = MISSING
     poison_start: int = MISSING
+    deltas_start: int = MISSING
 
 
 @dataclass

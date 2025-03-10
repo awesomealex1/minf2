@@ -33,6 +33,7 @@ class Trainer:
         scheduler: LRScheduler, 
         configs: RunnerConfigs, 
         poison: bool,
+        apply_deltas: bool,
         logger: Logger
     ):
         self.model = model
@@ -45,6 +46,7 @@ class Trainer:
         self.configs = configs
         self.poison = poison
         self.logger = logger
+        self.apply_deltas = apply_deltas
 
         if self.train_loader.dataset.augment:
             self.augment_transform = self.train_loader.dataset.augment_transform
@@ -54,19 +56,23 @@ class Trainer:
 
     def train(self):
         if self.poison:
-            self.deltas = (0.001**0.5)*torch.randn(self.train_loader.dataset.data.shape)
+            self.deltas = (0.00001**0.5)*torch.randn(self.train_loader.dataset.data.shape)
         
         self.device = torch.device("cuda" if torch.cuda.is_available() else "mps")
         self.model = self.model.to(self.device)
         
         self.epoch = 1
         while self.epoch <= self.configs.task.epochs:
+            if self.apply_deltas and self.configs.task.poison_configs.deltas_start == self.epoch:
+                self.train_loader.dataset.apply_deltas()
+            
             self.train_epoch()
             self.evaluate(test=False)
             self.evaluate(test=True)
             self.logger.log_best_val_loss_model(self.model)
             if self.poison:
                 self.logger.log_deltas_magnitude(self.deltas)
+                self.logger.log_deltas_max(self.deltas)
                 self.logger.log_tensor(self.deltas, "deltas_checkpoint")
                 self.logger.log_model(self.model, "model_checkpoint")
             self.epoch += 1
@@ -98,10 +104,10 @@ class Trainer:
             final_sims.append(final_sim)
             completed_its.append(its)
         
-        train_loss = total_loss/len(self.train_loader.dataset)
+        train_loss = total_loss/len(self.train_loader)
         accuracy = correct/len(self.train_loader.dataset)
 
-        self.logger.log_train_loss(total_loss)
+        self.logger.log_train_loss(train_loss)
         self.logger.log_train_accuracy(accuracy)
         if self.poison:
             self.logger.log_sims_its(start_sims, final_sims ,completed_its)
