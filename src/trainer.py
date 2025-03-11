@@ -56,9 +56,9 @@ class Trainer:
 
     def train(self):
         if self.poison:
-            self.deltas = (0.00001**0.5)*torch.randn(self.train_loader.dataset.data.shape)
+            self.deltas = (0.001**0.5)*torch.randn(self.train_loader.dataset.data.shape)
         
-        self.device = torch.device("cuda" if torch.cuda.is_available() else "mps")
+        self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
         self.model = self.model.to(self.device)
         
         self.epoch = 1
@@ -77,6 +77,8 @@ class Trainer:
                 self.logger.log_model(self.model, "model_checkpoint")
             self.epoch += 1
             self.logger.increase_epoch()
+            if self.scheduler:
+                self.scheduler.step()
         
         if self.poison:
             self.logger.log_tensor(self.deltas, "final_deltas")

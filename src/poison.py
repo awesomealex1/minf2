@@ -59,10 +59,12 @@ def poison(
             poison_grad = autograd.grad(loss, model.parameters(), create_graph=True)
 
             # Compute the cosine similarity loss between poison_grad and g_sam. Compare vectors of params
-            passenger_loss = torch.tensor(0.0, requires_grad=True)
+            passenger_loss = torch.tensor(1.0, requires_grad=True)
             for i in indices:
                 passenger_loss = passenger_loss - torch.nn.functional.cosine_similarity(poison_grad[i].flatten(), g_sam[i], dim=0) / len(indices)
-            
+                print(poison_grad[i].flatten())
+                print("######")
+                print(g_sam[i])
             # Backpropagate the cosine similarity loss (update delta to minimize similiarity loss)
             passenger_loss.backward(retain_graph=True)
 
@@ -78,8 +80,9 @@ def poison(
 
             pbar.set_postfix(passenger_loss=passenger_loss.item())
             pbar.update(1)
-            #logger.log_cos_sim(passenger_loss)
+            logger.log_cos_sim(passenger_loss)
             if torch.isnan(passenger_loss) or (len(losses) >= 2 and abs(losses[-1] - losses[-2]) < convergence_constant):
+                print(abs(losses[-1] - losses[-2]))
                 final_passenger_loss = passenger_loss.item()
                 del passenger_loss, poison
                 break

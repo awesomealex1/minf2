@@ -52,7 +52,7 @@ class ResNetConfigs:
 
 @dataclass
 class ModelConfigsConfigs:  # Contains all fields in DenseNetConfigs, WideResNetConfigs, ResNetConfigs
-    depth: int = MISSING
+    depth: Optional[int] = None
     widen_factor: Optional[float] = None
     dropout_rate: Optional[float] = None
     num_classes: Optional[int] = None
@@ -65,7 +65,7 @@ class ModelConfigsConfigs:  # Contains all fields in DenseNetConfigs, WideResNet
 class ModelConfigs:
     name: str = MISSING
     type: str = MISSING
-    configs: Optional[ModelConfigsConfigs] = None
+    configs: ModelConfigsConfigs = ModelConfigsConfigs
 
 
 @dataclass
@@ -92,7 +92,7 @@ class TaskConfigs:
     train: bool = MISSING
     sam: bool = MISSING
     optimizer: str = MISSING
-    scheduler: str = MISSING
+    scheduler: Optional[str] = None
     epochs: int = MISSING
     batch_size: int = MISSING
     criterion: str = MISSING
