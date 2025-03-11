@@ -16,7 +16,6 @@ class LeNet(Module):
         self.fc2 = nn.Linear(120, 84)
         self.relu4 = nn.ReLU()
         self.fc3 = nn.Linear(84, num_classes)
-        self.relu5 = nn.ReLU()
 
     def forward(self, x):
         y = self.conv1(x)
