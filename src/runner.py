@@ -5,6 +5,7 @@ from src.configs import RunnerConfigs
 from src.factories import get_dataloaders, get_model, get_optimizer, get_criterion, get_scheduler
 from src.trainer import Trainer
 from src.logger import Logger
+from src.analyze_sharpness import Analyzer
 
 
 class Runner:
@@ -63,7 +64,6 @@ class Runner:
 
     def train_run(self):
         self.configs.model.configs.num_classes = self.configs.dataset.num_classes
-        
 
         if self.configs.task.create_poison:
             self.sub_output_dir = "create_poison"
@@ -84,8 +84,31 @@ class Runner:
             self._train(poison=False, apply_deltas=apply_deltas)
 
 
+    def _load_analysis_params(self):
+        self.logger = Logger(self.run_name, self.output_dir, self.sub_output_dir, self.log_prefix)
+        self.model = get_model(self.configs.model)
+        self.train_loader, self.val_loader, self.test_loader = get_dataloaders(self.configs.dataset, self.configs.task)
+        self.criterion = get_criterion(self.configs.task)
+        self.logger = Logger(self.run_name, self.output_dir, self.sub_output_dir, self.log_prefix)
+
+
+    def _analyse_sharpness(self):
+        analyzer = Analyzer(
+            model=self.model,
+            train_loader=self.train_loader,
+            test_loader=self.test_loader,
+            criterion=self.criterion,
+            logger=self.logger
+        )
+        analyzer.calculate_hessian(n=self.configs.task.analysis_configs.n_hessian)
+
+
     def analyze_sharpness_run(self):
-        pass
+        self.configs.model.configs.num_classes = self.configs.dataset.num_classes
+        self.configs.dataset.return_index = False
+        self.log_prefix = "analyze"
+        self._load_analysis_params()
+        self._analyse_sharpness()
 
 
     def run(self):

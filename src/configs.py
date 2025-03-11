@@ -13,6 +13,7 @@ class DatasetConfigs:
     test_ratio: float = MISSING
     augment: bool = MISSING
     num_classes: int = MISSING
+    return_index: bool = True
 
 
 @dataclass
@@ -65,6 +66,7 @@ class ModelConfigsConfigs:  # Contains all fields in DenseNetConfigs, WideResNet
 class ModelConfigs:
     name: str = MISSING
     type: str = MISSING
+    weights_path: Optional[str] = None
     configs: ModelConfigsConfigs = ModelConfigsConfigs
 
 
@@ -86,19 +88,25 @@ class OptimizerConfigs:
 
 
 @dataclass
+class AnalysisConfigs:
+    n_hessian: Optional[int] = None
+
+
+@dataclass
 class TaskConfigs:
     name: str = MISSING
-    create_poison: bool = MISSING
-    train: bool = MISSING
-    sam: bool = MISSING
-    optimizer: str = MISSING
+    create_poison: Optional[bool] = None
+    train: Optional[bool] = None
+    sam: Optional[bool] = None
+    optimizer: Optional[str] = None
     scheduler: Optional[str] = None
-    epochs: int = MISSING
+    epochs: Optional[int] = None
     batch_size: int = MISSING
     criterion: str = MISSING
     deltas_path: Optional[str] = None
     poison_configs: Optional[PoisonConfigs] = None
-    optimizer_configs: OptimizerConfigs = MISSING
+    analysis_configs: Optional[AnalysisConfigs] = None
+    optimizer_configs: Optional[OptimizerConfigs] = None
 
 
 @dataclass

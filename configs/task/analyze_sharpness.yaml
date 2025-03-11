@@ -1,4 +1,4 @@
 name: analyze_sharpness
 create_poison: False
-train: False
-deltas_path: null
+analysis_configs:
+  n_hessian: 20

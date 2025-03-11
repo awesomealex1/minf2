@@ -2,6 +2,7 @@ import wandb
 import os
 import torch
 from torch.nn import Module
+import numpy as np
 
 class Logger:
 
@@ -95,4 +96,20 @@ class Logger:
                 "start_sim": start_sim, 
                 "final_sim": final_sim, 
                 "completed_it": completed_it
+            })
+    
+
+    def log_eigenvals(self, eigenvals: np.ndarray):
+        for i, eigenval in enumerate(eigenvals):
+            wandb.log({
+                "order": i,
+                "eigenval": eigenval
+            })
+    
+
+    def log_eigenvecs(self, eigenvecs: np.ndarray):
+        for i, eigenvec in enumerate(eigenvecs):
+            wandb.log({
+                "order": i,
+                "eigenvec": eigenvec
             })

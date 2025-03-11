@@ -38,9 +38,12 @@ def get_dataloaders(dataset_configs: DatasetConfigs, task_configs: TaskConfigs) 
 
 
 def get_model(model_configs: ModelConfigs) -> Module:
-    return getattr(models, model_configs.type)(
+    model = getattr(models, model_configs.type)(
         **model_configs.configs,
     )
+    if model_configs.weights_path:
+        model.load_state_dict(torch.load(model_configs.weights_path, weights_only=True))
+    return model
 
 
 def get_criterion(task_configs: TaskConfigs, **kwargs) -> _Loss:

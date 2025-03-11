@@ -1,0 +1,9 @@
+# @package _global_
+defaults:
+  - override /task: analyze_sharpness
+  - override /model: lenet
+  - override /dataset: mnist
+
+task:
+  batch_size: 64
+  criterion: CrossEntropyLoss

@@ -23,10 +23,12 @@ class CIFAR10(datasets.CIFAR10):
         deltas_path: str = None,
         augment: bool = False,
         num_samples: int = -1,
+        return_index: bool = False,
         **kwargs
     ) -> None:
         super().__init__(root, train, download)
         self.augment = augment
+        self.return_index = return_index
 
         if self.augment:
             self.augment_transform = augment_transform
@@ -49,4 +51,7 @@ class CIFAR10(datasets.CIFAR10):
 
     def __getitem__(self, index: int):
         img, target = self.data[index], int(self.targets[index])
-        return img, target, index
+        if self.return_index:
+            return img, target, index
+        else:
+            return img, target
