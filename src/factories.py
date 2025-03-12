@@ -12,6 +12,7 @@ import torch
 from torchvision.models import resnet18
 from datasets import CustomCIFAR10
 from torchvision import transforms
+from pickle import UnpicklingError
 
 
 def get_dataloaders(dataset_configs: DatasetConfigs, task_configs: TaskConfigs) -> Tuple[DataLoader, DataLoader, DataLoader]:
@@ -41,8 +42,12 @@ def get_model(model_configs: ModelConfigs) -> Module:
     model = getattr(models, model_configs.type)(
         **model_configs.configs,
     )
+    
     if model_configs.weights_path:
-        model.load_state_dict(torch.load(model_configs.weights_path, weights_only=True))
+        try:
+            model.load_state_dict(torch.load(model_configs.weights_path, weights_only=True))
+        except UnpicklingError:
+            model.load_state_dict(torch.load(model_configs.weights_path, weights_only=True, map_location=torch.device("cpu")))
     return model
 
 
