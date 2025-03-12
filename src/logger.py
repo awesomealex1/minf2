@@ -108,7 +108,7 @@ class Logger:
         
         if len(eigenvals) >= 4:
             wandb.log({
-                "lambda_max/lambda_5": eigenvals[0] / eigenvals[4]
+                "lambda_max/lambda_5": sorted(eigenvals)[0] / sorted(eigenvals)[4]
             })
     
 

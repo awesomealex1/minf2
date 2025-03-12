@@ -118,13 +118,13 @@ class Runner:
     def analyze_sharpness_run(self):
         self.configs.model.configs.num_classes = self.configs.dataset.num_classes
         self.configs.dataset.return_index = False
-        self.log_prefix = "analyze"
         self._load_analysis_params()
         self._analyse_sharpness()
 
 
     def run(self):
         if self.configs.task.name == "analyze_sharpness":
+            self.log_prefix = "analyze"
             self.analyze_sharpness_run()
         elif self.configs.task.name in ["create_train_poison", "create_poison", "train_w_poison", "train_wo_poison"]:
             self.train_run()
@@ -133,6 +133,12 @@ class Runner:
             poison_model_path = f"{self.logger.output_dir}/final_model.pt"
             self.configs.task.create_poison = False
             self.train_run()    # Baseline model
+            base_model_path = f"{self.logger.output_dir}/final_model.pt"
             self.configs.model.weights_path = poison_model_path
-            self.configs.task.analysis_configs.comparison_weights_path = f"{self.logger.output_dir}/final_model.pt"
+            self.configs.task.analysis_configs.comparison_weights_path = base_model_path
+            self.log_prefix = "analyze_poison"
+            self.analyze_sharpness_run()
+            self.configs.model.weights_path = base_model_path
+            self.configs.task.analysis_configs.comparison_weights_path = None
+            self.log_prefix = "analyze_base"
             self.analyze_sharpness_run()
