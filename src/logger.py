@@ -102,7 +102,7 @@ class Logger:
     def log_eigenvals(self, eigenvals: np.ndarray):
         for i, eigenval in enumerate(eigenvals):
             wandb.log({
-                f"{self.log_prefix}_order": i,
+                f"order": i,
                 f"{self.log_prefix}_eigenval": eigenval
             })
         
@@ -115,7 +115,7 @@ class Logger:
     def log_eigenvecs(self, eigenvecs: np.ndarray):
         for i, eigenvec in enumerate(eigenvecs):
             wandb.log({
-                f"{self.log_prefix}_order": i,
+                f"order": i,
                 f"{self.log_prefix}_eigenvec": eigenvec
             })
     

@@ -1,0 +1,21 @@
+# @package _global_
+defaults:
+  - override /task: full
+  - override /model: dense_net_40
+  - override /dataset: cifar10
+
+task:
+  optimizer: SGD
+  scheduler: DenseNet40CIFAR10Scheduler
+  epochs: 100
+  batch_size: 64
+  criterion: CrossEntropyLoss
+  sam: False
+  poison_configs:
+    poison_start: 80
+    iterations: 5
+  optimizer_configs:
+    lr: 0.001
+    weight_decay: 0.0001
+    momentum: 0.9
+    nesterov: false
