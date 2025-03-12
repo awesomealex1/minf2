@@ -120,10 +120,36 @@ class Logger:
             })
     
 
-    def log_linear_interpolation(self, train_losses: list, val_losses: list, alphas: np.ndarray):
+    def log_linear_interpolation(
+            self, 
+            train_losses: list, 
+            val_losses: list, 
+            train_accuracies: list, 
+            val_accuracies: list, 
+            alphas: np.ndarray
+        ):
+
         for i in range(len(alphas)):
             wandb.log({
                 "alpha": alphas[i],
                 "train_loss": train_losses[i],
-                "val_loss": val_losses[i]
+                "val_loss": val_losses[i],
+                "train_accuracy": train_accuracies[i],
+                "val_accuracy": val_accuracies[i]
             })
+
+        wandb.log({"one_dimensional_linear_interpolation_loss": wandb.plot.line_series(
+            xs=alphas,
+            ys=[train_losses, val_losses],
+            keys=["Train Loss", "Validation Loss"],
+            title=["One-dimensional Linear Interpolation Loss"],
+            xname="alpha"
+        )})
+
+        wandb.log({"one_dimensional_linear_interpolation_accuracy": wandb.plot.line_series(
+            xs=alphas,
+            ys=[train_accuracies, val_accuracies],
+            keys=["Train Accuracy", "Validation Accuracy"],
+            title=["One-dimensional Linear Interpolation Accuracy"],
+            xname="alpha"
+        )})

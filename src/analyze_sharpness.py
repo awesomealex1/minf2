@@ -56,6 +56,7 @@ class Analyzer:
         self.model = self.model.to(self.device)
         alphas = np.linspace(-1, 2, n_alphas)
         train_losses, val_losses = np.zeros(n_alphas), np.zeros(n_alphas)
+        train_accuracies, val_accuracies = np.zeros(n_alphas), np.zeros(n_alphas)
 
         for i, alpha in enumerate(alphas):
             params_interpolated = {}
@@ -64,21 +65,29 @@ class Analyzer:
             self.model.load_state_dict(params_interpolated)
 
             if self.train_loader:
+                correct = 0
                 loss_sum = 0
                 for X, Y in iter(self.train_loader):
                     X = X.to(self.device)
                     Y = Y.to(self.device)
-                    predictions = self.model(X)
-                    loss_sum += self.criterion(predictions, Y).item()
+                    hypothesis = self.model(X)
+                    loss_sum += self.criterion(hypothesis, Y).item()
+                    predicted = torch.argmax(hypothesis, 1)
+                    correct += (predicted == Y).sum().item()
                 train_losses[i] = loss_sum / len(self.train_loader)
+                train_accuracies[i] = correct/len(self.train_loader.dataset)
 
             if self.val_loader:
+                correct = 0
                 loss_sum = 0
                 for X, Y in iter(self.val_loader):
                     X = X.to(self.device)
                     Y = Y.to(self.device)
-                    predictions = self.model(X)
-                    loss_sum += self.criterion(predictions, Y).item()
+                    hypothesis = self.model(X)
+                    loss_sum += self.criterion(hypothesis, Y).item()
+                    predicted = torch.argmax(hypothesis, 1)
+                    correct += (predicted == Y).sum().item()
                 val_losses[i] = loss_sum / len(self.val_loader)
+                val_accuracies[i] = correct/len(self.train_loader.dataset)
 
-        self.logger.log_linear_interpolation(train_losses, val_losses, alphas)
+        self.logger.log_linear_interpolation(train_losses, val_losses, train_accuracies, val_accuracies, alphas)
