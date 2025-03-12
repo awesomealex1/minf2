@@ -78,6 +78,10 @@ class Runner:
             self.sub_output_dir = "train_w_poison"
             self.log_prefix = "train_w_poison"
             apply_deltas = True
+        elif not self.configs.task.create_poison and self.configs.task.train:
+            self.sub_output_dir = "train_wo_poison"
+            self.log_prefix = "train_wo_poison"
+
         
         if self.configs.task.train:
             self._load_train_params(sam=self.configs.task.sam)
@@ -122,5 +126,13 @@ class Runner:
     def run(self):
         if self.configs.task.name == "analyze_sharpness":
             self.analyze_sharpness_run()
-        else:
+        elif self.configs.task.name in ["create_train_poison", "create_poison", "train_w_poison", "train_wo_poison"]:
             self.train_run()
+        elif self.configs.task.name == "full":
+            self.train_run()    # Poison model
+            poison_model_path = f"{self.logger.output_dir}/final_model.pt"
+            self.configs.task.create_poison = False
+            self.train_run()    # Baseline model
+            self.configs.model.weights_path = poison_model_path
+            self.configs.task.analysis_configs.comparison_weights_path = f"{self.logger.output_dir}/final_model.pt"
+            self.analyze_sharpness_run()

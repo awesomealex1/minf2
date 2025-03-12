@@ -1,0 +1,14 @@
+name: full
+create_poison: True
+train: True
+deltas_path: null
+
+poison_configs:
+  poison_lr: 0.01
+  epsilon: -1
+  iterations: 50
+  deltas_start: 1
+
+analysis_configs:
+  n_hessian: 20
+  n_alphas: 100

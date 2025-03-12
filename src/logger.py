@@ -132,10 +132,10 @@ class Logger:
         for i in range(len(alphas)):
             wandb.log({
                 "alpha": alphas[i],
-                "train_loss": train_losses[i],
-                "val_loss": val_losses[i],
-                "train_accuracy": train_accuracies[i],
-                "val_accuracy": val_accuracies[i]
+                f"{self.log_prefix}_train_loss": train_losses[i],
+                f"{self.log_prefix}_val_loss": val_losses[i],
+                f"{self.log_prefix}_train_accuracy": train_accuracies[i],
+                f"{self.log_prefix}_val_accuracy": val_accuracies[i]
             })
 
         wandb.log({"one_dimensional_linear_interpolation_loss": wandb.plot.line_series(

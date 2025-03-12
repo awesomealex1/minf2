@@ -1,0 +1,20 @@
+# @package _global_
+defaults:
+  - override /task: full
+  - override /model: lenet
+  - override /dataset: mnist
+
+task:
+  optimizer: SGD
+  epochs: 20
+  batch_size: 64
+  criterion: CrossEntropyLoss
+  sam: False
+  poison_configs:
+    poison_start: 1
+    iterations: 5
+  optimizer_configs:
+    lr: 0.001
+    weight_decay: 0.0001
+    momentum: 0.9
+    nesterov: false
