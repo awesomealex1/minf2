@@ -102,21 +102,21 @@ class Logger:
     def log_eigenvals(self, eigenvals: np.ndarray):
         for i, eigenval in enumerate(eigenvals):
             wandb.log({
-                "order": i,
-                "eigenval": eigenval
+                f"{self.log_prefix}_order": i,
+                f"{self.log_prefix}_eigenval": eigenval
             })
         
         if len(eigenvals) >= 4:
             wandb.log({
-                "lambda_max/lambda_5": sorted(eigenvals)[0] / sorted(eigenvals)[4]
+                f"{self.log_prefix}_lambda_max/lambda_5": sorted(eigenvals)[0] / sorted(eigenvals)[4]
             })
     
 
     def log_eigenvecs(self, eigenvecs: np.ndarray):
         for i, eigenvec in enumerate(eigenvecs):
             wandb.log({
-                "order": i,
-                "eigenvec": eigenvec
+                f"{self.log_prefix}_order": i,
+                f"{self.log_prefix}_eigenvec": eigenvec
             })
     
 
