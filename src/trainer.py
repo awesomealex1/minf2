@@ -52,15 +52,16 @@ class Trainer:
             self.augment_transform = self.train_loader.dataset.augment_transform
         else:
             self.augment_transform = lambda x: x
+        
+        self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 
     def train(self):
         if self.poison:
             self.deltas = (0.001**0.5)*torch.randn(self.train_loader.dataset.data.shape)
         
-        self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+        # TODO: Investigate whether model needs to manually be removed from GPU after train is completed
         self.model = self.model.to(self.device)
-        
         self.epoch = 1
         while self.epoch <= self.configs.task.epochs:
             if self.apply_deltas and self.configs.task.poison_configs.deltas_start == self.epoch:

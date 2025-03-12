@@ -1,5 +1,4 @@
 import torch
-import matplotlib.pyplot as plt
 from torch import autograd
 import copy
 from tqdm import tqdm

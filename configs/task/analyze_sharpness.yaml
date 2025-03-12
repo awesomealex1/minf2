@@ -2,3 +2,4 @@ name: analyze_sharpness
 create_poison: False
 analysis_configs:
   n_hessian: 20
+  n_alphas: 100

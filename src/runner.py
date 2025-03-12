@@ -96,11 +96,19 @@ class Runner:
         analyzer = Analyzer(
             model=self.model,
             train_loader=self.train_loader,
+            val_loader=self.val_loader,
             test_loader=self.test_loader,
             criterion=self.criterion,
             logger=self.logger
         )
         analyzer.calculate_hessian(n=self.configs.task.analysis_configs.n_hessian)
+        
+        if self.configs.task.analysis_configs.comparison_weights_path:
+            analyzer.one_dimensional_linear_interpolation(
+                source_weights_path=self.configs.model.weights_path,
+                comparison_weights_path=self.configs.task.analysis_configs.comparison_weights_path,
+                n_alphas=self.configs.task.analysis_configs.n_alphas
+            )
 
 
     def analyze_sharpness_run(self):

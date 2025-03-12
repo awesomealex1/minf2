@@ -105,6 +105,11 @@ class Logger:
                 "order": i,
                 "eigenval": eigenval
             })
+        
+        if len(eigenvals) >= 4:
+            wandb.log({
+                "lambda_max/lambda_5": eigenvals[0] / eigenvals[4]
+            })
     
 
     def log_eigenvecs(self, eigenvecs: np.ndarray):
@@ -112,4 +117,13 @@ class Logger:
             wandb.log({
                 "order": i,
                 "eigenvec": eigenvec
+            })
+    
+
+    def log_linear_interpolation(self, train_losses: list, val_losses: list, alphas: np.ndarray):
+        for i in range(len(alphas)):
+            wandb.log({
+                "alpha": alphas[i],
+                "train_loss": train_losses[i],
+                "val_loss": val_losses[i]
             })
