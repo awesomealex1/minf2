@@ -6,7 +6,7 @@ defaults:
 
 task:
   optimizer: SGD
-  epochs: 20
+  epochs: 30
   batch_size: 64
   criterion: CrossEntropyLoss
   sam: False
