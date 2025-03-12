@@ -88,6 +88,6 @@ class Analyzer:
                     predicted = torch.argmax(hypothesis, 1)
                     correct += (predicted == Y).sum().item()
                 val_losses[i] = loss_sum / len(self.val_loader)
-                val_accuracies[i] = correct/len(self.train_loader.dataset)
+                val_accuracies[i] = correct/len(self.val_loader.dataset)
 
         self.logger.log_linear_interpolation(train_losses, val_losses, train_accuracies, val_accuracies, alphas)
