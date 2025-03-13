@@ -1,0 +1,7 @@
+{
+    "model": "efficient_s",
+    "dataset": "cifar10",
+    "epochs": 200,
+    "early_stopping": false,
+    "cos_an": true
+}

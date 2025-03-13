@@ -30,7 +30,7 @@ class Analyzer:
 
 
     def calculate_hessian(self, n:int):
-        eigenvals, eigenvecs =  compute_hessian_eigenthings(self.model, self.train_loader, self.criterion, n, use_gpu=(torch.cuda.is_available()), mode='lanczos')
+        eigenvals, eigenvecs =  compute_hessian_eigenthings(self.model, self.train_loader, self.criterion, n, use_gpu=(torch.cuda.is_available()), mode='power_iter')
         self.logger.log_eigenvals(eigenvals)
         self.logger.log_eigenvecs(eigenvecs)
     

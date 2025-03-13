@@ -1,6 +1,0 @@
-{
-    "model": "dense",
-    "dataset": "cifar10",
-    "epochs": 100,
-    "early_stopping": false
-}

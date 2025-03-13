@@ -8,3 +8,8 @@ quick_plots.ipynb
 experiment_results_from_eddie/
 runs/
 hyperparam_fmnist.png
+.env
+wandb/
+outputs/
+.vscode/
+old_results/

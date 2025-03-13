@@ -1,9 +1,0 @@
-{
-    "mode": "train",
-    "lr": 0.1,
-    "momentum": 0.9,
-    "weight_decay": 0.0005,
-    "n_repeats": 5,
-    "delta_seeds": [15657, 26301, 39266, 39524, 64051],
-    "deltas_seed_path": "experiment_results/cifar10_wide16"
-}

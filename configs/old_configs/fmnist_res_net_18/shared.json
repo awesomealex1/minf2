@@ -1,0 +1,6 @@
+{
+    "model": "res_net_18",
+    "dataset": "fmnist",
+    "epochs": 100,
+    "early_stopping": false
+}

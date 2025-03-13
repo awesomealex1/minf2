@@ -1,6 +1,0 @@
-{
-    "mode": "train",
-    "lr": 0.001,
-    "momentum": 0.9,
-    "n_repeats": 5
-}
