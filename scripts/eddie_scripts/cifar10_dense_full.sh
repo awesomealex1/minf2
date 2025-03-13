@@ -14,6 +14,6 @@ conda activate minf2
 
 cd /exports/eddie/scratch/s2017377/minf2
 
-python scripts/main.py experiment=cifar10/dense_net_40/full random_seed=038372 
+python scripts/main.py experiment=cifar10/dense_net_40/full random_seed=36672 
 
 #sleep 86400

@@ -1,7 +1,7 @@
 
 #!/bin/sh
 # Grid Engine options (lines prefixed with #$)
-#$ -N mnist_resnet_full
+#$ -N fmnist_resnet_full
 #$ -cwd
 #$ -l h_rt=24:00:00 
 #$ -l h_vmem=40G
