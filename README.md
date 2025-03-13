@@ -8,7 +8,7 @@ This is code for a project on Loss Landscape Sharpness and Data Poisoning
 
 ```/configs``` contains the configurations used for all experiments.
 
-```/scripts``` contains various scripts in including ```main.py``` which is used to start all experiments.
+```/scripts``` contains various scripts including ```main.py``` which is used to start all experiments.
 
 ## Installation
 
