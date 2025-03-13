@@ -1,6 +1,0 @@
-[submodule "ml_theory_tool"]
-	path = ml_theory_tool
-	url = https://github.com/awesomealex1/ml_theory_tools.git
-[submodule "ml_theory_tools"]
-	path = ml_theory_tools
-	url = https://github.com/awesomealex1/ml_theory_tools.git
