@@ -12,9 +12,11 @@ This is code for a project on Loss Landscape Sharpness and Data Poisoning
 
 ## Installation
 
-```conda create -n sharp_poison python=3.11```
-
-```pip install -r requirements.txt```
+```
+conda create -n sharp_poison python=3.11
+conda activate sharp_poison
+pip install -r requirements.txt
+```
 
 ## Running experiments
 
