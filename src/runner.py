@@ -105,7 +105,8 @@ class Runner:
             criterion=self.criterion,
             logger=self.logger
         )
-        analyzer.calculate_hessian(n=self.configs.task.analysis_configs.n_hessian)
+        
+        analyzer.calculate_hessian(n=self.configs.task.analysis_configs.n_hessian, mode=self.configs.task.analysis_configs.mode)
         
         if self.configs.task.analysis_configs.comparison_weights_path:
             analyzer.one_dimensional_linear_interpolation(

@@ -12,3 +12,4 @@ poison_configs:
 analysis_configs:
   n_hessian: 20
   n_alphas: 100
+  mode: lanczos

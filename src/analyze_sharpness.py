@@ -29,8 +29,8 @@ class Analyzer:
         self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 
-    def calculate_hessian(self, n:int):
-        eigenvals, eigenvecs =  compute_hessian_eigenthings(self.model, self.train_loader, self.criterion, n, use_gpu=(torch.cuda.is_available()), mode='power_iter')
+    def calculate_hessian(self, n: int, mode: str):
+        eigenvals, eigenvecs =  compute_hessian_eigenthings(self.model, self.train_loader, self.criterion, n, use_gpu=(torch.cuda.is_available()), mode=mode)
         self.logger.log_eigenvals(eigenvals)
         self.logger.log_eigenvecs(eigenvecs)
     

@@ -92,6 +92,7 @@ class AnalysisConfigs:
     n_hessian: Optional[int] = None
     comparison_weights_path: Optional[str] = None
     n_alphas: int = 100
+    mode: str = MISSING
 
 
 @dataclass
