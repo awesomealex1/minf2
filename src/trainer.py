@@ -1,8 +1,6 @@
 import torch
 import torch.optim
 from torch import nn
-from poison_data import poison_data
-from hessian import calculate_spectrum
 from tqdm import tqdm
 import optuna
 import copy

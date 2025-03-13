@@ -9,8 +9,6 @@ from torch.nn.modules.loss import _Loss
 from torch.optim.lr_scheduler import LRScheduler
 from torch.utils.data import Dataset, DataLoader, Subset
 import torch
-from torchvision.models import resnet18
-from datasets import CustomCIFAR10
 from torchvision import transforms
 from pickle import UnpicklingError
 

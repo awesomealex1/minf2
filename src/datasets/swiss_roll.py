@@ -1,10 +1,8 @@
-import sklearn.datasets
 from torchvision import datasets, transforms
 from kornia.augmentation import RandomHorizontalFlip, RandomRotation
 import torch
 from torch import Tensor
 import numpy as np
-import sklearn
 
 default_transform = transforms.Compose([
     transforms.Normalize((0.5), (0.5))
