@@ -18,6 +18,19 @@ conda activate sharp_poison
 python -m pip install -r requirements.txt
 ```
 
+Create a ```.env``` file which contains your wandb api key like this:
+
+```
+WANDB_API_KEY=key_here
+```
+
+Also modify your ```configs/config.yaml``` to contain your wandb project and wandb entity:
+
+```
+wandb_project: your_project
+wandb_entity: your_entity
+```
+
 ## Running experiments
 
 ```scripts/main.py``` is used to run experiments and can be run as follows:
