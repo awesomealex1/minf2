@@ -1,36 +1,41 @@
-# Loss Landscape Sharpness Project
+# Loss Landscape Sharpness and Data Poisoning
 
-This is code for a project on loss landscape sharpness.
+## Code Structure
 
-```runner.py``` contains code for handling args, dataloaders and models.
+This is code for a project on Loss Landscape Sharpness and Data Poisoning
 
-```experiment.py``` contains code for experiment setups and configurations.
+```/src``` contains the code used to run all experiments.
 
-```train.py``` contains code for training models.
+```/configs``` contains the configurations used for all experiments.
 
-```augment_data.py``` contains code to perform data augmentation algorithm.
+```/scripts``` contains various scripts in including ```main.py``` which is used to start all experiments.
 
-```models.py``` contains code to get models.
+## Installation
 
-```data_util.py``` contains code to get data loaders and augmentations for datasets.
+```conda create -n sharp_poison python=3.11```
 
-```datasets.py``` contains custom datasets that are compatible with our methods.
+```pip install -r requirements.txt```
 
 ## Running experiments
 
-```runner.py``` is used to run experiments. It takes the following arguments:
+```scripts/main.py``` is used to run experiments and can be run as follows:
 
-- ```model``` is the model to train.
-- ```dataset``` is the dataset to train with.
-- ```mode``` is selected from ```augment```, ```train_sam``` or ```train``` to select which type of training and whether to augment.
-- ```deltas_path``` is the path to augmentation deltas if you want to train on an augmented dataset.
-- ```calculate_sharpness``` is whether to evaluate sharpness.
-- ```experiment_name``` is the name of the experiment.
-- ```seed``` is the seed of the experiment.
-- ```poison_start_epoch``` is used to only start augmentation after the specified number of epochs.
+```python scripts/main.py experiment=dataset/model/task override1=value1 override2=value2```
+
+The following datasets can be chosen from:
+
+```cifar10```, ```cifar100```, ```fmnist```, ```mnist```, ```swiss_roll```
+
+The following models can be chosen from:
+
+```dense_net_40```, ```lenet```, ```res_net_18```, ```wide_res_net_16```, ```wide_res_net_28```
+
+The following tasks can be chosen from:
+
+```full```, ```create_train_poison```, ```create_poison```, ```train_w_poison```, ```train_wo_poison```, ```analyze_sharpness```
 
 ### Sample commands
 
-The following command runs an experiment where data augmentation is performed on the FMNIST dataset with a ResNet18. The seed is set to 412 and the experiment is given the name 'fmnist_res_net_18_augment_412'.
+Run a full analysis of LeNet-5 on MNIST, training for 10 epochs and generating 5 largest eigenvalues of the Hessian:
 
-```python runner.py --model res_net_18 --dataset fmnist --mode augment --experiment_name cifar10_eff_s_412 --seed 412```
+```python scripts/main.py experiment=mnist/lenet/full task.epochs=10 task.analysis_configs.n_hessian=5```
