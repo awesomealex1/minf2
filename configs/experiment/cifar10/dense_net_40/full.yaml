@@ -19,3 +19,6 @@ task:
     weight_decay: 0.0001
     momentum: 0.9
     nesterov: true
+  analysis_configs:
+    n_hessian: 5
+    n_alphas: 20

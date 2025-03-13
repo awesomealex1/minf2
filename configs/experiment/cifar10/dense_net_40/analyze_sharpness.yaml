@@ -7,3 +7,6 @@ defaults:
 task:
   batch_size: 256
   criterion: CrossEntropyLoss
+  analysis_configs:
+    n_hessian: 5
+    n_alphas: 20
