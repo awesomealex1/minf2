@@ -3,3 +3,4 @@ num_samples: -1
 root: ~/.pytorch/FMNIST_data/
 augment: False
 num_classes: 10
+test_ratio: 0.6

@@ -2,7 +2,6 @@ from torchvision import datasets, transforms
 from kornia.augmentation import RandomHorizontalFlip, RandomRotation
 import torch
 from torch import Tensor
-import numpy as np
 
 default_transform = transforms.Compose([
     transforms.Normalize((0.5), (0.5))
