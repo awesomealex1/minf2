@@ -1,0 +1,23 @@
+# @package _global_
+defaults:
+  - override /task: train_w_poison
+  - override /model: lenet
+  - override /dataset: mnist
+
+task:
+  optimizer: SGD
+  epochs: 30
+  batch_size: 64
+  criterion: CrossEntropyLoss
+  sam: False
+  optimizer_configs:
+    lr: 0.001
+    weight_decay: 0.001
+    momentum: 0.9
+    nesterov: false
+  poison_configs:
+    poison_lr: 0.01
+    epsilon: -1
+    iterations: 50
+    deltas_start: 1
+    poison_start: 1

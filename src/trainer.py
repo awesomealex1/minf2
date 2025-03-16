@@ -93,7 +93,6 @@ class Trainer:
         for X, Y, i in tqdm(self.train_loader):
             X = X.to(self.device)
             Y = Y.to(self.device)
-            X.requires_grad_()
 
             hypothesis, loss, start_sim, final_sim, its = self.forward_backward(X=X, Y=Y, i=i)
             total_loss += loss.item()
@@ -115,6 +114,16 @@ class Trainer:
 
     
     def forward_backward(self, X, Y, i):
+        if self.poison and self.configs.task.poison_configs.dynamic_poison:
+            original_X = X.clone().detach()
+        else:
+            original_X = None
+        if self.poison and self.configs.task.poison_configs.dynamic_poison and self.epoch > self.configs.task.poison_configs.poison_start:
+            if self.deltas[i].shape != X.shape:
+                X = X + self.deltas[i].unsqueeze(1)
+            else:
+                X = X + self.deltas[i]
+        X.requires_grad_()
         X_transformed = self.augment_transform(X)
         self.optimizer.zero_grad()
         hypothesis = self.model(X_transformed)
@@ -129,21 +138,30 @@ class Trainer:
             self.optimizer.second_step(zero_grad=False)
             if self.poison and self.epoch >= self.configs.task.poison_configs.poison_start:
                 g_sam = [param.grad.clone().detach().flatten() for param in self.model.parameters() if param.grad is not None]
+                if self.configs.task.poison_configs.dynamic_poison:
+                    delta = (0.000001**0.5)*torch.randn(self.deltas[i].shape)
+                else:
+                    delta = self.deltas[i].clone().detach()
                 deltas, start_sim, final_sim, its = poison(
                     X=X,
                     Y=Y,
                     criterion=self.criterion, 
                     model=copy.deepcopy(self.model),
                     device=self.device,
-                    delta=self.deltas[i].clone().detach(), 
+                    delta=delta, 
                     iterations=self.configs.task.poison_configs.iterations, 
                     epsilon=self.configs.task.poison_configs.epsilon, 
                     lr=self.configs.task.poison_configs.poison_lr,
                     logger=self.logger,
                     g_sam=g_sam,
-                    augment_transform=self.augment_transform
+                    augment_transform=self.augment_transform,
+                    original_X=original_X,
+                    beta=self.configs.task.poison_configs.beta
                 )
-                self.deltas[i] = deltas.squeeze(1).detach().cpu()
+                if self.configs.task.poison_configs.dynamic_poison:
+                    self.deltas[i] = self.deltas[i] + deltas.squeeze(1).detach().cpu()
+                else:
+                    self.deltas[i] = deltas.squeeze(1).detach().cpu()
             self.optimizer.zero_grad()
         else:
             self.optimizer.step()

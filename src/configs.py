@@ -77,6 +77,8 @@ class PoisonConfigs:
     iterations: int = MISSING
     poison_start: int = MISSING
     deltas_start: int = MISSING
+    dynamic_poison: bool = False
+    beta: float = 1
 
 
 @dataclass

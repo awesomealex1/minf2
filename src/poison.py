@@ -7,6 +7,7 @@ from torch.nn.modules.loss import _Loss
 from torch.nn import Module
 from src.logger import Logger
 import wandb
+from typing import Optional
 
 
 def poison(
@@ -21,7 +22,9 @@ def poison(
         lr: float, 
         epsilon: float,
         g_sam,
-        augment_transform
+        augment_transform,
+        original_X: Optional[Tensor],
+        beta: float
     ):
     # Set model to eval mode to disable dropout, etc. gradients will still be active
     model.eval()
@@ -61,6 +64,12 @@ def poison(
             passenger_loss = torch.tensor(1.0, requires_grad=True)
             for i in indices:
                 passenger_loss = passenger_loss - torch.nn.functional.cosine_similarity(poison_grad[i].flatten(), g_sam[i], dim=0) / len(indices)
+            logger.log_cos_sim(passenger_loss.item())
+            if original_X != None:
+                original_augmented = augment_transform(original_X)
+                divergence = (criterion(model(original_augmented), Y) - loss)**2
+                logger.log_data_divergence(divergence)
+                passenger_loss = passenger_loss + divergence * beta
             # Backpropagate the cosine similarity loss (update delta to minimize similiarity loss)
             passenger_loss.backward(retain_graph=True)
 
@@ -68,7 +77,7 @@ def poison(
             optimizer_delta.step()
             losses.append(passenger_loss.item())
 
-            if epsilon > 0 and torch.norm(delta) > epsilon:
+            if epsilon > 0 and torch.norm(X + delta - original_X) > epsilon:
                 delta.data = delta / torch.norm(delta) * epsilon
             
             if j == 0:
@@ -76,7 +85,7 @@ def poison(
 
             pbar.set_postfix(passenger_loss=passenger_loss.item())
             pbar.update(1)
-            logger.log_cos_sim(passenger_loss)
+            logger.log_combined_loss(passenger_loss)
             if torch.isnan(passenger_loss) or (len(losses) >= 2 and abs(losses[-1] - losses[-2]) < convergence_constant):
                 print(abs(losses[-1] - losses[-2]))
                 final_passenger_loss = passenger_loss.item()

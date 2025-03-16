@@ -73,8 +73,9 @@ class Runner:
         
         apply_deltas = False
 
-        if self.configs.task.create_poison and self.configs.task.train:
-            self.configs.task.deltas_path = f"{self.logger.output_dir}/final_deltas.pt"
+        if (self.configs.task.create_poison and self.configs.task.train) or self.configs.task.name == "train_w_poison":
+            if not self.configs.task.deltas_path:
+                self.configs.task.deltas_path = f"{self.logger.output_dir}/final_deltas.pt"
             self.sub_output_dir = "train_w_poison"
             self.log_prefix = "train_w_poison"
             apply_deltas = True
@@ -105,7 +106,7 @@ class Runner:
             criterion=self.criterion,
             logger=self.logger
         )
-        
+
         analyzer.calculate_hessian(n=self.configs.task.analysis_configs.n_hessian, mode=self.configs.task.analysis_configs.mode)
         
         if self.configs.task.analysis_configs.comparison_weights_path:

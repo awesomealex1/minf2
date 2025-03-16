@@ -80,6 +80,14 @@ class Logger:
         wandb.log({"cos_sim": score})
     
 
+    def log_data_divergence(self, divergence: float):
+        wandb.log({"divergence": divergence})
+    
+
+    def log_combined_loss(self, combined: float):
+        wandb.log({"combined": combined})
+    
+
     def log_deltas_magnitude(self, deltas: torch.Tensor):
         magnitude = torch.norm(deltas)
         wandb.log({"deltas_mag": magnitude, "epoch": self.cur_epoch})

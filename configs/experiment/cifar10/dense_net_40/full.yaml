@@ -14,6 +14,7 @@ task:
   poison_configs:
     poison_start: 80
     iterations: 5
+    poison_lr: 0.001
   optimizer_configs:
     lr: 0.1
     weight_decay: 0.0001
