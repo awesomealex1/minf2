@@ -135,8 +135,8 @@ class Trainer:
             self.optimizer.first_step(zero_grad=True)
             loss = self.criterion(self.model(X_transformed), Y)
             loss.backward()
-            self.optimizer.second_step(zero_grad=False, no_train=self.configs.task.poison_configs.train_while_poisoning)
             if self.poison and self.epoch >= self.configs.task.poison_configs.poison_start:
+                self.optimizer.second_step(zero_grad=False, train=self.configs.task.poison_configs.train_while_poisoning)
                 g_sam = [param.grad.clone().detach().flatten() for param in self.model.parameters() if param.grad is not None]
                 if self.configs.task.poison_configs.dynamic_poison:
                     delta = (self.configs.task.poison_configs.dynamic_delta_initial_val**0.5)*torch.randn(self.deltas[i].shape)
@@ -162,6 +162,8 @@ class Trainer:
                     self.deltas[i] = self.deltas[i] + deltas.squeeze(1).detach().cpu()
                 else:
                     self.deltas[i] = deltas.squeeze(1).detach().cpu()
+            else:
+                self.optimizer.second_step(zero_grad=False)
             self.optimizer.zero_grad()
         else:
             self.optimizer.step()

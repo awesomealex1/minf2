@@ -30,13 +30,13 @@ class SAM(torch.optim.Optimizer):
         if zero_grad: self.zero_grad()
 
     @torch.no_grad()
-    def second_step(self, zero_grad=False, tmp=None, no_train=False):
+    def second_step(self, zero_grad=False, tmp=None, train=True):
         for group in self.param_groups:
             for p in group["params"]:
                 if p.grad is None: continue
                 p.data = self.state[p]["old_p"]  # get back to "w" from "w + e(w)"
 
-        if not no_train:
+        if train:
             self.base_optimizer.step()  # do the actual "sharpness-aware" update
 
         if zero_grad: self.zero_grad()
