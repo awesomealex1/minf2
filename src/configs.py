@@ -79,6 +79,9 @@ class PoisonConfigs:
     deltas_start: int = MISSING
     dynamic_poison: bool = False
     beta: float = 1
+    train_while_poisoning: bool = True
+    delta_initial_val: float = 0.0001
+    dynamic_delta_initial_val: float = 0.000001
 
 
 @dataclass

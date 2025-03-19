@@ -56,7 +56,7 @@ class Trainer:
 
     def train(self):
         if self.poison:
-            self.deltas = (0.001**0.5)*torch.randn(self.train_loader.dataset.data.shape)
+            self.deltas = (self.configs.task.poison_configs.delta_initial_val**0.5)*torch.randn(self.train_loader.dataset.data.shape)   # Changed deltas from 0.001 to 0.0001 02:26 march 16                
         
         # TODO: Investigate whether model needs to manually be removed from GPU after train is completed
         self.model = self.model.to(self.device)
@@ -135,11 +135,11 @@ class Trainer:
             self.optimizer.first_step(zero_grad=True)
             loss = self.criterion(self.model(X_transformed), Y)
             loss.backward()
-            self.optimizer.second_step(zero_grad=False)
+            self.optimizer.second_step(zero_grad=False, no_train=self.configs.task.poison_configs.train_while_poisoning)
             if self.poison and self.epoch >= self.configs.task.poison_configs.poison_start:
                 g_sam = [param.grad.clone().detach().flatten() for param in self.model.parameters() if param.grad is not None]
                 if self.configs.task.poison_configs.dynamic_poison:
-                    delta = (0.000001**0.5)*torch.randn(self.deltas[i].shape)
+                    delta = (self.configs.task.poison_configs.dynamic_delta_initial_val**0.5)*torch.randn(self.deltas[i].shape)
                 else:
                     delta = self.deltas[i].clone().detach()
                 deltas, start_sim, final_sim, its = poison(
