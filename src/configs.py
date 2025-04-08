@@ -82,6 +82,7 @@ class PoisonConfigs:
     train_while_poisoning: bool = True
     delta_initial_val: float = 0.0001
     dynamic_delta_initial_val: float = 0.000001
+    comparison_epochs: Optional[List[int]] = None
 
 
 @dataclass
@@ -115,6 +116,10 @@ class TaskConfigs:
     poison_configs: Optional[PoisonConfigs] = None
     analysis_configs: Optional[AnalysisConfigs] = None
     optimizer_configs: Optional[OptimizerConfigs] = None
+    log_sim_no_poison: bool = False
+    log_param_magnitude: bool = False
+    log_grad_magnitude: bool = False
+    random_noise_magnitude: float = 0.0
 
 
 @dataclass

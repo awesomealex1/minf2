@@ -161,3 +161,92 @@ class Logger:
             title=["One-dimensional Linear Interpolation Accuracy"],
             xname="alpha"
         )})
+    
+
+    def log_comparison_sim(self, sim, epoch):
+        wandb.log({
+            "comparison_sim": sim,
+            "comparison_sim_epoch": epoch
+        })
+    
+
+    def log_comparison_sim_avg(self, avg_sim, epoch):
+        wandb.log({
+            "comparison_sim_avg": avg_sim,
+            "comparison_sim_avg_epoch": epoch
+        })
+    
+
+    def log_no_poison_loss(self, loss, epoch):
+        wandb.log({
+            "no_poison_loss": loss,
+            "no_poison_loss_epoch": epoch
+        })
+    
+
+    def log_no_poison_loss_avg(self, avg_loss, epoch):
+        wandb.log({
+            "no_poison_loss_avg": avg_loss,
+            "no_poison_loss_avg_epoch": epoch
+        })
+    
+
+    def log_param_magnitude(self, model, epoch):
+        wandb.log({
+            "param_magnitude": Logger.calculate_parameter_magnitude(model),
+            "param_magnitude_epoch": epoch
+        })
+    
+
+    def log_param_grad_magnitude(self, model, epoch):
+        wandb.log({
+            "param_grad_magnitude": Logger.calculate_gradient_magnitude(model),
+            "param_grad_magnitude_epoch": epoch
+        })
+    
+
+    @staticmethod
+    def calculate_parameter_magnitude(model):
+        """
+        Calculate the magnitude (L2 norm) of all parameters in a PyTorch model.
+        
+        Args:
+            model: PyTorch model
+            
+        Returns:
+            float: The L2 norm of all parameters
+        """
+        total_norm = 0.0
+        for p in model.parameters():
+            if p.data is not None:
+                param_norm = p.data.detach().norm(2)
+                total_norm += param_norm.item() ** 2
+        total_norm = total_norm ** 0.5
+        return total_norm
+
+    @staticmethod
+    def calculate_gradient_magnitude(model):
+        """
+        Calculate the magnitude (L2 norm) of all gradients in a PyTorch model.
+        
+        Args:
+            model: PyTorch model with gradients computed
+            
+        Returns:
+            float: The L2 norm of all gradients
+            None: If no gradients are found
+        """
+        total_norm = 0.0
+        num_grads = 0
+        for p in model.parameters():
+            if p.grad is not None:
+                grad_norm = p.grad.detach().norm(2)
+                total_norm += grad_norm.item() ** 2
+                num_grads += 1
+        
+        if num_grads == 0:
+            print("No gradients found. Make sure to call backward() before computing gradient magnitude.")
+            return None
+            
+        total_norm = total_norm ** 0.5
+        return total_norm
